@@ -1,9 +1,4 @@
 # owl-back
 owl back-end
 
-호현 수정
-다시 수정
-현진 수정
-
-
-호현 다시 수정합니다
+<a href="https://lavender-consonant-572.notion.site/a6db8d9040894b689e4f5bf7ca739958">OWL Notion Page</a>
