@@ -3,12 +3,12 @@ package com.project.owlback.user.api;
 import java.security.Key;
 import java.util.Date;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 
 import com.project.owlback.user.dto.TokenInfo;
+import com.project.owlback.user.dto.User;
 
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
@@ -34,15 +34,15 @@ public class JwtTokenProvider {
     public TokenInfo generateToken(Authentication authentication) {
         long now = (new Date()).getTime();
 
-        // 이메일 가져오기
-        String email = authentication.getPrincipal().toString();
+        User user = (User) authentication.getPrincipal();
         
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
-                .setSubject(authentication.getName())
+                .setSubject(Long.toString(user.getUserId())) // 아이디
+                .claim("nickName", user.getNickname())
+                .claim("ROLE", user.getRoles())
                 .setExpiration(accessTokenExpiresIn)
-                .claim("email", email)
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 

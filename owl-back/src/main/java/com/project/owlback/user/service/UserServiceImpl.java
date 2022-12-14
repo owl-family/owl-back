@@ -15,7 +15,7 @@ import com.project.owlback.user.dto.TokenInfo;
 import com.project.owlback.user.repository.UserRepository;
 
 @Service
-public class UserServiceImpl {
+public class UserServiceImpl implements UserService{
 	
 	@Autowired
 	private Response response;
