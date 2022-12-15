@@ -1,4 +1,11 @@
 package com.project.owlback.user.service;
 
-public class UserServiceImpl {
+import org.springframework.stereotype.Service;
+
+@Service
+public class UserServiceImpl implements UserService{
+    @Override
+    public boolean checkEmail(String email) {
+        return false;
+    }
 }
