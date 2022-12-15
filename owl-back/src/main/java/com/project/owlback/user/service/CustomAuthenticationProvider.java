@@ -18,22 +18,22 @@ import org.springframework.stereotype.Component;
 @Component
 public class CustomAuthenticationProvider implements AuthenticationProvider{
 
-	@Autowired
-	private CustomUserDetailsService userDetailsService;
-	@Autowired
-	private PasswordEncoder passwordEncoder;
-	
-	@Override
-	public Authentication authenticate(Authentication authentication) throws AuthenticationException {
-		if(authentication == null){
+    @Autowired
+    private CustomUserDetailsService userDetailsService;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Override
+    public Authentication authenticate(Authentication authentication) throws AuthenticationException {
+        if(authentication == null){
             throw new InternalAuthenticationServiceException("Authentication is null");
         }
-		
-		String username = authentication.getName();
-		String password = authentication.getCredentials().toString();
-		
-		UserDetails user = userDetailsService.loadUserByUsername(username);
-		
+
+        String username = authentication.getName();
+        String password = authentication.getCredentials().toString();
+
+        UserDetails user = userDetailsService.loadUserByUsername(username);
+
         if(user == null){
             throw new InternalAuthenticationServiceException("UserDetailsService returned null, which is an interface contract violation");
         }
@@ -45,7 +45,7 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
             throw new DisabledException("User is disabled");
         }
         if(!user.isAccountNonExpired()){
-        	throw new AccountExpiredException("User account has expired");
+            throw new AccountExpiredException("User account has expired");
         }
         /* 실질적인 인증 */
         if(!passwordEncoder.matches(password, user.getPassword())){
@@ -55,16 +55,16 @@ public class CustomAuthenticationProvider implements AuthenticationProvider{
         if(!user.isCredentialsNonExpired()){
             throw new CredentialsExpiredException("User credentials have expired");
         }
-        
+
         /* 인증 완료 */
         UsernamePasswordAuthenticationToken result = new UsernamePasswordAuthenticationToken(user, null, user.getAuthorities());
         result.setDetails(authentication.getDetails());
         return result;
-	}
+    }
 
-	@Override
+    @Override
     public boolean supports(Class<?> authentication) {
         return UsernamePasswordAuthenticationToken.class.isAssignableFrom(authentication);
     }
-	
+
 }

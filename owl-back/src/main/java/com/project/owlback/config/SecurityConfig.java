@@ -22,17 +22,16 @@ import com.project.owlback.user.service.CustomAuthenticationProvider;
 @ConditionalOnDefaultWebSecurity
 @ConditionalOnWebApplication(type = ConditionalOnWebApplication.Type.SERVLET)
 public class SecurityConfig {
-	
-	@Bean
+
+    @Bean
     @Order(SecurityProperties.BASIC_AUTH_ORDER)
-	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
+    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception{
         http
-    		.csrf().disable()
-	        .authorizeRequests()
-	        .antMatchers("/v2/api-docs", "/configuration/**", "/swagger*/**", "/webjars/**",
-	        			 "/api/**").permitAll()
-	        .anyRequest().authenticated();
-        
+                .csrf().disable()
+                .authorizeRequests()
+                .antMatchers("/v3/api-docs/**", "/configuration/**", "/swagger*/**", "/webjars/**", "/api/**").permitAll()
+                .anyRequest().authenticated();
+
         return http.build();
     }
 

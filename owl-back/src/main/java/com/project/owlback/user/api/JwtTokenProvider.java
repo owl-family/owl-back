@@ -19,23 +19,23 @@ import io.jsonwebtoken.security.Keys;
 public class JwtTokenProvider {
 
     private static final String BEARER_TYPE = "Bearer";
-	// 유효시간이 짧은 Access Token을 발급하고, Access Token이 만료되었을 때 재발급을 위한 Refresh Token을 발급
-	private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;              // 30분
+    // 유효시간이 짧은 Access Token을 발급하고, Access Token이 만료되었을 때 재발급을 위한 Refresh Token을 발급
+    private static final long ACCESS_TOKEN_EXPIRE_TIME = 30 * 60 * 1000L;              // 30분
     private static final long REFRESH_TOKEN_EXPIRE_TIME = 7 * 24 * 60 * 60 * 1000L;    // 7일
- 
+
     private Key key;
 
     public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
     }
-    
+
     // Service에서 Authentication 객체 인증 후, 인증된 객체를 가지고 해당 메서드를 통해 AccessToken, RefreshToken 생성
     public TokenInfo generateToken(Authentication authentication) {
         long now = (new Date()).getTime();
 
         User user = (User) authentication.getPrincipal();
-        
+
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
         String accessToken = Jwts.builder()
@@ -59,5 +59,5 @@ public class JwtTokenProvider {
                 .refreshToken(refreshToken)
                 .build();
     }
-    
+
 }

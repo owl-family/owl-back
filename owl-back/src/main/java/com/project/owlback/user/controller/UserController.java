@@ -15,12 +15,12 @@ import com.project.owlback.user.service.UserServiceImpl;
 @RestController
 public class UserController {
 
-	@Autowired
-	private UserServiceImpl userService;
-	
-	@PostMapping("/login")
-	public ResponseEntity<?> login(@RequestBody @Validated Login login) {
-		return userService.login(login);
-	}
-	
+    @Autowired
+    private UserServiceImpl userService;
+
+    @PostMapping("/login")
+    public ResponseEntity<?> login(@RequestBody @Validated Login login) {
+        return userService.login(login);
+    }
+
 }
