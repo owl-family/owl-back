@@ -2,7 +2,6 @@ package com.project.owlback.codereview.controller;
 
 import com.project.owlback.codereview.dto.CodeHistoryDto;
 import com.project.owlback.codereview.dto.CodeReviewDto;
-import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.service.CodeReveiwService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;

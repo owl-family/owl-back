@@ -65,6 +65,14 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
         return changeToCodeReviewDto(list);
     }
 
+    @Override
+    public CodeHistoryDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId) {
+        CodeHistory history = codeReviewHistoryRepository.findByCodeReviewIdAndVersionNum(codeReviewId, versionNum);
+
+        CodeHistoryDto result = changeToCodeReviewHistoryDto(history, userId);
+
+        return result;
+    }
 
     // CodeReviewList -> CodeReviewDtoList
     public List<CodeReviewDto> changeToCodeReviewDto(List<CodeReview> list) {
@@ -91,12 +99,8 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
         return resultList;
     }
 
-
-    @Override
-    public CodeHistoryDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId) {
-        CodeHistory history = codeReviewHistoryRepository.findByCodeReviewIdAndVersionNum(codeReviewId, versionNum);
+    public CodeHistoryDto changeToCodeReviewHistoryDto(CodeHistory history, int userId) {
         CodeHistoryDto result = null;
-        // CodeHistory -> CodeHistoryDto
         if (history != null) {
             result = new CodeHistoryDto();
             result.setId(history.getId());
@@ -126,9 +130,10 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
             dto.setDepth(comment.getDepth());
             dto.setLikeCount(comment.getLikeCount());
             dto.setCreatedDate(comment.getCreatedDate());
-            int cnt = codeCommentLikeRepository.countByUserIdAndCodeCommentId(comment.getId(), userId);
-            if (cnt > 0) {
+            int isLike = codeCommentLikeRepository.countByUserIdAndCodeCommentId(userId, comment.getId());
+            if (isLike > 0) {
                 dto.setLike(true);
+
             } else {
                 dto.setLike(false);
             }

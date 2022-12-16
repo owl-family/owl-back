@@ -2,8 +2,6 @@ package com.project.owlback.codereview.service;
 
 import com.project.owlback.codereview.dto.CodeHistoryDto;
 import com.project.owlback.codereview.dto.CodeReviewDto;
-import com.project.owlback.codereview.model.CodeHistory;
-import com.project.owlback.codereview.model.CodeReview;
 
 import java.util.List;
 
