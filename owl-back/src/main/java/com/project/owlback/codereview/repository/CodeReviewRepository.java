@@ -1,13 +1,10 @@
 package com.project.owlback.codereview.repository;
 
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import org.springframework.beans.factory.annotation.Autowired;
+import com.project.owlback.codereview.model.CodeReview;
+@Repository
+public interface CodeReviewRepository extends JpaRepository<CodeReview, Integer> {
 
-import jakarta.transaction.Transactional;
-
-@Transactional
-public class CodeReviewRepository {
-	@Autowired(required = true)
-	CodeReviewRepo codereviewRepo;
-	
 }

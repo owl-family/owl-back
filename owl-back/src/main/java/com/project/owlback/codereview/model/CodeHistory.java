@@ -16,7 +16,14 @@ public class CodeHistory {
     @Column(name = "code_history_id", nullable = false)
     private Integer id;
 
-    @Column(name = "version_num", nullable = false)
+    @Override
+	public String toString() {
+		return "CodeHistory [id=" + id + ", versionNum=" + versionNum + ", code=" + code + ", subTitle=" + subTitle
+				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", contents=" + contents
+				+ ", like=" + like + ", commentCount=" + commentCount + ", codeReview=" + codeReview + "]";
+	}
+
+	@Column(name = "version_num", nullable = false)
     private Integer versionNum;
 
     @Lob

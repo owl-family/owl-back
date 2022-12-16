@@ -16,6 +16,7 @@ import java.time.Instant;
 public class CodeReview {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_review_id", nullable = false)
     private Integer id;
 
@@ -41,7 +42,8 @@ public class CodeReview {
     @JoinColumn(name = "writer", nullable = false)
     private User writer;
 
-    @ManyToOne(optional = false)
+
+	@ManyToOne(optional = false)
     @JoinColumn(name = "study_group_id", nullable = false)
     private StudyGroup studyGroup;
 
@@ -52,4 +54,13 @@ public class CodeReview {
     @ManyToOne(optional = false)
     @JoinColumn(name = "code_language_id", nullable = false)
     private CodeLanguage codeLanguage;
+
+    
+    @Override
+    public String toString() {
+    	return "CodeReview [id=" + id + ", versionCount=" + versionCount + ", title=" + title + ", createdDate="
+    			+ createdDate + ", modifiedDate=" + modifiedDate + ", viewCount=" + viewCount + ", commentCount="
+    			+ commentCount + ", writer=" + writer + ", studyGroup=" + studyGroup + ", codeScope=" + codeScope
+    			+ ", codeLanguage=" + codeLanguage + "]";
+    }
 }
