@@ -1,5 +1,6 @@
 package com.project.owlback.user.service;
 
+import com.project.owlback.user.api.jwt.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,7 +10,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.project.owlback.Response;
-import com.project.owlback.user.api.JwtTokenProvider;
 import com.project.owlback.user.dto.Login;
 import com.project.owlback.user.dto.TokenInfo;
 import com.project.owlback.user.repository.UserRepository;

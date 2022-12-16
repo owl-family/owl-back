@@ -1,5 +1,4 @@
-package com.project.owlback.user.api;
-
+package com.project.owlback.user.api.enums;
 
 public enum Authority {
     ROLE_USER,
