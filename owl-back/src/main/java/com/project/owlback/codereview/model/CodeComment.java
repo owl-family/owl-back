@@ -1,16 +1,19 @@
 package com.project.owlback.codereview.model;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
 
 import java.time.Instant;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @Table(name="code_comment")
-public class CodeComment {
+public class CodeComment extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_comment_id", nullable = false)
@@ -32,13 +35,8 @@ public class CodeComment {
     @Column(name = "depth", nullable = false)
     private Integer depth;
 
-    @Column(name = "created_date", nullable = false)
-    private Instant createdDate;
-
-    @Column(name = "modified_date")
-    private Instant modifiedDate;
-
     @Column(name = "like_count", nullable = false)
+    @ColumnDefault("0")
     private Integer likeCount;
 
     @ManyToOne(optional = false)
@@ -48,4 +46,14 @@ public class CodeComment {
     @ManyToOne(optional = false)
     @JoinColumn(name = "writer", nullable = false)
     private User writer;
+
+    public void setWriter(User user) {
+        this.writer = user;
+        writer.getComments().add(this);
+    }
+
+    public void setCodeHistory(CodeHistory codeHistory) {
+        this.codeHistory = codeHistory;
+        codeHistory.getComments().add(this);
+    }
 }

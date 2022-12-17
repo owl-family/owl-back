@@ -17,28 +17,4 @@ public class CodeCommentLike {
     @ManyToOne(optional = false)
     @JoinColumn(name = "code_comment_id", nullable = false)
     private CodeComment codeComment;
-
-    public CodeComment getCodeComment() {
-        return codeComment;
-    }
-
-    public void setCodeComment(CodeComment codeComment) {
-        this.codeComment = codeComment;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Integer getId() {
-        return id;
-    }
-
-    public void setId(Integer id) {
-        this.id = id;
-    }
 }
