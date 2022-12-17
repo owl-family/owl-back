@@ -1,5 +1,6 @@
 package com.project.owlback.user.dto;
 
+import com.project.owlback.util.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -11,7 +12,7 @@ import java.util.Date;
 @AllArgsConstructor
 @Getter
 @ToString
-public class User {
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
@@ -23,8 +24,6 @@ public class User {
 
     private String introduction;
     private String password;
-    private Date createdDate;
-    private Date modifiedDate;
     private int status;
 
     public void updatePassword(String password) {
