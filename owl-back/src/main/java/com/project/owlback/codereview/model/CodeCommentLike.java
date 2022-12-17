@@ -1,8 +1,16 @@
 package com.project.owlback.codereview.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
 @Table(name = "code_comment_like")
 public class CodeCommentLike {
     @Id

@@ -56,4 +56,12 @@ public class CodeComment extends BaseTimeEntity{
         this.codeHistory = codeHistory;
         codeHistory.getComments().add(this);
     }
+
+    public void dislike() {
+        this.likeCount --;
+    }
+
+    public void like() {
+        this.likeCount ++;
+    }
 }

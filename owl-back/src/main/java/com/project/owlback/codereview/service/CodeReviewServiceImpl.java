@@ -2,12 +2,10 @@ package com.project.owlback.codereview.service;
 
 import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
 import com.project.owlback.codereview.model.CodeComment;
+import com.project.owlback.codereview.model.CodeCommentLike;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.User;
-import com.project.owlback.codereview.repository.CodeCommentRepository;
-import com.project.owlback.codereview.repository.CodeHistoryRepository;
-import com.project.owlback.codereview.repository.CodeReviewRepository;
-import com.project.owlback.codereview.repository.UserRepository;
+import com.project.owlback.codereview.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -23,6 +21,7 @@ public class CodeReviewServiceImpl implements CodeReviewService{
     private final UserRepository userRepository;
     private final CodeHistoryRepository codeHistoryRepository;
     private final CodeCommentRepository codeCommentRepository;
+    private final CodeCommentLikeRepository codeCommentLikeRepository;
 
     @Override
     @Transactional
@@ -54,11 +53,27 @@ public class CodeReviewServiceImpl implements CodeReviewService{
     }
 
     @Override
-    public void likeComment(CodeReviewCommentReqDto reqDto) {
+    @Transactional
+    public int likeComment(CodeReviewCommentReqDto reqDto) {
         Integer userId = 1; // temporary use before create user function
 
         final CodeComment comment = codeCommentRepository.findById(reqDto.getCodeCommentId()).orElseThrow();
         final User user = userRepository.findById(userId).orElseThrow();
 
+        log.info("comment : {}, user : {}", comment, user);
+
+        final Optional<CodeCommentLike> byCodeCommentAndUser = codeCommentLikeRepository.findByCodeCommentAndUser(comment, user);
+        byCodeCommentAndUser.ifPresentOrElse(
+                codeCommentLike -> {
+                    codeCommentLikeRepository.delete(codeCommentLike);
+                    comment.dislike();
+                },
+                () -> {
+                    final CodeCommentLike codeCommentLike = CodeCommentLike.builder().codeComment(comment).user(user).build();
+                    codeCommentLikeRepository.save(codeCommentLike);
+                    comment.like();
+                });
+
+        return comment.getLikeCount();
     }
 }

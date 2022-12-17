@@ -35,8 +35,11 @@ public class CodeReviewController {
                                          @RequestBody CodeReviewCommentReqDto reqDto) {
         log.info("codeReviewId : {}, versionNum : {}, codeCommentId : {}", codeReviewId, versionNum, codeCommentId);
         log.info("{}", reqDto);
+
         reqDto.setCodeCommentId(codeCommentId);
-        codeReviewService.likeComment(reqDto);
-        return new ResponseEntity<>(HttpStatus.OK);
+
+        final int likeCount = codeReviewService.likeComment(reqDto);
+
+        return new ResponseEntity<>(likeCount, HttpStatus.OK);
     }
 }
