@@ -1,8 +1,8 @@
 package com.project.owlback.codereview.service;
 
-import com.project.owlback.codereview.dto.CodeCommentDto;
-import com.project.owlback.codereview.dto.CodeHistoryDto;
-import com.project.owlback.codereview.dto.CodeReviewDto;
+import com.project.owlback.codereview.dto.CodeCommentDetailDto;
+import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
+import com.project.owlback.codereview.dto.CodeReviewItemDto;
 import com.project.owlback.codereview.model.*;
 import com.project.owlback.codereview.repository.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Service
-public class CodeReviewServiceImpl implements CodeReveiwService {
+public class CodeReviewServiceImpl implements CodeReviewService {
     @Autowired
     private CodeReviewRepository codeReviewRepository;
 
@@ -30,7 +30,7 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
 
 
     @Override
-    public List<CodeReviewDto> codeReviewList(String key, int id) {
+    public List<CodeReviewItemDto> codeReviewList(String key, int id) {
         List<CodeReview> list = new ArrayList<>();
 
         if (key.equals("all")) {
@@ -43,7 +43,7 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
     }
 
     @Override
-    public List<CodeReviewDto> codeReviewSearch(String key, String word) {
+    public List<CodeReviewItemDto> codeReviewSearch(String key, String word) {
         List<CodeReview> list = new ArrayList<>();
 
         if (key.equals("title")) {
@@ -66,19 +66,19 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
     }
 
     @Override
-    public CodeHistoryDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId) {
+    public CodeHistoryDetailDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId) {
         CodeHistory history = codeReviewHistoryRepository.findByCodeReviewIdAndVersionNum(codeReviewId, versionNum);
 
-        CodeHistoryDto result = changeToCodeReviewHistoryDto(history, userId);
+        CodeHistoryDetailDto result = changeToCodeReviewHistoryDto(history, userId);
 
         return result;
     }
 
     // CodeReviewList -> CodeReviewDtoList
-    public List<CodeReviewDto> changeToCodeReviewDto(List<CodeReview> list) {
-        List<CodeReviewDto> resultList = new ArrayList<>();
+    public List<CodeReviewItemDto> changeToCodeReviewDto(List<CodeReview> list) {
+        List<CodeReviewItemDto> resultList = new ArrayList<>();
         for (CodeReview item : list) {
-            CodeReviewDto dto = new CodeReviewDto();
+            CodeReviewItemDto dto = new CodeReviewItemDto();
             dto.setId(item.getId());
             dto.setTitle(item.getTitle());
             dto.setViewCount(item.getViewCount());
@@ -99,10 +99,10 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
         return resultList;
     }
 
-    public CodeHistoryDto changeToCodeReviewHistoryDto(CodeHistory history, int userId) {
-        CodeHistoryDto result = null;
+    public CodeHistoryDetailDto changeToCodeReviewHistoryDto(CodeHistory history, int userId) {
+        CodeHistoryDetailDto result = null;
         if (history != null) {
-            result = new CodeHistoryDto();
+            result = new CodeHistoryDetailDto();
             result.setId(history.getId());
             result.setTitle(history.getCodeReview().getTitle());
             result.setSubTitle(history.getSubTitle());
@@ -111,17 +111,17 @@ public class CodeReviewServiceImpl implements CodeReveiwService {
             result.setLike(history.getLike());
             result.setCode(history.getCode());
             result.setContents(history.getContents());
-            List<CodeCommentDto> comments = getCodeComments(history.getId(), userId);
+            List<CodeCommentDetailDto> comments = getCodeComments(history.getId(), userId);
             result.setComments(comments);
         }
         return result;
     }
 
-    public List<CodeCommentDto> getCodeComments(int historyId, int userId) {
-        List<CodeCommentDto> list = new ArrayList<>();
+    public List<CodeCommentDetailDto> getCodeComments(int historyId, int userId) {
+        List<CodeCommentDetailDto> list = new ArrayList<>();
         List<CodeComment> comments = codeCommentRepository.findByCodeHistoryId(historyId);
         for (CodeComment comment : comments) {
-            CodeCommentDto dto = new CodeCommentDto();
+            CodeCommentDetailDto dto = new CodeCommentDetailDto();
             dto.setNickname(comment.getWriter().getNickname());
             dto.setContents(comment.getContents());
             dto.setStartLine(comment.getStartLine());

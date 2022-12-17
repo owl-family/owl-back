@@ -1,6 +1,5 @@
 package com.project.owlback.codereview.dto;
 
-import com.project.owlback.codereview.model.Tag;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,7 +13,7 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CodeReviewDto {
+public class CodeReviewItemDto {
     int id;
     List<String> tags;
     String title;

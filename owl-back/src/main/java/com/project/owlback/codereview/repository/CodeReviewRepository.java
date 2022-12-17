@@ -11,8 +11,6 @@ public interface CodeReviewRepository extends JpaRepository<CodeReview, Integer>
 
     List<CodeReview> findAll();
 
-    CodeReview findById(int id);
-
     List<CodeReview> findByStudyGroupId(int id);
 
     List<CodeReview> findByTitleLike(String word);

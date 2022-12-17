@@ -6,19 +6,21 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
+import java.util.List;
 
 @Getter
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class CodeCommentDto {
-    String nickname;
-    String contents;
-    int startLine;
-    int endLine;
-    int parent;
-    int depth;
-    int likeCount;
+public class CodeHistoryDetailDto {
+    int id;
+    String title;
+    String subTitle;
+    int version;
     Instant createdDate;
-    boolean like;
+    int like;
+    String code;
+    String contents;
+    List<CodeCommentDetailDto> comments;
+
 }
