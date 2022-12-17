@@ -1,5 +1,7 @@
 package com.project.owlback.codereview.service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.stereotype.Service;
 
@@ -54,5 +56,9 @@ public class CodeReveiwService {
 		CodeReview codereview = codereviewRepository.findById(id);
 		codehistory.setCodeReview(codereview);
 		return codehistory;
+	}
+	
+	public List<CodeHistory> getCodeReviewHistory(int id) {
+		return codereviewhistoryRepository.findByCodeReview(codereviewRepository.findById(id));
 	}
 }

@@ -1,7 +1,11 @@
 package com.project.owlback.codereview.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -28,11 +32,18 @@ public class CodeReviewController {
 
 		return ResponseEntity.ok("succes");
 	}
+	
 	@PostMapping("/api/codereviews/{id}/history")
 	public ResponseEntity createHistory(@RequestBody CodeHistory codehistory, @PathVariable Integer id) {
 		System.out.println("id=>"+id);
 		System.out.println(codehistory.toString());
 		codereveiwService.createHistory(codereveiwService.setCodeReviewToCodeHistory(codehistory,id));
 		return ResponseEntity.ok("succes");
+	}
+	
+	@GetMapping("/api/codereviews/{codeReviewId}/history")
+	public ResponseEntity<List<CodeHistory>> getCodeReviewHistory(@PathVariable Integer codeReviewId){
+		System.out.println(codeReviewId);
+		return new ResponseEntity<List<CodeHistory>>(codereveiwService.getCodeReviewHistory(codeReviewId),HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 }
