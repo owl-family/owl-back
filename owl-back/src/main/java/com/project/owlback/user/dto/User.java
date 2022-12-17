@@ -5,16 +5,16 @@ import lombok.*;
 
 import java.util.Date;
 
+@Entity
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
 @ToString
-@Entity
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long userId;
-
 
     private String email;
     private String nickname;
@@ -27,6 +27,8 @@ public class User {
     private Date modifiedDate;
     private int status;
 
-
+    public void updatePassword(String password) {
+        this.password = password;
+    }
 }
 
