@@ -1,8 +1,10 @@
 package com.project.owlback.user.api.jwt;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.util.ObjectUtils;
 import org.springframework.util.StringUtils;
 import org.springframework.web.filter.GenericFilterBean;
 
@@ -19,6 +21,7 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     private static final String BEARER_TYPE = "Bearer";
 
     private final JwtTokenProvider jwtTokenProvider;
+    private final RedisTemplate redisTemplate;
 
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
@@ -28,10 +31,15 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         // validationToken으로 토큰 유효성 검사
         // token이 null이 아니고 유효하다면
         if(token != null && jwtTokenProvider.validationToken(token)){
-            // Authentication객체를 가지고 와서
-            Authentication authentication = jwtTokenProvider.getAuthentication(token);
-            // SecurityContext에 저장
-            SecurityContextHolder.getContext().setAuthentication(authentication);
+            // Redis에 해당 accessToken logout 여부 확인
+            String isLogout = (String)redisTemplate.opsForValue() // OpsForValue(): String 값에 대한 Redis 작업이다.
+                    .get(token); // get(key): token(key)값을 가져온다
+            if (ObjectUtils.isEmpty(isLogout)) {
+                // Authentication객체를 가지고 와서
+                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                // SecurityContext에 저장
+                SecurityContextHolder.getContext().setAuthentication(authentication);
+            }
         }
         chain.doFilter(request, response);
     }

@@ -1,7 +1,7 @@
 package com.project.owlback.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,6 +15,8 @@ import com.project.owlback.user.dto.Login;
 import com.project.owlback.user.dto.TokenInfo;
 import com.project.owlback.user.repository.UserRepository;
 
+import java.util.concurrent.TimeUnit;
+
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
@@ -23,6 +25,7 @@ public class UserServiceImpl implements UserService{
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final RedisTemplate<String, String> redisTemplate;
 
     public ResponseEntity<?> login(Login login) {		// email, password 기반으로 Authentication 객체 생성
         if (userRepository.findByEmail(login.getEmail()).orElse(null) == null) {
@@ -40,7 +43,11 @@ public class UserServiceImpl implements UserService{
         // 인증번호 기반으로 JWT 토큰 생성
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
 
-        // TODO:: RefreshToken Redis 저장
+        // RefreshToken Redis 저장(Expiration 설정을 통해 자동 삭제 처리)
+        redisTemplate.opsForValue() // set the value and expiration timeout for key
+                .set("RT:"+authentication.getName(), // key
+                        tokenInfo.getRefreshToken(),  // value
+                        tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS); // expiration timeout
 
         return response.success(tokenInfo, "로그인에 성공했습니다.", HttpStatus.OK);
     }

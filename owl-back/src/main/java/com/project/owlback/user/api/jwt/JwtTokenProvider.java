@@ -69,8 +69,8 @@ public class JwtTokenProvider {
         return TokenInfo.builder()
                 .grantType(BEARER_TYPE) // JWT 혹은 OAuth에 대한 토큰을 사용
                 .accessToken(accessToken)
-                .accessTokenExpiresIn(accessTokenExpiresIn.getTime())
                 .refreshToken(refreshToken)
+                .refreshTokenExpirationTime(REFRESH_TOKEN_EXPIRE_TIME)
                 .build();
     }
 
