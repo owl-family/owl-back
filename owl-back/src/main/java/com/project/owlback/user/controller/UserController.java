@@ -1,9 +1,12 @@
 package com.project.owlback.user.controller;
 
+import com.project.owlback.user.dto.CreateUserReq;
 import com.project.owlback.user.dto.ResponseDto;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.service.EmailService;
 import com.project.owlback.user.service.UserService;
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -13,16 +16,66 @@ import java.util.*;
 
 @RestController
 @RequestMapping("api/users")
+@RequiredArgsConstructor
 public class UserController {
     private static final int ZERO = 0;
 
     private final UserService userService;
     private final EmailService emailService;
 
-    @Autowired
-    public UserController(UserService userService, EmailService emailService) {
-        this.userService = userService;
-        this.emailService = emailService;
+
+    @PostMapping
+    public ResponseEntity<ResponseDto> createUser(@RequestBody @Valid CreateUserReq createUserReq){
+        userService.createUser(createUserReq);
+
+        ResponseDto responseDto;
+
+        if(!createUserReq.getPassword().equals(createUserReq.getPasswordCheck())){
+            responseDto = ResponseDto.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .message("비밀번호가 비밀번호 확인 값과 다름")
+                    .result(Collections.emptyList())
+                    .count(ZERO)
+                    .build();
+        }
+        else {
+            responseDto = ResponseDto.builder()
+                    .code(HttpStatus.OK.value())
+                    .httpStatus(HttpStatus.OK)
+                    .message("회원가입 완료")
+                    .result(Collections.emptyList())
+                    .count(ZERO)
+                    .build();
+        }
+        return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
+    }
+
+    @GetMapping("check2/{nickname}")
+    public ResponseEntity<ResponseDto> checkNickname(@PathVariable String nickname) {
+        boolean isExist = userService.findByNickname(nickname);
+        ResponseDto responseDto;
+
+        if (!isExist) {
+            responseDto = ResponseDto.builder()
+                    .code(HttpStatus.OK.value())
+                    .httpStatus(HttpStatus.OK)
+                    .message("닉네임 중복 확인 완료")
+                    .result(Collections.emptyList())
+                    .count(ZERO)
+                    .build();
+
+        } else {
+            responseDto = ResponseDto.builder()
+                    .code(HttpStatus.NOT_FOUND.value())
+                    .httpStatus(HttpStatus.NOT_FOUND)
+                    .message("이미 존재하는 닉네임")
+                    .result(Collections.emptyList())
+                    .count(ZERO)
+                    .build();
+        }
+
+        return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
     }
 
     @GetMapping("check/{email}")
