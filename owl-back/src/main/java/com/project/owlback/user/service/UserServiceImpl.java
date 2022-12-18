@@ -1,6 +1,6 @@
 package com.project.owlback.user.service;
 
-import com.project.owlback.user.api.jwt.JwtTokenProvider;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,22 +10,19 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.project.owlback.Response;
+import com.project.owlback.user.api.jwt.JwtTokenProvider;
 import com.project.owlback.user.dto.Login;
 import com.project.owlback.user.dto.TokenInfo;
 import com.project.owlback.user.repository.UserRepository;
 
 @Service
+@RequiredArgsConstructor
 public class UserServiceImpl implements UserService{
 
-    @Autowired
-    private Response response;
-    @Autowired
-    private UserRepository userRepository;
-    @Autowired
-    private JwtTokenProvider jwtTokenProvider;
-
-    @Autowired
-    private AuthenticationManagerBuilder authenticationManagerBuilder;
+    private final Response response;
+    private final UserRepository userRepository;
+    private final JwtTokenProvider jwtTokenProvider;
+    private final AuthenticationManagerBuilder authenticationManagerBuilder;
 
     public ResponseEntity<?> login(Login login) {		// email, password 기반으로 Authentication 객체 생성
         if (userRepository.findByEmail(login.getEmail()).orElse(null) == null) {
