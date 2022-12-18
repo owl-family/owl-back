@@ -82,7 +82,7 @@ public class CodeReviewController {
         HttpStatus status = null;
 
         try {
-            List<Tag> tags = service.getRelativeTags(word);
+            List<String> tags = service.getRelativeTags(word);
             if (tags == null || tags.size() == 0) {
                 resultMap.put("message", "no data");
                 status = HttpStatus.NO_CONTENT;

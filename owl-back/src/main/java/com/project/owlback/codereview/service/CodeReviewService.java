@@ -16,5 +16,5 @@ public interface CodeReviewService {
 
     List<CodeCommentDetailDto> codeReviewCommentsDetail(int historyId, int startLine, int userId) throws Exception;
 
-    List<Tag> getRelativeTags(String word) throws Exception;
+    List<String> getRelativeTags(String word) throws Exception;
 }

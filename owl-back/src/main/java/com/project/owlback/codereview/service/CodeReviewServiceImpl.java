@@ -83,9 +83,13 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     }
 
     @Override
-    public List<Tag> getRelativeTags(String word) throws Exception {
+    public List<String> getRelativeTags(String word) throws Exception {
         List<Tag> tags = tagRepository.findByContentLikeOrderByCountDesc('%' + word + '%');
-        return tags;
+        List<String> result = new ArrayList<>();
+        for (Tag tag : tags) {
+            result.add(tag.getContent());
+        }
+        return result;
     }
 
     // CodeReviewList -> CodeReviewDtoList
