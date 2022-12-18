@@ -30,7 +30,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
 
     @Override
-    public List<CodeReviewItemDto> codeReviewList(String key, int id) {
+    public List<CodeReviewItemDto> codeReviewList(String key, int id) throws Exception {
         List<CodeReview> list = new ArrayList<>();
 
         if (key.equals("all")) {
@@ -43,7 +43,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     }
 
     @Override
-    public List<CodeReviewItemDto> codeReviewSearch(String key, String word) {
+    public List<CodeReviewItemDto> codeReviewSearch(String key, String word) throws Exception {
         List<CodeReview> list = new ArrayList<>();
 
         if (key.equals("title")) {
@@ -66,16 +66,22 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     }
 
     @Override
-    public CodeHistoryDetailDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId) {
+    public CodeHistoryDetailDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId) throws Exception {
         CodeHistory history = codeReviewHistoryRepository.findByCodeReviewIdAndVersionNum(codeReviewId, versionNum);
-
         CodeHistoryDetailDto result = changeToCodeReviewHistoryDto(history, userId);
 
         return result;
     }
 
+    @Override
+    public List<CodeCommentDetailDto> codeReviewCommentsDetail(int historyId, int startLine, int userId) throws Exception {
+        List<CodeComment> list = codeCommentRepository.findByCodeHistoryIdAndStartLine(historyId, startLine);
+        List<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
+        return comments;
+    }
+
     // CodeReviewList -> CodeReviewDtoList
-    public List<CodeReviewItemDto> changeToCodeReviewDto(List<CodeReview> list) {
+    public List<CodeReviewItemDto> changeToCodeReviewDto(List<CodeReview> list) throws Exception {
         List<CodeReviewItemDto> resultList = new ArrayList<>();
         for (CodeReview item : list) {
             CodeReviewItemDto dto = new CodeReviewItemDto();
@@ -99,7 +105,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
         return resultList;
     }
 
-    public CodeHistoryDetailDto changeToCodeReviewHistoryDto(CodeHistory history, int userId) {
+    public CodeHistoryDetailDto changeToCodeReviewHistoryDto(CodeHistory history, int userId) throws Exception {
         CodeHistoryDetailDto result = null;
         if (history != null) {
             result = new CodeHistoryDetailDto();
@@ -111,18 +117,18 @@ public class CodeReviewServiceImpl implements CodeReviewService {
             result.setLike(history.getLike());
             result.setCode(history.getCode());
             result.setContents(history.getContents());
-            List<CodeCommentDetailDto> comments = getCodeComments(history.getId(), userId);
+            List<CodeComment> list = codeCommentRepository.findByCodeHistoryId(history.getId());
+            List<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
             result.setComments(comments);
         }
         return result;
     }
 
-    public List<CodeCommentDetailDto> getCodeComments(int historyId, int userId) {
+    public List<CodeCommentDetailDto> changeToCodeCommentDto(List<CodeComment> comments, int userId) throws Exception {
         List<CodeCommentDetailDto> list = new ArrayList<>();
-        List<CodeComment> comments = codeCommentRepository.findByCodeHistoryId(historyId);
         for (CodeComment comment : comments) {
             CodeCommentDetailDto dto = new CodeCommentDetailDto();
-            dto.setNickname(comment.getWriter().getNickname());
+            dto.setWriter(comment.getWriter().getNickname());
             dto.setContents(comment.getContents());
             dto.setStartLine(comment.getStartLine());
             dto.setEndLine(comment.getEndLine());
@@ -133,7 +139,6 @@ public class CodeReviewServiceImpl implements CodeReviewService {
             int isLike = codeCommentLikeRepository.countByUserIdAndCodeCommentId(userId, comment.getId());
             if (isLike > 0) {
                 dto.setLike(true);
-
             } else {
                 dto.setLike(false);
             }

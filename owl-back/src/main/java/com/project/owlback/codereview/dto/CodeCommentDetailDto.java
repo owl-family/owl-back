@@ -12,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CodeCommentDetailDto {
-    String nickname;
+    String writer;
     String contents;
     int startLine;
     int endLine;

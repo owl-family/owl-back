@@ -4,18 +4,17 @@ import com.project.owlback.codereview.model.CodeReview;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+
+import java.sql.SQLException;
 import java.util.List;
 
 public interface CodeReviewRepository extends JpaRepository<CodeReview, Integer> {
 
+    List<CodeReview> findByStudyGroupId(int id) throws SQLException;
 
-    List<CodeReview> findAll();
+    List<CodeReview> findByTitleLike(String word) throws SQLException;
 
-    List<CodeReview> findByStudyGroupId(int id);
+    List<CodeReview> findByWriterNicknameLike(String word) throws SQLException;
 
-    List<CodeReview> findByTitleLike(String word);
-
-    List<CodeReview> findByWriterNicknameLike(String word);
-
-    List<CodeReview> findByCodeLanguageDescriptionLike(String word);
+    List<CodeReview> findByCodeLanguageDescriptionLike(String word) throws SQLException;
 }
