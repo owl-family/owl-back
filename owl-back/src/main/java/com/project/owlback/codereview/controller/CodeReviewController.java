@@ -3,6 +3,7 @@ package com.project.owlback.codereview.controller;
 import com.project.owlback.codereview.dto.CodeCommentDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
 import com.project.owlback.codereview.dto.CodeReviewItemDto;
+import com.project.owlback.codereview.model.Tag;
 import com.project.owlback.codereview.service.CodeReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,13 +36,13 @@ public class CodeReviewController {
         List<CodeReviewItemDto> list = null;
         try {
             list = service.codeReviewList(key, param);
-            if (list != null && list.size() > 0) {
+            if (list == null || list.size() == 0) {
+                resultMap.put("message", "no data");
+                status = HttpStatus.NO_CONTENT;
+            } else {
                 resultMap.put("message", "success");
                 resultMap.put("list", list);
                 status = HttpStatus.OK;
-            } else {
-                resultMap.put("message", "no data");
-                status = HttpStatus.NO_CONTENT;
             }
         } catch (Exception e) {
             resultMap.put("message", "fail");
@@ -58,13 +59,14 @@ public class CodeReviewController {
 
         try {
             List<CodeReviewItemDto> list = service.codeReviewSearch(key, word);
-            if (list != null && list.size() > 0) {
+
+            if (list == null || list.size() == 0) {
+                resultMap.put("message", "no data");
+                status = HttpStatus.NO_CONTENT;
+            } else {
                 resultMap.put("message", "success");
                 resultMap.put("list", list);
                 status = HttpStatus.OK;
-            } else {
-                resultMap.put("message", "no data");
-                status = HttpStatus.NO_CONTENT;
             }
         } catch (Exception e) {
             resultMap.put("message", "fail");
@@ -74,11 +76,26 @@ public class CodeReviewController {
         return new ResponseEntity<>(resultMap, status);
     }
 
-    @GetMapping("/codereviews/tag/{tag}")
-    public ResponseEntity<Map<String, Object>> codeReviewTag(@PathVariable String tag) {
+    @GetMapping("/codereviews/tag/{word}")
+    public ResponseEntity<Map<String, Object>> codeReviewRelativeTags(@PathVariable String word) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
 
+        try {
+            List<Tag> tags = service.getRelativeTags(word);
+            if (tags == null || tags.size() == 0) {
+                resultMap.put("message", "no data");
+                status = HttpStatus.NO_CONTENT;
+            } else {
+                resultMap.put("message", "success");
+                resultMap.put("tags", tags);
+                status = HttpStatus.OK;
+            }
+
+        } catch (Exception e) {
+            resultMap.put("message", "fail");
+            throw new RuntimeException(e);
+        }
         return new ResponseEntity<>(resultMap, status);
     }
 

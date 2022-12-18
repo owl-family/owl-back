@@ -13,4 +13,5 @@ public interface CodeReviewTagRepository extends JpaRepository<CodeReviewTag, In
     List<CodeReviewTag> findByCodeReviewId(int id) throws SQLException;
 
     List<CodeReviewTag> findByTagContentLike(String content) throws SQLException;
+
 }

@@ -28,6 +28,8 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     @Autowired
     private CodeCommentLikeRepository codeCommentLikeRepository;
 
+    @Autowired
+    private TagRepository tagRepository;
 
     @Override
     public List<CodeReviewItemDto> codeReviewList(String key, int id) throws Exception {
@@ -78,6 +80,12 @@ public class CodeReviewServiceImpl implements CodeReviewService {
         List<CodeComment> list = codeCommentRepository.findByCodeHistoryIdAndStartLine(historyId, startLine);
         List<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
         return comments;
+    }
+
+    @Override
+    public List<Tag> getRelativeTags(String word) throws Exception {
+        List<Tag> tags = tagRepository.findByContentLikeOrderByCountDesc('%' + word + '%');
+        return tags;
     }
 
     // CodeReviewList -> CodeReviewDtoList
