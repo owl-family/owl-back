@@ -2,19 +2,24 @@ package com.project.owlback.codereview.model;
 
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
-
+@Builder
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="code_review")
-public class CodeReview {
-
+public class CodeReview extends BaseTimeEntity{
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "code_review_id", nullable = false)
     private Integer id;
@@ -25,11 +30,6 @@ public class CodeReview {
     @Column(name = "title", nullable = false, length = 50)
     private String title;
 
-    @Column(name = "created_date")
-    private Instant createdDate;
-
-    @Column(name = "modified_date")
-    private Instant modifiedDate;
 
     @Column(name = "view_count")
     private Integer viewCount;
@@ -54,12 +54,5 @@ public class CodeReview {
     @JoinColumn(name = "code_language_id", nullable = false)
     private CodeLanguage codeLanguage;
 
-    
-    @Override
-    public String toString() {
-    	return "CodeReview [id=" + id + ", versionCount=" + versionCount + ", title=" + title + ", createdDate="
-    			+ createdDate + ", modifiedDate=" + modifiedDate + ", viewCount=" + viewCount + ", commentCount="
-    			+ commentCount + ", writer=" + writer + ", studyGroup=" + studyGroup + ", codeScope=" + codeScope
-    			+ ", codeLanguage=" + codeLanguage + "]";
-    }
+
 }

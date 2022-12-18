@@ -18,47 +18,58 @@ import lombok.RequiredArgsConstructor;
 @Service
 public class CodeReveiwService {
 	@Autowired
-	CodeReviewRepository codereviewRepository;
+	CodeReviewRepository codeReviewRepository;
 	@Autowired
-	CodeRevieHistoryRepository codereviewhistoryRepository;
+	CodeRevieHistoryRepository codeReviewHistoryRepository;
 	@Transactional
 	public void create(CodeReviewDto codeReviewDto) {
 		// TODO Auto-generated method stub
 		// user 정보
 		// codereview 정보
-		System.out.println("도착");
-		System.out.println("codereview =>"+codeReviewDto.toString());
-		CodeReview codereview = new CodeReview();
-		codereview.setVersionCount(codeReviewDto.getVersionCount());
-		codereview.setTitle(codeReviewDto.getTitle());
-		// user 정보
-		codereview.setWriter(codeReviewDto.getWriter());
-		codereview.setStudyGroup(codeReviewDto.getStudyGroup());
-		codereview.setCodeScope(codeReviewDto.getCodeScope());
-		codereview.setCodeLanguage(codeReviewDto.getCodeLanguage());
-				
-		codereviewRepository.save(codereview);
-		CodeHistory codehistory = new CodeHistory();
-		codehistory.setCodeReview(codereview);
-		codehistory.setCode(codeReviewDto.getCodeHistory().getCode());
-		codehistory.setSubTitle(codeReviewDto.getCodeHistory().getSubTitle());
-		codehistory.setContents(codeReviewDto.getCodeHistory().getContents());
-		codehistory.setVersionNum(codeReviewDto.getCodeHistory().getVersionNum());
-		createHistory(codehistory);
+		CodeReview codeReview = CodeReview.builder()
+				.versionCount(codeReviewDto.getVersionCount())
+				.title(codeReviewDto.getTitle())
+				.writer(codeReviewDto.getWriter())
+				.studyGroup(codeReviewDto.getStudyGroup())
+				.codeScope(codeReviewDto.getCodeScope())
+				.codeLanguage(codeReviewDto.getCodeLanguage())
+				.build();
+		codeReviewRepository.save(codeReview);
+		
+		CodeHistory codeHistory = CodeHistory.builder()
+				.codeReview(codeReview)
+				.code(codeReviewDto.getCodeHistory().getCode())
+				.subTitle(codeReviewDto.getCodeHistory().getSubTitle())
+				.contents(codeReviewDto.getCodeHistory().getContents())
+				.versionNum(codeReviewDto.getCodeHistory().getVersionNum())
+				.like(0)
+				.commentCount(0)
+				.build();
+
+		createHistory(codeHistory);
 	}
 
-	public void createHistory(CodeHistory codehistory) {
+	public void createHistory(CodeHistory codeHistory) {
 		// TODO Auto-generated method stub
-		codereviewhistoryRepository.save(codehistory);
+		codeReviewHistoryRepository.save(codeHistory);
 	}
 	
-	public CodeHistory setCodeReviewToCodeHistory(CodeHistory codehistory, int id) {
-		CodeReview codereview = codereviewRepository.findById(id);
-		codehistory.setCodeReview(codereview);
-		return codehistory;
+	public CodeHistory setCodeReviewToCodeHistory(CodeHistory codeHistory, int id) {
+		System.out.println("enter");
+		codeHistory = CodeHistory.builder()
+				.codeReview(codeReviewRepository.findById(id))
+				.code(codeHistory.getCode())
+				.subTitle(codeHistory.getSubTitle())
+				.contents(codeHistory.getContents())
+				.versionNum(codeHistory.getVersionNum())
+				.like(0)
+				.commentCount(0)
+				.build();
+		System.out.println(codeHistory.toString());
+		return codeHistory;
 	}
 	
 	public List<CodeHistory> getCodeReviewHistory(int id) {
-		return codereviewhistoryRepository.findByCodeReview(codereviewRepository.findById(id));
+		return codeReviewHistoryRepository.findByCodeReview(codeReviewRepository.findById(id));
 	}
 }

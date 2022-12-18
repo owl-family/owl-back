@@ -1,27 +1,28 @@
 package com.project.owlback.codereview.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.Instant;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "code_history")
 @Getter
 @Setter
-public class CodeHistory {
+@ToString(of = {"code"})
+public class CodeHistory extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_history_id", nullable = false)
     private Integer id;
-
-    @Override
-	public String toString() {
-		return "CodeHistory [id=" + id + ", versionNum=" + versionNum + ", code=" + code + ", subTitle=" + subTitle
-				+ ", createdDate=" + createdDate + ", modifiedDate=" + modifiedDate + ", contents=" + contents
-				+ ", like=" + like + ", commentCount=" + commentCount + ", codeReview=" + codeReview + "]";
-	}
 
 	@Column(name = "version_num", nullable = false)
     private Integer versionNum;
@@ -33,11 +34,6 @@ public class CodeHistory {
     @Column(name = "sub_title", nullable = false, length = 50)
     private String subTitle;
 
-    @Column(name = "created_date", nullable = false)
-    private Instant createdDate;
-
-    @Column(name = "modified_date", nullable = false)
-    private Instant modifiedDate;
 
     @Lob
     @Column(name = "contents", nullable = false)
