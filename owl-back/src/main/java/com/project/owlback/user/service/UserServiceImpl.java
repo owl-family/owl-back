@@ -5,12 +5,16 @@ import com.project.owlback.user.dto.UpdateInfo;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService{
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
     private static UserRepository userRepository;
 
     @Autowired
@@ -52,11 +56,12 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public void createUser(CreateUserReq createUserReq) {
+
         User user = User.builder()
                 .name(createUserReq.getName())
                 .nickname(createUserReq.getNickname())
                 .email(createUserReq.getEmail())
-                .password(createUserReq.getPassword())
+                .password(passwordEncoder.encode(createUserReq.getPassword()))
                 .status(2)
                 .build();
 
