@@ -8,4 +8,5 @@ import com.project.owlback.user.dto.User;
 
 public interface UserRepository extends JpaRepository<User, Long> {
     Optional<User> findByEmail(String email);
+    Optional<User> findByUserId(String name);
 }

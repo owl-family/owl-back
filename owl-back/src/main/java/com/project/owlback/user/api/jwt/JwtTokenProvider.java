@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import com.project.owlback.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.slf4j.Slf4j;
@@ -26,6 +27,7 @@ import io.jsonwebtoken.security.Keys;
 @Slf4j
 @Component
 public class JwtTokenProvider {
+    private final UserRepository userRepository;
 
     private static final String BEARER_TYPE = "Bearer";
     // 유효시간이 짧은 Access Token을 발급하고, Access Token이 만료되었을 때 재발급을 위한 Refresh Token을 발급
@@ -34,16 +36,22 @@ public class JwtTokenProvider {
 
     private Key key;
 
-    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey) {
+    public JwtTokenProvider(@Value("${jwt.secret}") String secretKey,
+                            UserRepository userRepository) {
         byte[] keyBytes = Decoders.BASE64.decode(secretKey);
         this.key = Keys.hmacShaKeyFor(keyBytes);
+        this.userRepository = userRepository;
     }
 
     // Service에서 Authentication 객체 인증 후, 인증된 객체를 가지고 해당 메서드를 통해 AccessToken, RefreshToken 생성
-    public TokenInfo generateToken(Authentication authentication) {
+    public TokenInfo generateToken(Authentication authentication, String refreshToken) {
         long now = (new Date()).getTime();
 
-        com.project.owlback.user.dto.User user = (com.project.owlback.user.dto.User) authentication.getPrincipal();
+        UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+        String username = userDetails.getUsername(); // 저장된 user Id 가져오기
+
+        // userId로 User 정보들 가져오기
+        com.project.owlback.user.dto.User user = userRepository.findByUserId(username).get();
 
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
@@ -60,11 +68,14 @@ public class JwtTokenProvider {
                 .signWith(key, SignatureAlgorithm.HS256)
                 .compact();
 
-        // Refresh Token 생성
-        String refreshToken = Jwts.builder()
-                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        // refresh token이 없을 때
+        if(refreshToken == null) {
+            // Refresh Token 생성
+            refreshToken = Jwts.builder()
+                    .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                    .signWith(key, SignatureAlgorithm.HS256)
+                    .compact();
+        }
 
         return TokenInfo.builder()
                 .grantType(BEARER_TYPE) // JWT 혹은 OAuth에 대한 토큰을 사용

@@ -1,5 +1,6 @@
 package com.project.owlback.user.service;
 
+import com.project.owlback.user.dto.Reissue;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -14,6 +15,7 @@ import com.project.owlback.user.api.jwt.JwtTokenProvider;
 import com.project.owlback.user.dto.Login;
 import com.project.owlback.user.dto.TokenInfo;
 import com.project.owlback.user.repository.UserRepository;
+import org.springframework.util.ObjectUtils;
 
 import java.util.concurrent.TimeUnit;
 
@@ -41,7 +43,7 @@ public class UserServiceImpl implements UserService{
         Authentication authentication = authenticationManagerBuilder.getObject().authenticate(authenticationToken);
 
         // 인증번호 기반으로 JWT 토큰 생성
-        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication);
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, null);
 
         // RefreshToken Redis 저장(Expiration 설정을 통해 자동 삭제 처리)
         redisTemplate.opsForValue() // set the value and expiration timeout for key
@@ -52,7 +54,39 @@ public class UserServiceImpl implements UserService{
         return response.success(tokenInfo, "로그인에 성공했습니다.", HttpStatus.OK);
     }
 
+    @Override
+    public ResponseEntity<?> reissue(Reissue reissue) {
+        // Refresh Token이 유효한지 검증
+        if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
+            return response.fail("Refresh Token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
 
+        // Access Token에서 Authentication 객체를 가지고 옴
+        Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
 
+        // email(authentication.getName())을 가지고
+        // Redis에 저장된 Refresh Token을 가지고 옴(.get("RT:" + authentication.getName()))
+        String refreshToken = (String)redisTemplate.opsForValue()
+                .get("RT:" + authentication.getName());
+
+        // 로그아웃되어 Redis 에 refreshToken 이 존재하지 않는 경우 처리
+        // refresh token이 존재하는지 확인
+        if(ObjectUtils.isEmpty(refreshToken)) {
+            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+        }
+        if(!refreshToken.equals(reissue.getRefreshToken())) { // 입력받은 refresh token값과 비교
+            return response.fail("Refresh Token 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // 새로운 토큰 생성
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, refreshToken);
+
+        // redis에 새로 생성된 refresh token을 저장합니다.
+        redisTemplate.opsForValue()
+                .set("RT:" + authentication.getName(),
+                        tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
+
+        return response.success(tokenInfo, "Token 정보가 갱신되었습니다.", HttpStatus.OK);
+    }
 
 }
