@@ -39,7 +39,7 @@ public class SecurityConfig{
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/v3/api-docs/**", "/swagger*/**") // swagger
                         .permitAll()
-                        .requestMatchers("/api/user/login") // login
+                        .requestMatchers("/api/users/**") // login
                         .permitAll()
                 )
                 // JWT인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행하겠다는 설정

@@ -122,7 +122,7 @@ public class Response {
         return fail(Collections.emptyList(), msg, status);
     }
 
-    public ResponseEntity<?> invalidFields(LinkedList<LinkedHashMap<String, String>> errors) {
+    public ResponseEntity<?> invalidFields(String errors) {
         Body body = Body.builder()
                 .state(HttpStatus.BAD_REQUEST.value())
                 .data(Collections.emptyList())
