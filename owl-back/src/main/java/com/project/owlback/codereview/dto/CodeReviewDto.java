@@ -3,11 +3,13 @@ package com.project.owlback.codereview.dto;
 
 
 import java.time.Instant;
+import java.util.List;
 
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeLanguage;
 import com.project.owlback.codereview.model.CodeScope;
 import com.project.owlback.codereview.model.StudyGroup;
+import com.project.owlback.codereview.model.Tag;
 import com.project.owlback.codereview.model.User;
 
 import jakarta.persistence.Column;
@@ -26,6 +28,7 @@ import lombok.ToString;
 @AllArgsConstructor
 @Getter
 @Setter
+
 @ToString(of = {"id","versionCount","title"})
 public class CodeReviewDto {
 
@@ -52,5 +55,6 @@ public class CodeReviewDto {
     private CodeLanguage codeLanguage;
     
     private CodeHistory codeHistory;
-
+    
+    private List<Tag> tag;
 }

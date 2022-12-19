@@ -20,10 +20,10 @@ import com.project.owlback.codereview.service.CodeReveiwService;
 
 import lombok.RequiredArgsConstructor;
 @EnableJpaAuditing
+@RequiredArgsConstructor
 @RestController
 public class CodeReviewController {
-	@Autowired
-	CodeReveiwService codeReveiwService;
+	private final CodeReveiwService codeReveiwService;
 
 	@PostMapping("/api/codereviews")
 	public ResponseEntity create(@RequestBody CodeReviewDto codeReviewDto) {
@@ -42,8 +42,10 @@ public class CodeReviewController {
 	}
 	
 	@GetMapping("/api/codereviews/{codeReviewId}/history")
-	public ResponseEntity<List<CodeHistory>> getCodeReviewHistory(@PathVariable Integer codeReviewId){
+	public ResponseEntity<List<CodeHistory>> getCodeReviewHistory(@PathVariable Integer codeReviewId) throws Exception{
 		System.out.println(codeReviewId);
-		return new ResponseEntity<List<CodeHistory>>(codeReveiwService.getCodeReviewHistory(codeReviewId),HttpStatus.OK);
+		List<CodeHistory> codeHistoryList = codeReveiwService.getCodeReviewHistory(codeReviewId);
+		System.out.println("return =>"+codeHistoryList);
+		return new ResponseEntity<List<CodeHistory>>(codeHistoryList,HttpStatus.OK);
 	}
 }
