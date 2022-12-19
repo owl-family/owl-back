@@ -25,14 +25,14 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> login(@RequestBody @Validated Login login) {
         try {
+            // 로그인하면 access token과 refresh token을 모두 발급
             return userService.login(login);
         }catch(Exception e){
             return response.invalidFields(e.getMessage());
         }
     }
 
-    // refresh token이 만료되지 않았을 때
-    // access token이 만료됐는지 확인하고 재발급
+    // access token 재발급; front에서 access token 만료여부를 확인해서 reissue를 요청함
     @PostMapping("/reissue")
     public ResponseEntity<?> reissue(@RequestBody @Validated Reissue reissue) {
         try {

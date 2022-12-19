@@ -56,20 +56,20 @@ public class UserServiceImpl implements UserService{
 
     @Override
     public ResponseEntity<?> reissue(Reissue reissue) {
-        // Refresh Token이 유효한지 검증
+        // refresh token이 유효한지 검증
         if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
-            return response.fail("Refresh Token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+            return response.fail("refresh token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
-        // Access Token에서 Authentication 객체를 가지고 옴
+        // access token에서 Authentication 객체를 가지고 옴
         Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
 
         // email(authentication.getName())을 가지고
-        // Redis에 저장된 Refresh Token을 가지고 옴(.get("RT:" + authentication.getName()))
+        // redis에 저장된 refresh token을 가지고 옴(.get("RT:" + authentication.getName()))
         String refreshToken = (String)redisTemplate.opsForValue()
                 .get("RT:" + authentication.getName());
 
-        // 로그아웃되어 Redis 에 refreshToken 이 존재하지 않는 경우 처리
+        // 로그아웃되어 redis 에 refresh token 이 존재하지 않는 경우 처리
         // refresh token이 존재하는지 확인
         if(ObjectUtils.isEmpty(refreshToken)) {
             return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
@@ -78,6 +78,7 @@ public class UserServiceImpl implements UserService{
             return response.fail("Refresh Token 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
         }
 
+        // access token이 만료됐으면
         // 새로운 토큰 생성
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(authentication, refreshToken);
 
