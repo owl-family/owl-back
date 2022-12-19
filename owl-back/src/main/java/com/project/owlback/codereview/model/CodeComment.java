@@ -47,14 +47,15 @@ public class CodeComment extends BaseTimeEntity{
     @JoinColumn(name = "writer", nullable = false)
     private User writer;
 
+//    연관관계 매서드
     public void setWriter(User user) {
         this.writer = user;
-        writer.getComments().add(this);
+        writer.getComments().add(this); // builder 로 넣으면 이 부분이 없음
     }
 
     public void setCodeHistory(CodeHistory codeHistory) {
         this.codeHistory = codeHistory;
-        codeHistory.getComments().add(this);
+        codeHistory.getComments().add(this); // builder 로 넣으면 이 부분이 없음
     }
 
     public void dislike() {

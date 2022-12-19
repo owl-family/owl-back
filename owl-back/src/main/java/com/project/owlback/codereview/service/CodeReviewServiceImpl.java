@@ -25,7 +25,7 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 
     @Override
     @Transactional
-    public void addComment(CodeReviewCommentReqDto reqDto) {
+    public Integer addComment(CodeReviewCommentReqDto reqDto) {
         Integer userId = 1; // temporary use before create user function
 
         final CodeComment comment = CodeComment.builder()
@@ -37,12 +37,15 @@ public class CodeReviewServiceImpl implements CodeReviewService{
                 .likeCount(0)
                 .build();
 
+        // 1. JpaAuditing
+        // 2. builder 패턴
+        // 3. Optional
+        // 4. logging -> slf4j -> 공부하면 좋다
         final User user = userRepository.findById(userId).orElseThrow();
         final CodeHistory codeHistory = codeHistoryRepository.findById(reqDto.getCodeHistoryId()).orElseThrow();
 
         log.info("found user : {}", user);
         log.info("found codeHistory : {}", codeHistory);
-
         comment.setCodeHistory(codeHistory);
         comment.setWriter(user);
 
@@ -50,6 +53,8 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 
         codeCommentRepository.save(comment);
         log.info("comment has been saved successfully");
+
+        return comment.getId();
     }
 
     @Override

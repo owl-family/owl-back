@@ -10,36 +10,38 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
-@Controller
+@RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/codereviews")
+@RequestMapping("/api/codereviews")
 public class CodeReviewController {
     private final CodeReviewService codeReviewService;
 
-    @PostMapping("/{codeReviewId}/history/{versionNum}/comments")
-    public ResponseEntity<?> addComment(@PathVariable Integer codeReviewId, @PathVariable Integer versionNum,
+    @PostMapping("/{codeReviewId}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Integer codeReviewId,
                                         @RequestBody CodeReviewCommentReqDto reqDto) {
-        log.info("codeReviewId : {}, versionNum : {}", codeReviewId, versionNum);
-        log.info("{}", reqDto);
+        log.info("codeReviewId : {}", codeReviewId);
         reqDto.setCodeReviewId(codeReviewId);
-        reqDto.setVersionNum(versionNum);
+        log.info("{}", reqDto);
 
-        codeReviewService.addComment(reqDto);
+        final Integer id = codeReviewService.addComment(reqDto);
+        log.info("comment saved successfully id : {}", id);
+
         return new ResponseEntity<>(HttpStatus.OK);
     }
 
-    @PutMapping("/{codeReviewId}/history/{versionNum}/comments/{codeCommentId}")
-    public ResponseEntity<?> likeComment(@PathVariable Integer codeReviewId, @PathVariable Integer versionNum,
-                                         @PathVariable Integer codeCommentId,
-                                         @RequestBody CodeReviewCommentReqDto reqDto) {
-        log.info("codeReviewId : {}, versionNum : {}, codeCommentId : {}", codeReviewId, versionNum, codeCommentId);
-        log.info("{}", reqDto);
+    @PutMapping("/comments/{codeCommentId}")
+    public ResponseEntity<?> likeComment(@PathVariable Integer codeCommentId) {
+        log.info("codeCommentId : {}", codeCommentId);
 
+        CodeReviewCommentReqDto reqDto = new CodeReviewCommentReqDto();
         reqDto.setCodeCommentId(codeCommentId);
+        log.info("{}", reqDto);
 
         final int likeCount = codeReviewService.likeComment(reqDto);
 
         return new ResponseEntity<>(likeCount, HttpStatus.OK);
     }
+
+
 }
