@@ -1,6 +1,7 @@
 package com.project.owlback.user.service;
 
 import com.project.owlback.user.dto.CreateUserReq;
+import com.project.owlback.user.dto.UpdateInfo;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -66,5 +67,18 @@ public class UserServiceImpl implements UserService{
     public boolean findByNickname(String nickname) {
         return userRepository.findByNickname(nickname).isPresent();
     }
+
+    @Override
+    public User updateInfo(User user, UpdateInfo updateInfo) {
+        user.updateInfo(updateInfo);
+        return userRepository.save(user);
+    }
+
+    @Override
+    public User deleteUser(User user) {
+        user.deleteUser();
+        return userRepository.save(user);
+    }
+
 
 }
