@@ -36,5 +36,15 @@ public class User extends BaseTimeEntity {
     public void updatePassword(String password) {
         this.password = password;
     }
+
+    public void updateInfo(UpdateInfo updateinfo){
+        this.imgFile = updateinfo.getImgFile();
+        this.introduction=updateinfo.getIntroduction();
+        this.nickname= updateinfo.getNickname();
+    }
+
+    public void deleteUser(){
+        this.status=0;
+    }
 }
 

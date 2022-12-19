@@ -1,13 +1,14 @@
 package com.project.owlback.user.controller;
 
 import com.project.owlback.user.dto.CreateUserReq;
+import com.project.owlback.user.dto.UpdateInfo;
 import com.project.owlback.user.dto.ResponseDto;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.service.EmailService;
 import com.project.owlback.user.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.hibernate.sql.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +26,12 @@ public class UserController {
 
 
     @PostMapping
-    public ResponseEntity<ResponseDto> createUser(@RequestBody @Valid CreateUserReq createUserReq){
+    public ResponseEntity<ResponseDto> createUser(@RequestBody @Valid CreateUserReq createUserReq) {
         userService.createUser(createUserReq);
 
         ResponseDto responseDto;
 
-        if(!createUserReq.getPassword().equals(createUserReq.getPasswordCheck())){
+        if (!createUserReq.getPassword().equals(createUserReq.getPasswordCheck())) {
             responseDto = ResponseDto.builder()
                     .code(HttpStatus.NOT_FOUND.value())
                     .httpStatus(HttpStatus.NOT_FOUND)
@@ -38,8 +39,7 @@ public class UserController {
                     .result(Collections.emptyList())
                     .count(ZERO)
                     .build();
-        }
-        else {
+        } else {
             responseDto = ResponseDto.builder()
                     .code(HttpStatus.OK.value())
                     .httpStatus(HttpStatus.OK)
@@ -166,6 +166,56 @@ public class UserController {
                 .code(HttpStatus.CREATED.value())
                 .httpStatus(HttpStatus.CREATED)
                 .message("비밀번호 변경 완료")
+                .result(Collections.emptyList())
+                .count(ZERO)
+                .build();
+
+        return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
+    }
+
+    @PutMapping("{user_id}")
+    public ResponseEntity<ResponseDto> UpdateInfo(@PathVariable("user_id") long userId, @RequestBody UpdateInfo updateInfoReq) {
+        User user = userService.findByUserId(userId);
+        userService.updateInfo(user, updateInfoReq);
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .code(HttpStatus.CREATED.value())
+                .httpStatus(HttpStatus.CREATED)
+                .message("회원 정보 수정 완료")
+                .result(Collections.emptyList())
+                .count(ZERO)
+                .build();
+
+        return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
+    }
+
+    @GetMapping("{user_id}")
+    public ResponseEntity<ResponseDto> getInfo(@PathVariable("user_id") long userId) {
+
+        User user = userService.findByUserId(userId);
+        List<Object> updateInfoList = new ArrayList<>();
+        updateInfoList.add(new UpdateInfo(user.getNickname(), user.getImgFile(), user.getIntroduction()));
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .code(HttpStatus.OK.value())
+                .httpStatus(HttpStatus.OK)
+                .message("회원 정보 조회 완료")
+                .result(updateInfoList)
+                .count(ZERO)
+                .build();
+
+        return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
+    }
+
+    @PutMapping("delete/{user_id}")
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable("user_id") long userId) {
+        User user = userService.findByUserId(userId);
+        userService.deleteUser(user);
+
+        ResponseDto responseDto = ResponseDto.builder()
+                .code(HttpStatus.CREATED.value())
+                .httpStatus(HttpStatus.CREATED)
+                .message("회원 탈퇴 완료")
                 .result(Collections.emptyList())
                 .count(ZERO)
                 .build();
