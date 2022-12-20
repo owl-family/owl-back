@@ -1,13 +1,19 @@
 package com.project.owlback.codereview.model;
 
+import com.project.owlback.codereview.dto.CodeReviewItemDto;
+import com.project.owlback.codereview.repository.CodeReviewTagRepository;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.Length;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.sql.SQLException;
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Getter
@@ -52,4 +58,5 @@ public class CodeReview {
     @ManyToOne(optional = false)
     @JoinColumn(name = "code_language_id", nullable = false)
     private CodeLanguage codeLanguage;
+
 }

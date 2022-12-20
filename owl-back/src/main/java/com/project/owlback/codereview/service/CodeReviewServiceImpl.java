@@ -3,159 +3,181 @@ package com.project.owlback.codereview.service;
 import com.project.owlback.codereview.dto.CodeCommentDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
 import com.project.owlback.codereview.dto.CodeReviewItemDto;
-import com.project.owlback.codereview.model.*;
+import com.project.owlback.codereview.model.CodeComment;
+import com.project.owlback.codereview.model.CodeHistory;
+import com.project.owlback.codereview.model.CodeReview;
+import com.project.owlback.codereview.model.CodeReviewTag;
 import com.project.owlback.codereview.repository.*;
-import org.springframework.beans.factory.annotation.Autowired;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Service
+@Slf4j
+@RequiredArgsConstructor
 public class CodeReviewServiceImpl implements CodeReviewService {
-    @Autowired
-    private CodeReviewRepository codeReviewRepository;
+    final private CodeReviewRepository codeReviewRepository;
 
-    @Autowired
-    private CodeReviewHistoryRepository codeReviewHistoryRepository;
+    final private CodeReviewHistoryRepository codeReviewHistoryRepository;
 
-    @Autowired
-    private CodeReviewTagRepository codeReviewTagRepository;
+    final private CodeReviewTagRepository codeReviewTagRepository;
 
-    @Autowired
-    private CodeCommentRepository codeCommentRepository;
+    final private CodeCommentRepository codeCommentRepository;
 
-    @Autowired
-    private CodeCommentLikeRepository codeCommentLikeRepository;
+    final private CodeCommentLikeRepository codeCommentLikeRepository;
 
-    @Autowired
-    private TagRepository tagRepository;
 
     @Override
-    public List<CodeReviewItemDto> codeReviewList(String key, int id) throws Exception {
-        List<CodeReview> list = new ArrayList<>();
+    public Page<CodeReviewItemDto> codeReviewList(String key, int id, Pageable pageable) throws Exception {
+        Page<CodeReview> list = null;
 
         if (key.equals("all")) {
-            list = codeReviewRepository.findAll();
+            list = codeReviewRepository.findAll(pageable);
+            log.info("get codeReviewList : {}", list);
+
         } else if (key.equals("study")) {
-            list = codeReviewRepository.findByStudyGroupId(id);
+            list = codeReviewRepository.findByStudyGroupId(id, pageable);
+            log.info("get codeReviewList : {}", list);
         }
 
         return changeToCodeReviewDto(list);
     }
 
     @Override
-    public List<CodeReviewItemDto> codeReviewSearch(String key, String word) throws Exception {
-        List<CodeReview> list = new ArrayList<>();
+    public Page<CodeReviewItemDto> codeReviewSearch(String key, String word, Pageable pageable) throws Exception {
+        Page<CodeReview> list = null;
 
         if (key.equals("title")) {
-            list = codeReviewRepository.findByTitleLike('%' + word + '%');
-            System.out.println(word);
-            System.out.println(list.size());
+            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "modifiedDate"));
+            list = codeReviewRepository.findByTitleLike('%' + word + '%', pageable);
+            log.info("get codeReviewList : {}", list);
+
         } else if (key.equals("tag")) {
-            List<CodeReviewTag> codeReviewTagList = codeReviewTagRepository.findByTagContentLike('%' + word + '%');
-            for (CodeReviewTag codeReviewTag : codeReviewTagList) {
-                list.add(codeReviewTag.getCodeReview());
-            }
+            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "modifiedDate"));
+            Page<CodeReviewTag> codeReviewTagList = codeReviewTagRepository
+                    .findByTagContentLike('%' + word + '%', pageable);
+            log.info("get codeReviewTagList : {}", codeReviewTagList);
+            list = codeReviewTagList.map(CodeReviewTag::getCodeReview);
+
+            log.info("get codeReviewList : {}", list);
+
         } else if (key.equals("writer")) {
-            list = codeReviewRepository.findByWriterNicknameLike('%' + word + '%');
+            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "codeReview.modifiedDate"));
+            list = codeReviewRepository.findByWriterNicknameLike('%' + word + '%', pageable);
+            log.info("get codeReviewList : {}", list);
+
         } else if (key.equals("language")) {
+            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "modifiedDate"));
             String param = word.toUpperCase();
-            list = codeReviewRepository.findByCodeLanguageDescriptionLike('%' + param + '%');
+            list = codeReviewRepository.findByCodeLanguageDescriptionLike('%' + param + '%', pageable);
+            log.info("get codeReviewList : {}", list);
+
         }
 
         return changeToCodeReviewDto(list);
     }
 
     @Override
-    public CodeHistoryDetailDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId) throws Exception {
-        CodeHistory history = codeReviewHistoryRepository.findByCodeReviewIdAndVersionNum(codeReviewId, versionNum);
-        CodeHistoryDetailDto result = changeToCodeReviewHistoryDto(history, userId);
+    public CodeHistoryDetailDto codeReviewHistoryDetail(
+            int codeReviewId, int versionNum, int userId, Pageable pageable) throws Exception {
+        CodeHistory history = codeReviewHistoryRepository.findByCodeReviewIdAndVersionNum(codeReviewId, versionNum).orElseThrow();
+        log.info("found history : {}", history);
+        CodeHistoryDetailDto result = changeToCodeReviewHistoryDto(history, userId, pageable);
+        log.info("change to dto : {}", result);
 
         return result;
     }
 
     @Override
-    public List<CodeCommentDetailDto> codeReviewCommentsDetail(int historyId, int startLine, int userId) throws Exception {
-        List<CodeComment> list = codeCommentRepository.findByCodeHistoryIdAndStartLine(historyId, startLine);
-        List<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
+    public Page<CodeCommentDetailDto> codeReviewCommentsDetail(
+            int historyId, int startLine, int userId, Pageable pageable) throws Exception {
+
+        Page<CodeComment> list = codeCommentRepository.findByCodeHistoryIdAndStartLine(historyId, startLine, pageable);
+        log.info("get code comments : {}", list);
+
+        Page<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
+        log.info("change to dto : {}", comments);
+
+        return comments;
+    }
+
+    @Override
+    public Page<CodeCommentDetailDto> codeReviewComments(int historyId, int userId, Pageable pageable) throws Exception {
+
+        Page<CodeComment> list = codeCommentRepository.findByCodeHistoryId(historyId, pageable);
+        log.info("get code comments : {}", list);
+
+        Page<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
+        log.info("change to dto : {}", comments);
+
         return comments;
     }
 
     @Override
     public List<String> getRelativeTags(String word) throws Exception {
-        List<Tag> tags = tagRepository.findByContentLikeOrderByCountDesc('%' + word + '%');
+        List<CodeReviewTag> tags = codeReviewTagRepository.findByTagContentLikeOrderByCountDesc('%' + word + '%');
+        log.info("get tags : {}", tags);
+
         List<String> result = new ArrayList<>();
-        for (Tag tag : tags) {
-            result.add(tag.getContent());
+        for (CodeReviewTag tag : tags) {
+            result.add(tag.getTag().getContent());
         }
+        log.info("get tag content : {}", result);
+
         return result;
     }
+
 
     // CodeReviewList -> CodeReviewDtoList
-    public List<CodeReviewItemDto> changeToCodeReviewDto(List<CodeReview> list) throws Exception {
-        List<CodeReviewItemDto> resultList = new ArrayList<>();
-        for (CodeReview item : list) {
-            CodeReviewItemDto dto = new CodeReviewItemDto();
-            dto.setId(item.getId());
-            dto.setTitle(item.getTitle());
-            dto.setViewCount(item.getViewCount());
-            dto.setNickname(item.getWriter().getNickname());
-            dto.setLanguage(item.getCodeLanguage().getDescription());
-            dto.setViewCount(item.getViewCount());
-            dto.setCommentCount(item.getCommentCount());
-            dto.setCreateDate(item.getCreatedDate());
+    public Page<CodeReviewItemDto> changeToCodeReviewDto(Page<CodeReview> list) throws Exception {
+        Page<CodeReviewItemDto> dtoList = list.map(c -> {
+            try {
+                List<String> tags = codeReviewTagRepository
+                        .findByCodeReviewId(c.getId()).stream().map(t -> t.getTag().getContent()).toList();
+                log.info("get tagList : {}", tags);
 
-            List<CodeReviewTag> tagList = codeReviewTagRepository.findByCodeReviewId(item.getId());
-            List<String> tags = new ArrayList<>();
-            for (CodeReviewTag tag : tagList) {
-                tags.add(tag.getTag().getContent());
+                return new CodeReviewItemDto(c, tags);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            dto.setTags(tags);
-            resultList.add(dto);
-        }
-        return resultList;
+        });
+        log.info("change to dto successfully");
+        return dtoList;
     }
 
-    public CodeHistoryDetailDto changeToCodeReviewHistoryDto(CodeHistory history, int userId) throws Exception {
-        CodeHistoryDetailDto result = null;
-        if (history != null) {
-            result = new CodeHistoryDetailDto();
-            result.setId(history.getId());
-            result.setTitle(history.getCodeReview().getTitle());
-            result.setSubTitle(history.getSubTitle());
-            result.setVersion(history.getVersionNum());
-            result.setCreatedDate(history.getCreatedDate());
-            result.setLike(history.getLike());
-            result.setCode(history.getCode());
-            result.setContents(history.getContents());
-            List<CodeComment> list = codeCommentRepository.findByCodeHistoryId(history.getId());
-            List<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
-            result.setComments(comments);
-        }
-        return result;
+    public CodeHistoryDetailDto changeToCodeReviewHistoryDto(
+            CodeHistory history, int userId, Pageable pageable) throws Exception {
+
+        Page<CodeComment> list = codeCommentRepository.findByCodeHistoryId(history.getId(), pageable);
+        Page<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
+        log.info("get code comments : {}", comments);
+
+        return new CodeHistoryDetailDto(history, comments);
     }
 
-    public List<CodeCommentDetailDto> changeToCodeCommentDto(List<CodeComment> comments, int userId) throws Exception {
-        List<CodeCommentDetailDto> list = new ArrayList<>();
-        for (CodeComment comment : comments) {
-            CodeCommentDetailDto dto = new CodeCommentDetailDto();
-            dto.setWriter(comment.getWriter().getNickname());
-            dto.setContents(comment.getContents());
-            dto.setStartLine(comment.getStartLine());
-            dto.setEndLine(comment.getEndLine());
-            dto.setParent(comment.getParent());
-            dto.setDepth(comment.getDepth());
-            dto.setLikeCount(comment.getLikeCount());
-            dto.setCreatedDate(comment.getCreatedDate());
-            int isLike = codeCommentLikeRepository.countByUserIdAndCodeCommentId(userId, comment.getId());
-            if (isLike > 0) {
-                dto.setLike(true);
-            } else {
-                dto.setLike(false);
+    public Page<CodeCommentDetailDto> changeToCodeCommentDto(Page<CodeComment> comments, int userId) throws Exception {
+        Page<CodeCommentDetailDto> list = comments.map(c -> {
+            try {
+                int cnt = codeCommentLikeRepository.countByUserIdAndCodeCommentId(userId, c.getId());
+                boolean isLike = (cnt > 0);
+                log.info("get code comment like : {}", isLike);
+
+                return new CodeCommentDetailDto(c, isLike);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
             }
-            list.add(dto);
-        }
+        });
+
         return list;
     }
+
 }

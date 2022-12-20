@@ -1,15 +1,14 @@
 package com.project.owlback.codereview.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.project.owlback.codereview.model.CodeHistory;
+import lombok.*;
+import org.springframework.data.domain.Page;
 
 import java.time.Instant;
 import java.util.List;
 
-@Getter
-@Setter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CodeHistoryDetailDto {
@@ -21,6 +20,19 @@ public class CodeHistoryDetailDto {
     int like;
     String code;
     String contents;
-    List<CodeCommentDetailDto> comments;
+    Page<CodeCommentDetailDto> comments;
+
+    public CodeHistoryDetailDto(CodeHistory history, Page<CodeCommentDetailDto> comments) {
+        this.id = history.getId();
+        this.title = history.getCodeReview().getTitle();
+        this.subTitle = history.getSubTitle();
+        this.version = history.getVersionNum();
+        this.createdDate = history.getCreatedDate();
+        this.like = history.getLike();
+        this.code = history.getCode();
+        this.contents = history.getContents();
+        this.comments = comments;
+
+    }
 
 }
