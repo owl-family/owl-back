@@ -18,14 +18,13 @@ public interface UserService {
 
     Optional<User> findByEmailAndName(User user);
 
-    User findByUserId(long userId);
-
+    User findByUserId(Long userId);
 
     void createUser(CreateUserReq createUserReq);
 
     boolean findByNickname(String nickname);
 
-    User updateInfo(User user, UpdateInfo updateInfo);
+    void updateInfo(Long userId, UpdateInfo updateInfo);
 
-    User deleteUser(User user);
+    void deleteUser(Long userId);
 }

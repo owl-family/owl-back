@@ -1,6 +1,7 @@
 package com.project.owlback.util;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.EntityListeners;
 import jakarta.persistence.MappedSuperclass;
 import lombok.Getter;
@@ -15,8 +16,10 @@ import java.time.LocalDateTime;
 @EntityListeners(AuditingEntityListener.class)
 public class BaseTimeEntity {
     @CreatedDate
+    @Column(name="created_date")
     private LocalDateTime createdDate;
 
     @LastModifiedDate
+    @Column(name="modified_date")
     private LocalDateTime modifiedDate;
 }

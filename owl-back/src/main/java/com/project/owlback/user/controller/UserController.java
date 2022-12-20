@@ -24,7 +24,10 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
 
-
+    /**
+     * 회원가입 API
+     * [POST] /api/users
+     */
     @PostMapping
     public ResponseEntity<ResponseDto> createUser(@RequestBody @Valid CreateUserReq createUserReq) {
         userService.createUser(createUserReq);
@@ -51,6 +54,10 @@ public class UserController {
         return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
     }
 
+    /**
+     * 닉네임 중복체크 API
+     * [GET] /api/check2/{nickname}
+     */
     @GetMapping("check2/{nickname}")
     public ResponseEntity<ResponseDto> checkNickname(@PathVariable String nickname) {
         boolean isExist = userService.findByNickname(nickname);
@@ -173,10 +180,13 @@ public class UserController {
         return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
     }
 
+    /**
+     * 회원 정보 수정 API
+     * [PUT] /api/users/{user_id}
+     */
     @PutMapping("{user_id}")
-    public ResponseEntity<ResponseDto> UpdateInfo(@PathVariable("user_id") long userId, @RequestBody UpdateInfo updateInfoReq) {
-        User user = userService.findByUserId(userId);
-        userService.updateInfo(user, updateInfoReq);
+    public ResponseEntity<ResponseDto> UpdateInfo(@PathVariable("user_id") Long userId, @RequestBody UpdateInfo updateInfoReq) {
+        userService.updateInfo(userId, updateInfoReq);
 
         ResponseDto responseDto = ResponseDto.builder()
                 .code(HttpStatus.CREATED.value())
@@ -189,8 +199,12 @@ public class UserController {
         return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
     }
 
+    /**
+     * 회원 정보 조회 API
+     * [GET] /api/users/{user_id}
+     */
     @GetMapping("{user_id}")
-    public ResponseEntity<ResponseDto> getInfo(@PathVariable("user_id") long userId) {
+    public ResponseEntity<ResponseDto> getInfo(@PathVariable("user_id") Long userId) {
 
         User user = userService.findByUserId(userId);
         List<Object> updateInfoList = new ArrayList<>();
@@ -207,10 +221,13 @@ public class UserController {
         return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
     }
 
+    /**
+     * 회원 탈퇴 API
+     * [PUT] /api/users/delete/{user_id}
+     */
     @PutMapping("delete/{user_id}")
-    public ResponseEntity<ResponseDto> deleteUser(@PathVariable("user_id") long userId) {
-        User user = userService.findByUserId(userId);
-        userService.deleteUser(user);
+    public ResponseEntity<ResponseDto> deleteUser(@PathVariable("user_id") Long userId) {
+        userService.deleteUser(userId);
 
         ResponseDto responseDto = ResponseDto.builder()
                 .code(HttpStatus.CREATED.value())
@@ -222,5 +239,7 @@ public class UserController {
 
         return new ResponseEntity<>(responseDto, responseDto.getHttpStatus());
     }
+
+
 
 }

@@ -9,7 +9,7 @@ import lombok.Data;
 public class UpdateInfo {
 
     private String nickname;
-    private String imgFile;
+    private byte[] imgFile;
 
     private String introduction;
 }
