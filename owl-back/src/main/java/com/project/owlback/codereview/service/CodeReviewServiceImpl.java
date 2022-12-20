@@ -1,5 +1,6 @@
 package com.project.owlback.codereview.service;
 
+import com.project.owlback.codereview.dto.CodeCommentResDto;
 import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
 import com.project.owlback.codereview.model.CodeComment;
 import com.project.owlback.codereview.model.CodeCommentLike;
@@ -8,6 +9,8 @@ import com.project.owlback.codereview.model.User;
 import com.project.owlback.codereview.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -67,7 +70,9 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 
         log.info("comment : {}, user : {}", comment, user);
 
-        final Optional<CodeCommentLike> byCodeCommentAndUser = codeCommentLikeRepository.findByCodeCommentAndUser(comment, user);
+        final Optional<CodeCommentLike> byCodeCommentAndUser =
+                codeCommentLikeRepository.findByCodeCommentAndUser(comment, user);
+
         byCodeCommentAndUser.ifPresentOrElse(
                 codeCommentLike -> {
                     codeCommentLikeRepository.delete(codeCommentLike);
@@ -80,5 +85,31 @@ public class CodeReviewServiceImpl implements CodeReviewService{
                 });
 
         return comment.getLikeCount();
+    }
+
+    @Override
+    public Page<CodeCommentResDto> getMyComments(String key, String word, Pageable pageable) {
+
+        final int uid = 1; // temporary comment writer's
+        final User user = userRepository.findById(uid).get();
+
+        Page<CodeCommentResDto> res = null;// id
+        Page<CodeComment> page;
+
+        if(key.equals("title")) {
+            // find by code review title
+            page = codeCommentRepository.findByWriterAndCodeReviewTitle(user, word, pageable);
+            res = page.map(CodeCommentResDto::new);
+        } else if(key.equals("contents")) {
+            // find by code comment contents
+            page = codeCommentRepository.findByWriterAndContentsContains(user, word, pageable);
+            res = page.map(CodeCommentResDto::new);
+        } else if(key.equals("writer")) {
+            // find by code review writer
+            page = codeCommentRepository.findByWriterAndUserNickName(user, word, pageable);
+            res = page.map(CodeCommentResDto::new);
+        }
+
+        return res;
     }
 }

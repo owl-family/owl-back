@@ -57,12 +57,14 @@ class CodeReviewServiceTest {
     @DisplayName("코드리뷰_댓글_추가")
     public void addComments() throws Exception {
         //given
+
+        String message = "테스트 코맨트";
         CodeReviewCommentReqDto reqDto = CodeReviewCommentReqDto.builder()
                 .startLine(1)
                 .endLine(2)
                 .parent(1)
                 .depth(1)
-                .contents("test comment")
+                .contents(message)
                 .codeHistoryId(1)
                 .build();
         //when
@@ -71,7 +73,7 @@ class CodeReviewServiceTest {
         //then
         final Optional<CodeComment> comment = codeCommentRepository.findById(id);
         assertThat(comment.isPresent()).isTrue();
-        assertThat(comment.get().getContents()).isEqualTo("test comment");
+        assertThat(comment.get().getContents()).isEqualTo(message);
     }
 
     @Test
