@@ -6,6 +6,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.project.owlback.codereview.model.CodeReview;
 
-public interface CodeReviewRepository extends JpaRepository<CodeReview, Integer> {
-	CodeReview findById(int id);
+public interface CodeReviewRepository extends JpaRepository<CodeReview, Long> {
+	Optional<CodeReview> findById(Long id);
 }

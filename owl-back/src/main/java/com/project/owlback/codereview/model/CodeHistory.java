@@ -17,12 +17,13 @@ import java.time.Instant;
 @Table(name = "code_history")
 @Getter
 @Setter
-@ToString(of = {"code"})
+@ToString(of = {"id","versionNum","code","subTitle","contents","like","commentCount","codeReview"})
+
 public class CodeHistory extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_history_id", nullable = false)
-    private Integer id;
+    private Long id;
 
 	@Column(name = "version_num", nullable = false)
     private Integer versionNum;

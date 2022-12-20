@@ -4,10 +4,9 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
-import com.project.owlback.codereview.dto.CodeHistoryDto;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeReview;
 
-public interface CodeRevieHistoryRepository extends JpaRepository<CodeHistory, Integer> {
+public interface CodeReviewHistoryRepository extends JpaRepository<CodeHistory, Long> {
 	List<CodeHistory> findByCodeReview(CodeReview codeReview);
 }

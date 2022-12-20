@@ -7,6 +7,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
+
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.validator.constraints.Length;
 
@@ -18,11 +20,12 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="code_review")
+@ToString(of = {"id","versioinCount","title","viewCount","commentCount","writer","studyGroup"})
 public class CodeReview extends BaseTimeEntity{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "code_review_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "version_count", nullable = false)
     private Integer versionCount;
