@@ -9,6 +9,6 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface CodeCommentLikeRepository extends JpaRepository<CodeCommentLike, Integer> {
+public interface CodeCommentLikeRepository extends JpaRepository<CodeCommentLike, Long> {
     Optional<CodeCommentLike> findByCodeCommentAndUser(CodeComment comment, User user);
 }

@@ -12,7 +12,7 @@ public class CodeLanguage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_language_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "description", nullable = false, length = 20)
     private String description;

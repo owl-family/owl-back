@@ -17,7 +17,7 @@ public class CodeComment extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_comment_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Lob
     @Column(name = "contents", nullable = false)
@@ -30,7 +30,7 @@ public class CodeComment extends BaseTimeEntity{
     private Integer endLine;
 
     @Column(name = "parent", nullable = false)
-    private Integer parent;
+    private Long parent;
 
     @Column(name = "depth", nullable = false)
     private Integer depth;

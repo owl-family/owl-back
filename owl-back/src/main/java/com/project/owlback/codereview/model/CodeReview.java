@@ -17,7 +17,7 @@ public class CodeReview {
 
     @Id
     @Column(name = "code_review_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "version_count", nullable = false)
     private Integer versionCount;

@@ -10,7 +10,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface CodeCommentRepository extends JpaRepository<CodeComment, Integer> {
+public interface CodeCommentRepository extends JpaRepository<CodeComment, Long> {
     List<CodeComment> findTop1By();
     Page<CodeComment> findByWriterAndContentsContains(User writer, String word, Pageable pageable);
     @Query("select cc from CodeComment cc where cc.writer=:writer and cc.codeHistory.codeReview.title LIKE %:title%")

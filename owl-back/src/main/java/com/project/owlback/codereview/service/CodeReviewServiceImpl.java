@@ -28,8 +28,8 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 
     @Override
     @Transactional
-    public Integer addComment(CodeReviewCommentReqDto reqDto) {
-        Integer userId = 1; // temporary use before create user function
+    public Long addComment(CodeReviewCommentReqDto reqDto) {
+        Long userId = 1L; // temporary use before create user function
 
         final CodeComment comment = CodeComment.builder()
                 .startLine(reqDto.getStartLine())
@@ -63,7 +63,7 @@ public class CodeReviewServiceImpl implements CodeReviewService{
     @Override
     @Transactional
     public int likeComment(CodeReviewCommentReqDto reqDto) {
-        Integer userId = 1; // temporary use before create user function
+        Long userId = 1L; // temporary use before create user function
 
         final CodeComment comment = codeCommentRepository.findById(reqDto.getCodeCommentId()).orElseThrow();
         final User user = userRepository.findById(userId).orElseThrow();
@@ -90,7 +90,7 @@ public class CodeReviewServiceImpl implements CodeReviewService{
     @Override
     public Page<CodeCommentResDto> getMyComments(String key, String word, Pageable pageable) {
 
-        final int uid = 1; // temporary comment writer's
+        final Long uid = 1L; // temporary comment writer's
         final User user = userRepository.findById(uid).get();
 
         Page<CodeCommentResDto> res = null;// id

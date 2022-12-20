@@ -7,8 +7,8 @@ import java.time.Instant;
 
 @Data
 public class CodeCommentResDto {
-    int codeCommentId;
-    int codeReviewId;
+    Long codeCommentId;
+    Long codeReviewId;
     int versionNumber;
     String title;
     String contents;

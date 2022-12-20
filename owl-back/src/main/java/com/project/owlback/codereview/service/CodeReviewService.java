@@ -7,7 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 public interface CodeReviewService {
-    Integer addComment(CodeReviewCommentReqDto reqDto);
+    Long addComment(CodeReviewCommentReqDto reqDto);
     int likeComment(CodeReviewCommentReqDto reqDto);
 
     Page<CodeCommentResDto> getMyComments(String key, String word, Pageable pageable);

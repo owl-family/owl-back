@@ -24,14 +24,14 @@ public class CodeReviewController {
     private final CodeReviewService codeReviewService;
 
     @PostMapping("/{code_review_id}/comments")
-    public ResponseEntity<?> addComment(@PathVariable("code_review_id") Integer codeReviewId,
+    public ResponseEntity<?> addComment(@PathVariable("code_review_id") Long codeReviewId,
                                         @RequestBody CodeReviewCommentReqDto reqDto) {
         log.info("codeReviewId : {}", codeReviewId);
         reqDto.setCodeReviewId(codeReviewId);
         log.info("{}", reqDto);
 
         try {
-            final Integer id = codeReviewService.addComment(reqDto);
+            final Long id = codeReviewService.addComment(reqDto);
             log.info("comment saved successfully id : {}", id);
 
             return new ResponseEntity<>(
@@ -43,7 +43,7 @@ public class CodeReviewController {
     }
 
     @PutMapping("/comments/{code_comment_id}")
-    public ResponseEntity<?> likeComment(@PathVariable("code_comment_id") Integer codeCommentId) {
+    public ResponseEntity<?> likeComment(@PathVariable("code_comment_id") Long codeCommentId) {
         log.info("codeCommentId : {}", codeCommentId);
 
         CodeReviewCommentReqDto reqDto = new CodeReviewCommentReqDto();

@@ -12,7 +12,7 @@ public class StudyTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_tag_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "count", nullable = false)
     private Integer count;

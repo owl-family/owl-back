@@ -17,7 +17,7 @@ public class CodeHistory {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_history_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "version_num", nullable = false)
     private Integer versionNum;
