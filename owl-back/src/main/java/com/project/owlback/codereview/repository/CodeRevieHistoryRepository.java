@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import com.project.owlback.codereview.dto.CodeHistoryDto;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeReview;
 

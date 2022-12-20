@@ -29,7 +29,7 @@ import lombok.ToString;
 @Getter
 @Setter
 
-@ToString(of = {"id","versionCount","title"})
+@ToString(of = {"id","versionCount","title","createdDate","modifiedDate","viewCount","commentCount","writer","studyGroup","codeScope","codeLanguage","codeHistory","tag"})
 public class CodeReviewDto {
 
     private Integer id;

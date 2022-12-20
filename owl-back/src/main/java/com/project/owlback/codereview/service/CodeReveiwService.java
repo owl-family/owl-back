@@ -3,10 +3,13 @@ package com.project.owlback.codereview.service;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired; 
 import org.springframework.stereotype.Service;
 
+import com.project.owlback.codereview.dto.CodeHistoryDto;
 import com.project.owlback.codereview.dto.CodeReviewDto;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeReview;
@@ -19,7 +22,8 @@ import com.project.owlback.codereview.repository.TagRepository;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-
+import lombok.extern.slf4j.Slf4j;
+@Slf4j
 @RequiredArgsConstructor
 @Service
 public class CodeReveiwService {
@@ -34,7 +38,9 @@ public class CodeReveiwService {
 
 	@Transactional
 	public void create(CodeReviewDto codeReviewDto) {
-		// TODO Auto-generated method stub
+
+		log.info("info log={}", codeReviewDto);
+		
 		// user 정보
 		// codereview 정보
 		CodeReview codeReview = CodeReview.builder()
@@ -45,7 +51,11 @@ public class CodeReveiwService {
 				.codeScope(codeReviewDto.getCodeScope())
 				.codeLanguage(codeReviewDto.getCodeLanguage())
 				.build();
+		log.info("info log={}", codeReview);
+		
 		codeReviewRepository.save(codeReview);
+		
+		log.info("info log={}", codeReview);
 		
 		CodeHistory codeHistory = CodeHistory.builder()
 				.codeReview(codeReview)
@@ -56,21 +66,29 @@ public class CodeReveiwService {
 				.like(0)
 				.commentCount(0)
 				.build();
-
+		log.info("info log={}",codeHistory);
+		
 		createHistory(codeHistory);
+		
+		log.info("info log={}",codeHistory);
 		
 		codeReviewDto.setTag(createTag(codeReviewDto.getTag()));
 		createCodeReviewTag(codeReview, codeReviewDto.getTag());
+		
+		log.info("info log={}", codeReviewDto);
 	}
 	
 	@Transactional
 	public void createCodeReviewTag(CodeReview codeReview, List<Tag> tag) {
+		
+		log.info("info log={}", tag);
 		tag.stream()
 		.forEach(x->codeReviewTagRepository.save(CodeReviewTag.builder()
 				.count(0)
 				.codeReview(codeReview)
 				.tag(x)
 				.build()));
+		log.info("info log={}", tag);
 	}
 	
 	@Transactional
@@ -93,6 +111,7 @@ public class CodeReveiwService {
 	}
 	public void createHistory(CodeHistory codeHistory) {
 		// TODO Auto-generated method stub
+		log.info("info log={}", codeHistory);
 		codeReviewHistoryRepository.save(codeHistory);
 	}
 	
@@ -109,12 +128,14 @@ public class CodeReveiwService {
 		return codeHistory;
 	}
 	
-	public List<CodeHistory> getCodeReviewHistory(int id) throws Exception{
-		Optional<CodeReview> optionCodeReview = Optional.ofNullable(codeReviewRepository.findById(id));
-		if(optionCodeReview.isPresent()) {
-			return codeReviewHistoryRepository.findByCodeReview(optionCodeReview.get());
-		}else {
-			return (List<CodeHistory>) new NoSuchElementException("no CodeReview");
-		}
+	public List<CodeHistoryDto> getCodeReviewHistory(int id) throws Exception{
+//		CodeReview optionCodeReview = codeReviewRepository.findById(id);
+//		===> []
+		
+		CodeReview optionCodeReview = Optional.ofNullable(codeReviewRepository.findById(id)).orElseThrow();
+//		===> NoSuchElementException
+		log.info("info log={}", optionCodeReview);
+		return codeReviewHistoryRepository.findByCodeReview(optionCodeReview).stream()
+				.map(CodeHistoryDto::fromEntity).collect(Collectors.toList());
 	}
 }
