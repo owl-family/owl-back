@@ -26,17 +26,17 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
     @Override
     public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
         // Request Header 에서 JWT 토큰 추출
-        String token = resolveToken((HttpServletRequest) request);
+        String accessToken = resolveToken((HttpServletRequest) request);
 
         // validationToken으로 토큰 유효성 검사
         // token이 null이 아니고 유효하다면
-        if(token != null && jwtTokenProvider.validateToken(token)){
+        if(accessToken != null && jwtTokenProvider.validateToken(accessToken)){
             // Redis에 해당 accessToken logout 여부 확인
             String isLogout = (String)redisTemplate.opsForValue() // OpsForValue(): String 값에 대한 Redis 작업이다.
-                    .get(token); // get(key): token(key)값을 가져온다
+                    .get(accessToken); // get(key): token(key)값을 가져온다
             if (ObjectUtils.isEmpty(isLogout)) {
                 // Authentication객체를 가지고 와서
-                Authentication authentication = jwtTokenProvider.getAuthentication(token);
+                Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
                 // SecurityContext에 저장
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             }

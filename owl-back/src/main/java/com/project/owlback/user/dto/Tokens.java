@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;
 
 @Getter
-public class Reissue {
+public class Tokens {
     @NotEmpty(message = "accessToken 을 입력해주세요.")
     private String accessToken;
 

@@ -1,9 +1,8 @@
 package com.project.owlback.user.controller;
 
 import com.project.owlback.Response;
-import com.project.owlback.user.dto.Reissue;
+import com.project.owlback.user.dto.Tokens;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -34,9 +33,18 @@ public class UserController {
 
     // access token 재발급; front에서 access token 만료여부를 확인해서 reissue를 요청함
     @PostMapping("/reissue")
-    public ResponseEntity<?> reissue(@RequestBody @Validated Reissue reissue) {
+    public ResponseEntity<?> reissue(@RequestBody @Validated Tokens reissue) {
         try {
             return userService.reissue(reissue);
+        }catch(Exception e){
+            return response.invalidFields(e.getMessage());
+        }
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<?>  logout(@RequestBody @Validated Tokens logout){
+        try{
+            return userService.logout(logout);
         }catch(Exception e){
             return response.invalidFields(e.getMessage());
         }

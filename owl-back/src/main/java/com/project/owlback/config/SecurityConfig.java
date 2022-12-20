@@ -39,8 +39,10 @@ public class SecurityConfig{
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/v3/api-docs/**", "/swagger*/**") // swagger
                         .permitAll()
-                        .requestMatchers("/api/users/**") // login
+                        .requestMatchers("/api/users/login") // login
                         .permitAll()
+                        .requestMatchers("/api/users/logout") // logout
+                        .hasAnyRole(new String[]{"ADMIN", "USER"})
                 )
                 // JWT인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행하겠다는 설정
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate),

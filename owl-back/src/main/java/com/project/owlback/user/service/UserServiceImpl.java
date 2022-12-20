@@ -1,6 +1,6 @@
 package com.project.owlback.user.service;
 
-import com.project.owlback.user.dto.Reissue;
+import com.project.owlback.user.dto.Tokens;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -55,7 +55,7 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public ResponseEntity<?> reissue(Reissue reissue) {
+    public ResponseEntity<?> reissue(Tokens reissue) {
         // refresh token이 유효한지 검증
         if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
             return response.fail("refresh token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
@@ -88,6 +88,33 @@ public class UserServiceImpl implements UserService{
                         tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
 
         return response.success(tokenInfo, "Token 정보가 갱신되었습니다.", HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<?> logout(Tokens logout) {
+        // access token 유효성 검증
+        if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
+            return response.fail("access token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+        }
+
+        // access token을 통해 Authentication 객체를 가져옴
+        Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
+
+        // email(authentication.getName())을 가지고
+        // redis에 저장된 refresh token을 가지고 옴(.get("RT:" + authentication.getName()))
+        // refresh token이 존재하면 삭제!
+        if (redisTemplate.opsForValue().get("RT:" + authentication.getName()) != null) {
+            // refresh token 삭제
+            redisTemplate.delete("RT:" + authentication.getName());
+        }
+
+        // access token 유효시간 가지고 와서 BlackList로 저장하기
+        // key: access token, value: logout
+        Long expirationTime = jwtTokenProvider.getExpirationTime(logout.getAccessToken());
+        redisTemplate.opsForValue()
+                .set(logout.getAccessToken(), "logout", expirationTime, TimeUnit.MILLISECONDS);
+
+        return response.success("로그아웃 되었습니다.");
     }
 
 }

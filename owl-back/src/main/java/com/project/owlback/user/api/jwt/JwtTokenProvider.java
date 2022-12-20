@@ -86,6 +86,7 @@ public class JwtTokenProvider {
     }
 
     // 토큰 정보를 검증하는 메서드
+    // ExpirationTime도 같이 검증함
     public boolean validateToken(String token) {
         try {
             Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(token);
@@ -124,11 +125,21 @@ public class JwtTokenProvider {
         return new UsernamePasswordAuthenticationToken(principal, "", authorities);
     }
 
+    // 토큰 복호화
     private Claims parseClaims(String accessToken) {
         try{
             return Jwts.parserBuilder().setSigningKey(key).build().parseClaimsJws(accessToken).getBody();
         } catch (ExpiredJwtException e) {
             return e.getClaims();
         }
+    }
+
+    public Long getExpirationTime(String accessToken) {
+        // access token 남은 유효시간 가져옴
+        Date expirationTime = parseClaims(accessToken).getExpiration();
+
+        // 현재 시간
+        Long now = new Date().getTime();
+        return expirationTime.getTime() - now;
     }
 }

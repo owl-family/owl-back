@@ -5,10 +5,8 @@ import jakarta.validation.constraints.Pattern;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 
 import lombok.Getter;
-import lombok.Setter;
 
 @Getter
-@Setter
 public class Login {
 
     @NotEmpty(message = "이메일은 필수 입력값입니다.")
