@@ -4,7 +4,6 @@ import com.project.owlback.codereview.dto.CodeCommentResDto;
 import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
 import com.project.owlback.codereview.dto.ResponseDto;
 import com.project.owlback.codereview.service.CodeReviewService;
-import com.project.owlback.codereview.service.CodeReviewServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
@@ -13,7 +12,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -32,12 +30,16 @@ public class CodeReviewController {
         reqDto.setCodeReviewId(codeReviewId);
         log.info("{}", reqDto);
 
-        final Integer id = codeReviewService.addComment(reqDto);
-        log.info("comment saved successfully id : {}", id);
+        try {
+            final Integer id = codeReviewService.addComment(reqDto);
+            log.info("comment saved successfully id : {}", id);
 
-        return new ResponseEntity<>(
-                ResponseDto.create(HttpStatus.OK, "comment saved successfully", Collections.emptyList()),
-                HttpStatus.OK);
+            return new ResponseEntity<>(
+                    ResponseDto.create(HttpStatus.OK, "comment saved successfully", Collections.emptyList()),
+                    HttpStatus.OK);
+        } catch(Exception e) {
+            return badRequest();
+        }
     }
 
     @PutMapping("/comments/{code_comment_id}")
@@ -48,17 +50,21 @@ public class CodeReviewController {
         reqDto.setCodeCommentId(codeCommentId);
         log.info("request Dto : {}", reqDto);
 
-        final int likeCount = codeReviewService.likeComment(reqDto);
+        try {
+            final int likeCount = codeReviewService.likeComment(reqDto);
 
-        Map<String, Integer> result = new HashMap<>();
-        result.put("likeCount", likeCount);
+            Map<String, Integer> result = new HashMap<>();
+            result.put("likeCount", likeCount);
 
-        List<Map<?, ?>> list = new ArrayList<>();
-        list.add(result);
+            List<Map<?, ?>> list = new ArrayList<>();
+            list.add(result);
 
-        return new ResponseEntity<>(
-                ResponseDto.create(HttpStatus.OK, "OK", list),
-                HttpStatus.OK);
+            return new ResponseEntity<>(
+                    ResponseDto.create(HttpStatus.OK, "OK", list),
+                    HttpStatus.OK);
+        } catch(Exception e) {
+            return badRequest();
+        }
     }
 
     @GetMapping("/comments")
@@ -70,9 +76,14 @@ public class CodeReviewController {
         final Page<CodeCommentResDto> response = codeReviewService.getMyComments(key, word, pageable);
         List<Page<?>> list = new ArrayList<>();
         list.add(response);
-
         return new ResponseEntity<>(
                 ResponseDto.create(HttpStatus.OK, "OK", list),
                 HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> badRequest() {
+        return new ResponseEntity<>(
+                ResponseDto.create(HttpStatus.BAD_REQUEST, "bad request", Collections.emptyList()),
+                HttpStatus.BAD_REQUEST);
     }
 }

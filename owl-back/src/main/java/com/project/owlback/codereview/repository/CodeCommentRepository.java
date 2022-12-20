@@ -17,8 +17,7 @@ public interface CodeCommentRepository extends JpaRepository<CodeComment, Intege
     Page<CodeComment> findByWriterAndCodeReviewTitle(
             @Param("writer") User writer, @Param("title") String title, Pageable pageable);
 
-    @Query("select cc from CodeComment cc where cc.writer=:writer " +
-            "and cc.codeHistory.codeReview.writer.nickname LIKE %:nickName%")
+    @Query("select cc from CodeComment cc where cc.writer=:writer and cc.codeHistory.codeReview.writer.nickname LIKE %:nickName%")
     Page<CodeComment> findByWriterAndUserNickName(
             @Param("writer") User writer, @Param("nickName") String nickName, Pageable pageable);
 }
