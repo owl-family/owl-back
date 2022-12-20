@@ -45,6 +45,7 @@ public class SecurityConfig{
                         .hasAnyRole(new String[]{"ADMIN", "USER"})
                 )
                 // JWT인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행하겠다는 설정
+                // 여기서 Role과 access token을 검사하게됨
                 .addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider, redisTemplate),
                         UsernamePasswordAuthenticationFilter.class);
 

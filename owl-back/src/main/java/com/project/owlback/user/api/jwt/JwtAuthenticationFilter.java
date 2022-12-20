@@ -29,9 +29,9 @@ public class JwtAuthenticationFilter extends GenericFilterBean {
         String accessToken = resolveToken((HttpServletRequest) request);
 
         // validationToken으로 토큰 유효성 검사
-        // token이 null이 아니고 유효하다면
+        // access token이 null이 아니고 유효하다면
         if(accessToken != null && jwtTokenProvider.validateToken(accessToken)){
-            // Redis에 해당 accessToken logout 여부 확인
+            // Redis에 해당 access token logout 여부 확인
             String isLogout = (String)redisTemplate.opsForValue() // OpsForValue(): String 값에 대한 Redis 작업이다.
                     .get(accessToken); // get(key): token(key)값을 가져온다
             if (ObjectUtils.isEmpty(isLogout)) {
