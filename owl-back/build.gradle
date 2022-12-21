@@ -9,9 +9,9 @@ version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '17'
 
 configurations {
-    compileOnly {
-        extendsFrom annotationProcessor
-    }
+	compileOnly {
+		extendsFrom annotationProcessor
+	}
 }
 
 repositories {
@@ -48,6 +48,14 @@ dependencies {
 
     // OAuth
     implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+    // file
+	implementation 'commons-io:commons-io:2.6' // 파일추가를 위함
+	implementation 'org.springframework.boot:spring-boot-starter-thymeleaf'
+	implementation 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect' /* 레이아웃 */
+
+	// Email Send
+	implementation 'org.springframework.boot:spring-boot-starter-mail'
 }
 
 tasks.named('test') {

@@ -1,4 +1,4 @@
-package com.project.owlback.user.dto;
+package com.project.owlback.user.dto.res;
 
 import lombok.Builder;
 import lombok.Getter;

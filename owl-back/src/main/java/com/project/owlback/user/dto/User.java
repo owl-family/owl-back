@@ -1,24 +1,25 @@
 package com.project.owlback.user.dto;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.List;
-import java.util.stream.Collectors;
-
-import jakarta.persistence.Column;
-import jakarta.persistence.ElementCollection;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.project.owlback.goal.dto.Goal;
+import com.project.owlback.user.dto.req.PutUserInfoReq;
+import com.project.owlback.util.BaseTimeEntity;
+import com.project.owlback.favorite.dto.Favorite;
+import com.project.owlback.favorite.dto.temp.CodeReview;
+import com.project.owlback.favorite.dto.temp.Url;
+import com.project.owlback.goal.dto.Subject;
+import com.project.owlback.score.dto.Score;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Collection;
+import java.util.stream.Collectors;
+
+import jakarta.persistence.*;
+
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -30,41 +31,83 @@ import org.springframework.security.core.userdetails.UserDetails;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class User implements UserDetails {
-
+@Table(name="user")
+public class User extends BaseTimeEntity  implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(columnDefinition="int")
-    private long userId;
+    @Column(name="user_id", nullable=false)
+    private Long userId;
 
-    @Column(length=50, nullable=false)
+    @Column(name="email", nullable=false)
     private String email;
 
-    @Column(length=10, nullable=false)
+    @Column(name="nickname", nullable=false)
     private String nickname;
 
-    @Column(length=10, nullable=false)
+    @Column(name="name", nullable=false)
     private String name;
 
-    @Column(columnDefinition="mediumblob")
-    private String imgFile;
 
-    @Column(length=1000, nullable=false)
-    @ColumnDefault("'안녕하세요!'")
+    @Column(name="introduction", nullable = false)
+    @ColumnDefault("''")
     private String introduction;
 
-    @Column(length=1000, nullable=false)
+    @Column(name="password", nullable = false)
     private String password;
 
-    @Column(columnDefinition="datetime DEFAULT CURRENT_TIMESTAMP", nullable=false)
-    private Date createdDate;
 
-    @Column(columnDefinition="timestamp DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP", nullable=false)
-    private Date modifiedDate;
-
-    @Column(columnDefinition="int", nullable=false)
+    @Column(name="status",nullable = false )
     @ColumnDefault("2")
-    private int status;
+    private Integer status;
+
+    @OneToOne(mappedBy ="user")
+    @JsonManagedReference // 순환참조 방지
+    private Goal goal;
+
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name="img_id")
+    private UserImg userImg;
+
+//    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+//    private Stat stat;
+//
+    @OneToMany(mappedBy = "user")
+    private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "user")
+    private List<Score> scores = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Favorite> favorites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Url> urls = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<CodeReview> codeReviews = new ArrayList<>();
+
+    public void updatePassword(String password) {
+        this.password = password;
+    }
+
+    public void updateInfo(PutUserInfoReq putUserInfoReq){
+        this.introduction=putUserInfoReq.getIntroduction();
+        this.nickname= putUserInfoReq.getNickname();
+    }
+
+    public void deleteUser(){
+        this.status=0;
+    }
+
+    public void updateImg(UserImg userImg){
+        UserImg u = new UserImg();
+        u.setImgId(userImg.getImgId());
+        u.setFileName(userImg.getFileName());
+        u.setFileOriginalName(userImg.getFileOriginalName());
+        u.setFileUrl(userImg.getFileUrl());
+        this.userImg=u;
+    }
 
     @Column
     @ElementCollection(fetch = FetchType.EAGER)
@@ -102,5 +145,4 @@ public class User implements UserDetails {
     public boolean isEnabled() {
         return true;
     }
-
 }

@@ -1,8 +1,8 @@
 package com.project.owlback.user.service;
 
-import com.project.owlback.user.dto.Tokens;
+import com.project.owlback.user.dto.req.Tokens;
 
-import com.project.owlback.user.dto.Login;
+import com.project.owlback.user.dto.req.Login;
 
 import java.util.Optional;
 

@@ -1,4 +1,4 @@
-package com.project.owlback.user.dto;
+package com.project.owlback.user.dto.req;
 
 import jakarta.validation.constraints.NotEmpty;
 import lombok.Getter;

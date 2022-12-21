@@ -1,7 +1,7 @@
 package com.project.owlback.user.service;
 
 import com.project.owlback.user.dto.SessionUser;
-import com.project.owlback.user.dto.Tokens;
+import com.project.owlback.user.dto.req.Tokens;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -11,8 +11,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
 import com.project.owlback.user.api.jwt.JwtTokenProvider;
-import com.project.owlback.user.dto.Login;
-import com.project.owlback.user.dto.TokenInfo;
+import com.project.owlback.user.dto.req.Login;
+import com.project.owlback.user.dto.res.TokenInfo;
 import com.project.owlback.user.repository.UserRepository;
 import org.springframework.util.ObjectUtils;
 
@@ -66,7 +66,7 @@ public class AuthServiceImpl implements AuthService {
         // access token에서 Authentication 객체를 가지고 옴
         Authentication authentication = jwtTokenProvider.getAuthentication(reissue.getAccessToken());
 
-        // email(authentication.getName())을 가지고
+        // userId(authentication.getName())을 가지고
         // redis에 저장된 refresh token을 가지고 옴(.get("RT:" + authentication.getName()))
         String refreshToken = (String)redisTemplate.opsForValue()
                 .get("RT:" + authentication.getName());
