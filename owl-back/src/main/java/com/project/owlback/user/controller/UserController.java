@@ -1,9 +1,8 @@
 package com.project.owlback.user.controller;
 
-import com.project.owlback.Response;
-import com.project.owlback.dto.ResponseDto;
 import com.project.owlback.user.dto.TokenInfo;
 import com.project.owlback.user.dto.Tokens;
+import com.project.owlback.util.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -16,8 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.project.owlback.user.dto.Login;
 import com.project.owlback.user.service.UserServiceImpl;
-
-import java.util.Arrays;
 
 @RequestMapping("/api/users")
 @RestController
@@ -38,8 +35,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return response.success(tokenInfo, "로그인이 성공했습니다.", HttpStatus.OK);
-        else return response.fail("로그인이 실패했습니다.", HttpStatus.BAD_REQUEST);
+        if(tokenInfo != null) return response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
+        else return response.makeResponse(HttpStatus.FORBIDDEN, "로그인이 실패했습니다.");
     }
 
     // access token 재발급; front에서 access token 만료여부를 확인해서 reissue를 요청함
@@ -53,8 +50,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return response.success(tokenInfo, "재발급 완료", HttpStatus.OK);
-        else return response.fail("재발급 실패", HttpStatus.BAD_REQUEST);
+        if(tokenInfo != null) return response.makeResponse(HttpStatus.OK, "재발급 완료", 1, tokenInfo);
+        else return response.makeResponse(HttpStatus.FORBIDDEN, "재발급 실패");
     }
 
     @PostMapping("/logout")
@@ -66,8 +63,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(isLogout) return response.success("로그아웃되었습니다.");
-        else return response.fail("로그아웃이 실패했습니다.", HttpStatus.BAD_REQUEST);
+        if(isLogout) return response.makeResponse(HttpStatus.OK, "로그아웃되었습니다.");
+        else return response.makeResponse(HttpStatus.FORBIDDEN, "로그아웃이 실패했습니다.");
     }
 
     @PostMapping("/login/social")
@@ -80,8 +77,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return response.success(tokenInfo, "로그인이 성공했습니다.", HttpStatus.OK);
-        else return response.fail("signUp", HttpStatus.BAD_REQUEST);
+        if(tokenInfo != null) return response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
+        else return response.makeResponse(HttpStatus.FORBIDDEN, "signUp");
     }
 
 }

@@ -4,16 +4,12 @@ import com.project.owlback.user.dto.SessionUser;
 import com.project.owlback.user.dto.Tokens;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Service;
 
-import com.project.owlback.Response;
 import com.project.owlback.user.api.jwt.JwtTokenProvider;
 import com.project.owlback.user.dto.Login;
 import com.project.owlback.user.dto.TokenInfo;
