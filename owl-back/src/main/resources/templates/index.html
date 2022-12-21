@@ -1,0 +1,15 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>이미지 업로드 테스트 </title>
+    <form method="POST" th:action="@{/api/users/img/1}" enctype="multipart/form-data">
+        <input multiple type="file" name="files">
+        <button type="submit">submit</button>
+
+    </form>
+</head>
+<body>
+
+</body>
+</html>

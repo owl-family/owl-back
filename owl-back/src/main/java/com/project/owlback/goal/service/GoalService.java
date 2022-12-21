@@ -2,8 +2,6 @@ package com.project.owlback.goal.service;
 
 import com.project.owlback.goal.dto.Goal;
 import com.project.owlback.goal.dto.UpdateGoal;
-import com.project.owlback.user.dto.UpdateInfo;
-import com.project.owlback.user.dto.User;
 
 public interface GoalService {
 

@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.owlback.goal.dto.Goal;
 import com.project.owlback.goal.dto.UpdateGoal;
+import com.project.owlback.user.dto.req.PutUserInfoReq;
 import com.project.owlback.util.BaseTimeEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -35,9 +36,6 @@ public class User extends BaseTimeEntity {
     @Column(name="name", nullable=false)
     private String name;
 
-    @Column(name="img_file")
-    private byte[] imgFile;
-
 
     @Column(name="introduction", nullable = false)
     @ColumnDefault("''")
@@ -55,18 +53,31 @@ public class User extends BaseTimeEntity {
     @JsonManagedReference // 순환참조 방지
     private Goal goal;
 
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name="img_id")
+    private UserImg userImg;
+
     public void updatePassword(String password) {
         this.password = password;
     }
 
-    public void updateInfo(UpdateInfo updateinfo){
-        this.imgFile = updateinfo.getImgFile();
-        this.introduction=updateinfo.getIntroduction();
-        this.nickname= updateinfo.getNickname();
+    public void updateInfo(PutUserInfoReq putUserInfoReq){
+        this.introduction=putUserInfoReq.getIntroduction();
+        this.nickname= putUserInfoReq.getNickname();
     }
 
     public void deleteUser(){
         this.status=0;
+    }
+
+    public void updateImg(UserImg userImg){
+        UserImg u = new UserImg();
+        u.setImgId(userImg.getImgId());
+        u.setFileName(userImg.getFileName());
+        u.setFileOriginalName(userImg.getFileOriginalName());
+        u.setFileUrl(userImg.getFileUrl());
+        this.userImg=u;
     }
 
 

@@ -1,4 +1,4 @@
-package com.project.owlback.user.dto;
+package com.project.owlback.user.dto.req;
 
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class CreateUserReq {
+public class PostUserReq {
 
     @Email
     @NotBlank

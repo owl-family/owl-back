@@ -1,9 +1,10 @@
 package com.project.owlback.user.service;
 
 
-import com.project.owlback.user.dto.CreateUserReq;
-import com.project.owlback.user.dto.UpdateInfo;
+import com.project.owlback.user.dto.UserImg;
+import com.project.owlback.user.dto.req.PostUserReq;
 import com.project.owlback.user.dto.User;
+import com.project.owlback.user.dto.req.PutUserInfoReq;
 
 import java.util.Optional;
 
@@ -20,11 +21,13 @@ public interface UserService {
 
     User findByUserId(Long userId);
 
-    void createUser(CreateUserReq createUserReq);
+    void createUser(PostUserReq postUserReq);
 
     boolean findByNickname(String nickname);
 
-    void updateInfo(Long userId, UpdateInfo updateInfo);
+    void updateInfo(Long userId, PutUserInfoReq putUserInfoReq);
 
     void deleteUser(Long userId);
+
+    UserImg findUserImgByUserId(Long userId);
 }

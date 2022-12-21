@@ -2,9 +2,11 @@ package com.project.owlback.user.service;
 
 import com.project.owlback.goal.dto.Goal;
 import com.project.owlback.goal.repository.GoalRepository;
-import com.project.owlback.user.dto.CreateUserReq;
-import com.project.owlback.user.dto.UpdateInfo;
+import com.project.owlback.user.dto.UserImg;
+import com.project.owlback.user.dto.req.PostUserReq;
 import com.project.owlback.user.dto.User;
+import com.project.owlback.user.dto.req.PutUserInfoReq;
+import com.project.owlback.user.repository.UserImgRepository;
 import com.project.owlback.user.repository.UserRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,10 +25,13 @@ public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
     private GoalRepository goalRepository;
 
+    private UserImgRepository userImgRepository;
+
     @Autowired
-    public UserServiceImpl(UserRepository userRepository, GoalRepository goalRepository) {
+    public UserServiceImpl(UserRepository userRepository, GoalRepository goalRepository,UserImgRepository userImgRepository) {
         this.userRepository = userRepository;
         this.goalRepository = goalRepository;
+        this.userImgRepository=userImgRepository;
     }
 
     @Override
@@ -64,13 +69,13 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void createUser(CreateUserReq createUserReq) {
+    public void createUser(PostUserReq postUserReq) {
 
         User user = User.builder()
-                .name(createUserReq.getName())
-                .nickname(createUserReq.getNickname())
-                .email(createUserReq.getEmail())
-                .password(passwordEncoder.encode(createUserReq.getPassword()))
+                .name(postUserReq.getName())
+                .nickname(postUserReq.getNickname())
+                .email(postUserReq.getEmail())
+                .password(passwordEncoder.encode(postUserReq.getPassword()))
                 .build();
         log.info("new user : {}", user);
         Long userId = userRepository.save(user).getUserId();
@@ -93,9 +98,9 @@ public class UserServiceImpl implements UserService {
 
     @Override
     @Transactional
-    public void updateInfo(Long userId, UpdateInfo updateInfo) {
+    public void updateInfo(Long userId, PutUserInfoReq putUserInfoReq) {
         User user = userRepository.findById(userId).orElseThrow();
-        user.updateInfo(updateInfo);
+        user.updateInfo(putUserInfoReq);
         userRepository.save(user);
     }
 
@@ -105,6 +110,14 @@ public class UserServiceImpl implements UserService {
         User user = userRepository.findById(userId).orElseThrow();
         user.deleteUser();
         userRepository.save(user);
+    }
+
+    @Override
+    public UserImg findUserImgByUserId(Long userId) {
+        User user = userRepository.findById(userId).orElseThrow();
+        UserImg userImg = user.getUserImg();
+        return userImg;
+
     }
 
 
