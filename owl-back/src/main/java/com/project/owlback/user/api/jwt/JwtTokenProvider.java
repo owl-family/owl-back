@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.stream.Collectors;
 
+import com.project.owlback.user.dto.SessionUser;
 import com.project.owlback.user.repository.UserRepository;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.SignatureException;
@@ -60,21 +61,12 @@ public class JwtTokenProvider {
 
         // Access Token 생성
         Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
-        String accessToken = Jwts.builder()
-                .setSubject(Long.toString(user.getUserId())) // 아이디
-                .claim("nickName", user.getNickname())
-                .claim("auth", authorities) // 권한
-                .setExpiration(accessTokenExpiresIn)
-                .signWith(key, SignatureAlgorithm.HS256)
-                .compact();
+        String accessToken = createAccessToken(authorities, user, accessTokenExpiresIn);
 
         // refresh token이 없을 때
         if(refreshToken == null) {
             // Refresh Token 생성
-            refreshToken = Jwts.builder()
-                    .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
-                    .signWith(key, SignatureAlgorithm.HS256)
-                    .compact();
+            refreshToken = createRefreshToken(now);
         }
 
         return TokenInfo.builder()
@@ -83,6 +75,23 @@ public class JwtTokenProvider {
                 .refreshToken(refreshToken)
                 .refreshTokenExpirationTime(REFRESH_TOKEN_EXPIRE_TIME)
                 .build();
+    }
+
+    private String createAccessToken(String authorities, com.project.owlback.user.dto.User user, Date accessTokenExpiresIn) {
+        return Jwts.builder()
+                .setSubject(Long.toString(user.getUserId())) // 아이디
+                .claim("nickName", user.getNickname())
+                .claim("auth", authorities) // 권한
+                .setExpiration(accessTokenExpiresIn)
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
+    }
+
+    private String createRefreshToken(long now) {
+        return Jwts.builder()
+                .setExpiration(new Date(now + REFRESH_TOKEN_EXPIRE_TIME))
+                .signWith(key, SignatureAlgorithm.HS256)
+                .compact();
     }
 
     // 토큰 정보를 검증하는 메서드
@@ -141,5 +150,31 @@ public class JwtTokenProvider {
         // 현재 시간
         Long now = new Date().getTime();
         return expirationTime.getTime() - now;
+    }
+
+    public TokenInfo generateToken(SessionUser sessionUser) {
+        long now = (new Date()).getTime();
+
+        // userId로 User 정보들 가져오기
+        com.project.owlback.user.dto.User user = userRepository.findByEmail(sessionUser.getEmail()).get();
+
+        // 권한 가져오기
+        String authorities = user.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .collect(Collectors.joining(","));
+
+        // Access Token 생성
+        Date accessTokenExpiresIn = new Date(now + ACCESS_TOKEN_EXPIRE_TIME);
+        String accessToken = createAccessToken(authorities, user, accessTokenExpiresIn);
+
+        // Refresh Token 생성
+        String refreshToken = createRefreshToken(now);
+
+        return TokenInfo.builder()
+                .grantType(BEARER_TYPE) // JWT 혹은 OAuth에 대한 토큰을 사용
+                .accessToken(accessToken)
+                .refreshToken(refreshToken)
+                .refreshTokenExpirationTime(REFRESH_TOKEN_EXPIRE_TIME)
+                .build();
     }
 }

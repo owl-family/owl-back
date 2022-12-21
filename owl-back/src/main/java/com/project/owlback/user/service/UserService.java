@@ -10,4 +10,5 @@ public interface UserService{
     public ResponseEntity<?> login(Login login);
     ResponseEntity<?> reissue(Tokens reissue);
     ResponseEntity<?> logout(Tokens logout);
+    ResponseEntity<?> socialLogin();
 }

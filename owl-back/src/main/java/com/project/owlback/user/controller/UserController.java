@@ -50,4 +50,9 @@ public class UserController {
         }
     }
 
+    @PostMapping("/login/social")
+    public ResponseEntity<?> socialLogin(){
+        return userService.socialLogin();
+    }
+
 }

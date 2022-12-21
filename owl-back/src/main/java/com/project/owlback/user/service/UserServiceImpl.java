@@ -1,6 +1,8 @@
 package com.project.owlback.user.service;
 
+import com.project.owlback.user.dto.SessionUser;
 import com.project.owlback.user.dto.Tokens;
+import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
@@ -115,6 +117,20 @@ public class UserServiceImpl implements UserService{
                 .set(logout.getAccessToken(), "logout", expirationTime, TimeUnit.MILLISECONDS);
 
         return response.success("로그아웃 되었습니다.");
+    }
+
+    private final HttpSession httpSession;
+
+    @Override
+    public ResponseEntity<?> socialLogin() {
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+        httpSession.removeAttribute("user");
+
+        if(user.getNickname() == null)
+            return response.fail(user,"signUp", HttpStatus.NO_CONTENT);
+
+        TokenInfo tokenInfo = jwtTokenProvider.generateToken(user);
+        return response.success(tokenInfo, "로그인에 성공했습니다.", HttpStatus.OK);
     }
 
 }
