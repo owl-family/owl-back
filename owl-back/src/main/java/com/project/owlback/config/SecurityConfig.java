@@ -50,6 +50,8 @@ public class SecurityConfig{
                         .permitAll()
                         .requestMatchers("/api/users/logout") // logout
                         .hasAnyRole(new String[]{"ADMIN", "USER"}) // hasAnyRole이 String 앞에 "ROLE_"을 추가해줌
+                        .requestMatchers("/api/**") // for test
+                        .permitAll()
                 )
                 // JWT인증을 위하여 직접 구현한 필터를 UsernamePasswordAuthenticationFilter 전에 실행하겠다는 설정
                 // 여기서 Role과 access token을 검사하게됨
