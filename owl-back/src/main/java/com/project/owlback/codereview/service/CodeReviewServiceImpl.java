@@ -1,5 +1,6 @@
 package com.project.owlback.codereview.service;
 
+import com.project.owlback.codereview.condition.CodeReviewSearchCondition;
 import com.project.owlback.codereview.dto.CodeCommentDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
 import com.project.owlback.codereview.dto.CodeReviewItemDto;
@@ -11,7 +12,6 @@ import com.project.owlback.codereview.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -19,69 +19,48 @@ import org.springframework.stereotype.Service;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Stream;
+import java.util.Locale;
 
 @Service
 @Slf4j
 @RequiredArgsConstructor
 public class CodeReviewServiceImpl implements CodeReviewService {
-    final private CodeReviewRepository codeReviewRepository;
 
-    final private CodeReviewHistoryRepository codeReviewHistoryRepository;
+    private final CodeReviewRepositoryCustom codeReviewRepositoryCustom;
 
-    final private CodeReviewTagRepository codeReviewTagRepository;
+    private final CodeReviewHistoryRepository codeReviewHistoryRepository;
 
-    final private CodeCommentRepository codeCommentRepository;
+    private final CodeReviewTagRepositoryCustom codeReviewTagRepositoryCustom;
 
-    final private CodeCommentLikeRepository codeCommentLikeRepository;
+    private final CodeCommentLikeRepository codeCommentLikeRepository;
 
-
-    @Override
-    public Page<CodeReviewItemDto> codeReviewList(String key, int id, Pageable pageable) throws Exception {
-        Page<CodeReview> list = null;
-
-        if (key.equals("all")) {
-            list = codeReviewRepository.findAll(pageable);
-            log.info("get codeReviewList : {}", list);
-
-        } else if (key.equals("study")) {
-            list = codeReviewRepository.findByStudyGroupId(id, pageable);
-            log.info("get codeReviewList : {}", list);
-        }
-
-        return changeToCodeReviewDto(list);
-    }
+    private final CodeCommentRepositoryCustom codeCommentRepositoryCustom;
 
     @Override
     public Page<CodeReviewItemDto> codeReviewSearch(String key, String word, Pageable pageable) throws Exception {
+
+        CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
+        condition.setKey(key);
+
+        switch (key) {
+            case "study" -> condition.setStudyGroupId(Long.parseLong(word));
+            case "title" -> condition.setTitle(word.toUpperCase());
+            case "writer" -> condition.setWriter(word.toUpperCase());
+            case "language" -> condition.setLanguage(word.toUpperCase());
+            case "tag" -> condition.setTag(word.toUpperCase());
+        }
+
         Page<CodeReview> list = null;
 
-        if (key.equals("title")) {
-            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "modifiedDate"));
-            list = codeReviewRepository.findByTitleLike('%' + word + '%', pageable);
-            log.info("get codeReviewList : {}", list);
-
-        } else if (key.equals("tag")) {
-            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "modifiedDate"));
-            Page<CodeReviewTag> codeReviewTagList = codeReviewTagRepository
-                    .findByTagContentLike('%' + word + '%', pageable);
-            log.info("get codeReviewTagList : {}", codeReviewTagList);
-            list = codeReviewTagList.map(CodeReviewTag::getCodeReview);
-
-            log.info("get codeReviewList : {}", list);
-
-        } else if (key.equals("writer")) {
-            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "codeReview.modifiedDate"));
-            list = codeReviewRepository.findByWriterNicknameLike('%' + word + '%', pageable);
-            log.info("get codeReviewList : {}", list);
-
-        } else if (key.equals("language")) {
-            pageable.getSortOr(Sort.by(Sort.Direction.DESC, "modifiedDate"));
-            String param = word.toUpperCase();
-            list = codeReviewRepository.findByCodeLanguageDescriptionLike('%' + param + '%', pageable);
-            log.info("get codeReviewList : {}", list);
-
+        if (!key.equals("tag")) {
+            list = codeReviewRepositoryCustom.SearchByCondition(condition, pageable);
+        } else {
+            Page<CodeReviewTag> tagList = codeReviewTagRepositoryCustom.findByTagContent(condition, pageable);
+            log.info("get codeReviewTagList : {}", tagList);
+            list = tagList.map(CodeReviewTag::getCodeReview);
         }
+
+        log.info("get codeReviewList : {}", list);
 
         return changeToCodeReviewDto(list);
     }
@@ -99,9 +78,13 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
     @Override
     public Page<CodeCommentDetailDto> codeReviewCommentsDetail(
-            int historyId, int startLine, int userId, Pageable pageable) throws Exception {
+            long historyId, int startLine, int userId, Pageable pageable) throws Exception {
 
-        Page<CodeComment> list = codeCommentRepository.findByCodeHistoryIdAndStartLine(historyId, startLine, pageable);
+        CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
+        condition.setCodeHistoryId(historyId);
+        condition.setStartLine(startLine);
+
+        Page<CodeComment> list = codeCommentRepositoryCustom.getCodeComment(condition, pageable);
         log.info("get code comments : {}", list);
 
         Page<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
@@ -111,9 +94,12 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     }
 
     @Override
-    public Page<CodeCommentDetailDto> codeReviewComments(int historyId, int userId, Pageable pageable) throws Exception {
+    public Page<CodeCommentDetailDto> codeReviewComments(long historyId, int userId, Pageable pageable) throws Exception {
 
-        Page<CodeComment> list = codeCommentRepository.findByCodeHistoryId(historyId, pageable);
+        CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
+        condition.setCodeHistoryId(historyId);
+
+        Page<CodeComment> list = codeCommentRepositoryCustom.getCodeComment(condition, pageable);
         log.info("get code comments : {}", list);
 
         Page<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
@@ -124,16 +110,13 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
     @Override
     public List<String> getRelativeTags(String word) throws Exception {
-        List<CodeReviewTag> tags = codeReviewTagRepository.findByTagContentLikeOrderByCountDesc('%' + word + '%');
+        CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
+        condition.setTag(word);
+
+        List<String> tags = codeReviewTagRepositoryCustom.getTagContent(condition);
         log.info("get tags : {}", tags);
 
-        List<String> result = new ArrayList<>();
-        for (CodeReviewTag tag : tags) {
-            result.add(tag.getTag().getContent());
-        }
-        log.info("get tag content : {}", result);
-
-        return result;
+        return tags;
     }
 
 
@@ -141,8 +124,9 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     public Page<CodeReviewItemDto> changeToCodeReviewDto(Page<CodeReview> list) throws Exception {
         Page<CodeReviewItemDto> dtoList = list.map(c -> {
             try {
-                List<String> tags = codeReviewTagRepository
-                        .findByCodeReviewId(c.getId()).stream().map(t -> t.getTag().getContent()).toList();
+                CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
+                condition.setCodeReviewId(c.getId());
+                List<String> tags = codeReviewTagRepositoryCustom.getTagContentbyCodeReviewId(condition);
                 log.info("get tagList : {}", tags);
 
                 return new CodeReviewItemDto(c, tags);
@@ -156,8 +140,10 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
     public CodeHistoryDetailDto changeToCodeReviewHistoryDto(
             CodeHistory history, int userId, Pageable pageable) throws Exception {
+        CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
+        condition.setCodeHistoryId(history.getId());
 
-        Page<CodeComment> list = codeCommentRepository.findByCodeHistoryId(history.getId(), pageable);
+        Page<CodeComment> list = codeCommentRepositoryCustom.getCodeComment(condition, pageable);
         Page<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
         log.info("get code comments : {}", comments);
 
@@ -165,7 +151,8 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     }
 
     public Page<CodeCommentDetailDto> changeToCodeCommentDto(Page<CodeComment> comments, int userId) throws Exception {
-        Page<CodeCommentDetailDto> list = comments.map(c -> {
+
+        return comments.map(c -> {
             try {
                 int cnt = codeCommentLikeRepository.countByUserIdAndCodeCommentId(userId, c.getId());
                 boolean isLike = (cnt > 0);
@@ -176,8 +163,6 @@ public class CodeReviewServiceImpl implements CodeReviewService {
                 throw new RuntimeException(e);
             }
         });
-
-        return list;
     }
 
 }

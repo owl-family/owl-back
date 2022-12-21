@@ -29,41 +29,18 @@ public class CodeReviewController {
 
     @GetMapping("")
     public ResponseEntity<Map<String, Object>> codeReviewList(
-            @RequestParam String key, @RequestParam(defaultValue = "0") Integer id,
-            @PageableDefault(size = 20, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable)
+            @RequestParam String key, @RequestParam(defaultValue = "0") String word,
+            @PageableDefault(size = 20) Pageable pageable)
             throws Exception {
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
-
-        log.info("key : {}, id : {}, pageable : {}", key, id, pageable);
-
-        Page<CodeReviewItemDto> list = null;
-        list = service.codeReviewList(key, id, pageable);
-        log.info("list : {}", list);
-
-        if (list == null || list.getTotalPages() == 0) {
-            resultMap.put("message", "no data");
-            status = HttpStatus.NO_CONTENT;
-        } else {
-            resultMap.put("message", "success");
-            resultMap.put("list", list);
-            status = HttpStatus.OK;
-        }
-
-        return new ResponseEntity<>(resultMap, status);
-    }
-
-    @GetMapping("/search")
-    public ResponseEntity<Map<String, Object>> codeReviewSearch(
-            @RequestParam String key, @RequestParam String word,
-            @PageableDefault(size = 20) Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
 
         log.info("key : {}, word : {}, pageable : {}", key, word, pageable);
 
+        Page<CodeReviewItemDto> list = null;
+
         try {
-            Page<CodeReviewItemDto> list = service.codeReviewSearch(key, word, pageable);
+            list = service.codeReviewSearch(key, word, pageable);
             log.info("list : {}", list);
 
             if (list == null || list.getTotalPages() == 0) {
@@ -76,7 +53,7 @@ public class CodeReviewController {
             }
         } catch (Exception e) {
             resultMap.put("message", "fail");
-            throw new RuntimeException(e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         return new ResponseEntity<>(resultMap, status);
@@ -108,8 +85,8 @@ public class CodeReviewController {
             resultMap.put("message", "no data");
             status = HttpStatus.NO_CONTENT;
 
-        } catch (Exception e){
-            resultMap.put("message","fail");
+        } catch (Exception e) {
+            resultMap.put("message", "fail");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
 
         }
@@ -119,7 +96,7 @@ public class CodeReviewController {
 
     @GetMapping("/history/{historyId}/comments")
     public ResponseEntity<?> codeReviewComments(
-            @PathVariable int historyId, HttpServletRequest request,
+            @PathVariable long historyId, HttpServletRequest request,
             @PageableDefault(size = 20, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
         Map<String, Object> resultMap = new HashMap<>();
@@ -142,12 +119,13 @@ public class CodeReviewController {
 
     @GetMapping("/history/{historyId}/comments/{startLine}")
     public ResponseEntity<?> codeReviewCommentsDetail(
-            @PathVariable int historyId, @PathVariable int startLine, HttpServletRequest request,
+            @PathVariable long historyId, @PathVariable int startLine, HttpServletRequest request,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable) {
 
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         log.info("historyId : {}, startLine : {}", historyId, startLine);
+
 
         // access-token에서 userId 뽑기
         String token = request.getHeader("access-token");

@@ -12,7 +12,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CodeHistoryDetailDto {
-    int id;
+    long id;
     String title;
     String subTitle;
     int version;

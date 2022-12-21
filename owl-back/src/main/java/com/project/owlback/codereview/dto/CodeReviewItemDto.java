@@ -1,14 +1,11 @@
 package com.project.owlback.codereview.dto;
 
 import com.project.owlback.codereview.model.CodeReview;
-import com.project.owlback.codereview.model.CodeReviewTag;
-import com.project.owlback.codereview.repository.CodeReviewTagRepository;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
 
 import java.sql.SQLException;
 import java.time.Instant;
-import java.util.ArrayList;
 import java.util.List;
 
 
@@ -18,7 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class CodeReviewItemDto {
-    int id;
+    long id;
     List<String> tags;
     String title;
     int versionCount;
