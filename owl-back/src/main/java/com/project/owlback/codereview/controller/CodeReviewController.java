@@ -2,7 +2,6 @@ package com.project.owlback.codereview.controller;
 
 import com.project.owlback.codereview.dto.CodeCommentDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
-import com.project.owlback.codereview.dto.CodeReviewItemDto;
 import com.project.owlback.codereview.service.CodeReviewService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -28,7 +27,7 @@ public class CodeReviewController {
     final private CodeReviewService service;
 
     @GetMapping("")
-    public ResponseEntity<Map<String, Object>> codeReviewList(
+    public ResponseEntity<?> codeReviewList(
             @RequestParam String key, @RequestParam(defaultValue = "0") String word,
             @PageableDefault(size = 20) Pageable pageable)
             throws Exception {
@@ -37,20 +36,14 @@ public class CodeReviewController {
 
         log.info("key : {}, word : {}, pageable : {}", key, word, pageable);
 
-        Page<CodeReviewItemDto> list = null;
-
         try {
-            list = service.codeReviewSearch(key, word, pageable);
+            Page<?> list = service.codeReviewSearch(key, word, pageable);
             log.info("list : {}", list);
 
-            if (list == null || list.getTotalPages() == 0) {
-                resultMap.put("message", "no data");
-                status = HttpStatus.NO_CONTENT;
-            } else {
-                resultMap.put("message", "success");
-                resultMap.put("list", list);
-                status = HttpStatus.OK;
-            }
+            resultMap.put("message", "success");
+            resultMap.put("list", list);
+
+            status = HttpStatus.OK;
         } catch (Exception e) {
             resultMap.put("message", "fail");
             status = HttpStatus.INTERNAL_SERVER_ERROR;
@@ -60,7 +53,7 @@ public class CodeReviewController {
     }
 
     @GetMapping("/{codeReviewId}/history/{versionNum}")
-    public ResponseEntity<Map<String, Object>> codeReviewHistoryDetail(
+    public ResponseEntity<?> codeReviewHistoryDetail(
             @PathVariable int codeReviewId, @PathVariable int versionNum, HttpServletRequest request,
             @PageableDefault(size = 10) Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -136,18 +129,13 @@ public class CodeReviewController {
             Page<CodeCommentDetailDto> comments = service.codeReviewCommentsDetail(historyId, startLine, userId, pageable);
             log.info("comments : {}", comments);
 
-            if (comments == null || comments.getTotalPages() == 0) {
-                resultMap.put("message", "no data");
-                status = HttpStatus.NO_CONTENT;
-            } else {
-                resultMap.put("message", "success");
-                resultMap.put("comments", comments);
-                status = HttpStatus.OK;
-            }
+            resultMap.put("message", "success");
+            resultMap.put("comments", comments);
+            status = HttpStatus.OK;
 
         } catch (Exception e) {
             resultMap.put("message", "fail");
-            throw new RuntimeException(e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
 
         return new ResponseEntity<>(resultMap, status);
@@ -155,7 +143,7 @@ public class CodeReviewController {
 
 
     @GetMapping("/tag/{word}")
-    public ResponseEntity<Map<String, Object>> codeReviewRelativeTags(@PathVariable String word) {
+    public ResponseEntity<?> codeReviewRelativeTags(@PathVariable String word) {
         Map<String, Object> resultMap = new HashMap<>();
         HttpStatus status = null;
         log.info("word : {}", word);
@@ -164,18 +152,13 @@ public class CodeReviewController {
             List<String> tags = service.getRelativeTags(word);
             log.info("tags : {}", tags);
 
-            if (tags == null || tags.size() == 0) {
-                resultMap.put("message", "no data");
-                status = HttpStatus.NO_CONTENT;
-            } else {
-                resultMap.put("message", "success");
-                resultMap.put("tags", tags);
-                status = HttpStatus.OK;
-            }
+            resultMap.put("message", "success");
+            resultMap.put("tags", tags);
+            status = HttpStatus.OK;
 
         } catch (Exception e) {
             resultMap.put("message", "fail");
-            throw new RuntimeException(e);
+            status = HttpStatus.INTERNAL_SERVER_ERROR;
         }
         return new ResponseEntity<>(resultMap, status);
     }

@@ -21,5 +21,8 @@
         <module name="com.project.owl-back.main" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="com.project.owl-back.querydsl" target="17" />
+    </bytecodeTargetLevel>
   </component>
 </project>

@@ -3,23 +3,21 @@ package com.project.owlback.codereview.service;
 import com.project.owlback.codereview.condition.CodeReviewSearchCondition;
 import com.project.owlback.codereview.dto.CodeCommentDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
-import com.project.owlback.codereview.dto.CodeReviewItemDto;
+import com.project.owlback.codereview.dto.CodeHistoryResDto;
+import com.project.owlback.codereview.dto.CodeReviewResDto;
 import com.project.owlback.codereview.model.CodeComment;
 import com.project.owlback.codereview.model.CodeHistory;
+import com.project.owlback.codereview.model.CodeHistoryTag;
 import com.project.owlback.codereview.model.CodeReview;
-import com.project.owlback.codereview.model.CodeReviewTag;
 import com.project.owlback.codereview.repository.*;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 
 @Service
 @Slf4j
@@ -30,14 +28,16 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
     private final CodeReviewHistoryRepository codeReviewHistoryRepository;
 
-    private final CodeReviewTagRepositoryCustom codeReviewTagRepositoryCustom;
+    private final CodeHistoryTagRepositoryCustom codeHistoryTagRepositoryCustom;
 
     private final CodeCommentLikeRepository codeCommentLikeRepository;
 
     private final CodeCommentRepositoryCustom codeCommentRepositoryCustom;
 
+    private final CodeHistoryRepositoryCustom codeHistoryRepositoryCustom;
+
     @Override
-    public Page<CodeReviewItemDto> codeReviewSearch(String key, String word, Pageable pageable) throws Exception {
+    public Page<?> codeReviewSearch(String key, String word, Pageable pageable) throws Exception {
 
         CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
         condition.setKey(key);
@@ -50,19 +50,25 @@ public class CodeReviewServiceImpl implements CodeReviewService {
             case "tag" -> condition.setTag(word.toUpperCase());
         }
 
-        Page<CodeReview> list = null;
 
         if (!key.equals("tag")) {
+            Page<CodeReview> list = null;
+
             list = codeReviewRepositoryCustom.SearchByCondition(condition, pageable);
+            log.info("get codeReviewList : {}", list);
+
+            return changeToCodeReviewDto(list);
         } else {
-            Page<CodeReviewTag> tagList = codeReviewTagRepositoryCustom.findByTagContent(condition, pageable);
+            Page<CodeHistoryTag> tagList = codeHistoryTagRepositoryCustom.findByTagContent(condition, pageable);
             log.info("get codeReviewTagList : {}", tagList);
-            list = tagList.map(CodeReviewTag::getCodeReview);
+
+            Page<CodeHistory> list = null;
+
+            list = tagList.map(CodeHistoryTag::getCodeHistory);
+
+            return changeToCodeHistoryDto(list);
         }
 
-        log.info("get codeReviewList : {}", list);
-
-        return changeToCodeReviewDto(list);
     }
 
     @Override
@@ -113,7 +119,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
         CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
         condition.setTag(word);
 
-        List<String> tags = codeReviewTagRepositoryCustom.getTagContent(condition);
+        List<String> tags = codeHistoryTagRepositoryCustom.getTagContent(condition);
         log.info("get tags : {}", tags);
 
         return tags;
@@ -121,21 +127,40 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
 
     // CodeReviewList -> CodeReviewDtoList
-    public Page<CodeReviewItemDto> changeToCodeReviewDto(Page<CodeReview> list) throws Exception {
-        Page<CodeReviewItemDto> dtoList = list.map(c -> {
+    public Page<CodeReviewResDto> changeToCodeReviewDto(Page<CodeReview> list) throws Exception {
+        Page<CodeReviewResDto> dtoList = list.map(c -> {
             try {
                 CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
                 condition.setCodeReviewId(c.getId());
-                List<String> tags = codeReviewTagRepositoryCustom.getTagContentbyCodeReviewId(condition);
+
+                List<String> tags = codeHistoryTagRepositoryCustom.getTagContentbyCodeReviewId(c.getId(), c.getVersionCount());
                 log.info("get tagList : {}", tags);
 
-                return new CodeReviewItemDto(c, tags);
+                String subtitle = codeHistoryRepositoryCustom.getSubTitle(c.getId(), c.getVersionCount());
+
+                return new CodeReviewResDto(c, subtitle, tags);
             } catch (SQLException e) {
                 throw new RuntimeException(e);
             }
         });
         log.info("change to dto successfully");
         return dtoList;
+    }
+
+    private Page<CodeHistoryResDto> changeToCodeHistoryDto(Page<CodeHistory> list) {
+        Page<CodeHistoryResDto> dtoList = list.map(h -> {
+            try {
+                List<String> tags = codeHistoryTagRepositoryCustom.getTagContentbyCodeHistoryId(h.getId());
+                log.info("get tagList : {}", tags);
+
+                return new CodeHistoryResDto(h, tags);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        });
+        log.info("change to dto successfully");
+        return dtoList;
+
     }
 
     public CodeHistoryDetailDto changeToCodeReviewHistoryDto(
@@ -147,7 +172,9 @@ public class CodeReviewServiceImpl implements CodeReviewService {
         Page<CodeCommentDetailDto> comments = changeToCodeCommentDto(list, userId);
         log.info("get code comments : {}", comments);
 
-        return new CodeHistoryDetailDto(history, comments);
+        List<String> tags = codeHistoryTagRepositoryCustom.getTagContentbyCodeHistoryId(history.getId());
+
+        return new CodeHistoryDetailDto(history, tags, comments);
     }
 
     public Page<CodeCommentDetailDto> changeToCodeCommentDto(Page<CodeComment> comments, int userId) throws Exception {
