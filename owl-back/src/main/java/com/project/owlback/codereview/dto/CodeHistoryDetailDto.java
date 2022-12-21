@@ -16,17 +16,19 @@ public class CodeHistoryDetailDto {
     String title;
     String subTitle;
     int version;
+    List<String> tags;
     Instant createdDate;
     int like;
     String code;
     String contents;
     Page<CodeCommentDetailDto> comments;
 
-    public CodeHistoryDetailDto(CodeHistory history, Page<CodeCommentDetailDto> comments) {
+    public CodeHistoryDetailDto(CodeHistory history, List<String> tags, Page<CodeCommentDetailDto> comments) {
         this.id = history.getId();
         this.title = history.getCodeReview().getTitle();
         this.subTitle = history.getSubTitle();
         this.version = history.getVersionNum();
+        this.tags = tags;
         this.createdDate = history.getCreatedDate();
         this.like = history.getLike();
         this.code = history.getCode();

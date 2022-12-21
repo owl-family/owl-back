@@ -14,10 +14,11 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class CodeReviewItemDto {
+public class CodeReviewResDto {
     long id;
     List<String> tags;
     String title;
+    String subtitle;
     int versionCount;
     String nickname;
     String language;
@@ -25,10 +26,11 @@ public class CodeReviewItemDto {
     int commentCount;
     Instant createDate;
 
-    public CodeReviewItemDto(CodeReview c, List<String> tags) throws SQLException {
+    public CodeReviewResDto(CodeReview c, String subtitle, List<String> tags) throws SQLException {
         this.id = c.getId();
         this.versionCount = c.getVersionCount();
         this.title = c.getTitle();
+        this.subtitle = subtitle;
         this.nickname = c.getWriter().getNickname();
         this.language = c.getCodeLanguage().getDescription();
         this.viewCount = c.getViewCount();

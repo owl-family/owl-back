@@ -19,7 +19,7 @@ public class CodeReviewControllerTest {
     @Test
     public void CodeReviewListSuccess() throws Exception {
         // given : 테스트를 위해 데이터들을 준비하는 과정
-        String url = "/api/codereviews?key=study&id=2";
+        String url = "/api/codereviews?key=all";
         // when : 실제로 요청을 하거나 실행을 해보는 과정
         mockMvc.perform(MockMvcRequestBuilders.get(url)
                         .contentType(MediaType.APPLICATION_JSON)
