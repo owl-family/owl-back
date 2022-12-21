@@ -23,8 +23,8 @@ import java.util.*;
 public class CodeReviewController {
     private final CodeReviewService codeReviewService;
 
-    @PostMapping("/{code_review_id}/comments")
-    public ResponseEntity<?> addComment(@PathVariable("code_review_id") Long codeReviewId,
+    @PostMapping("/{codeReviewId}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Long codeReviewId,
                                         @RequestBody CodeReviewCommentReqDto reqDto) {
         log.info("codeReviewId : {}", codeReviewId);
         reqDto.setCodeReviewId(codeReviewId);
@@ -42,8 +42,8 @@ public class CodeReviewController {
         }
     }
 
-    @PutMapping("/comments/{code_comment_id}")
-    public ResponseEntity<?> likeComment(@PathVariable("code_comment_id") Long codeCommentId) {
+    @PutMapping("/comments/{codeCommentId}")
+    public ResponseEntity<?> likeComment(@PathVariable Long codeCommentId) {
         log.info("codeCommentId : {}", codeCommentId);
 
         CodeReviewCommentReqDto reqDto = new CodeReviewCommentReqDto();
