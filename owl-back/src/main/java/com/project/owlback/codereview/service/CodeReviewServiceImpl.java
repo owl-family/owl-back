@@ -108,6 +108,8 @@ public class CodeReviewServiceImpl implements CodeReviewService{
             // find by code review writer
             page = codeCommentRepository.findByWriterAndUserNickName(user, word, pageable);
             res = page.map(CodeCommentResDto::new);
+        } else {
+            throw new IllegalArgumentException();
         }
         // queryDsl -> 동적 쿼리 작성에 필수로 사용되는 오픈소스
         return res;

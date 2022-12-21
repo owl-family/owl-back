@@ -1,27 +1,26 @@
 package com.project.owlback.codereview.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.project.owlback.codereview.dto.CodeCommentResDto;
 import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
 import com.project.owlback.codereview.model.CodeComment;
 import com.project.owlback.codereview.repository.CodeCommentRepository;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.Mock;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -54,7 +53,7 @@ class CodeReviewServiceTest {
     }
 
     @Test
-    @DisplayName("코드리뷰_댓글_추가")
+    @DisplayName("코드리뷰_댓글_추가_성공")
     public void addComments() throws Exception {
         //given
 
@@ -62,13 +61,13 @@ class CodeReviewServiceTest {
         CodeReviewCommentReqDto reqDto = CodeReviewCommentReqDto.builder()
                 .startLine(1)
                 .endLine(2)
-                .parent(1)
+                .parent(1L)
                 .depth(1)
                 .contents(message)
-                .codeHistoryId(1)
+                .codeHistoryId(1L)
                 .build();
         //when
-        final Integer id = codeReviewService.addComment(reqDto);
+        final Long id = codeReviewService.addComment(reqDto);
 
         //then
         final Optional<CodeComment> comment = codeCommentRepository.findById(id);
@@ -77,7 +76,28 @@ class CodeReviewServiceTest {
     }
 
     @Test
-    @DisplayName("MVC_코드리뷰_댓글_추가")
+    @DisplayName("코드리뷰_댓글_추가_실패")
+    public void addCommentsFail() throws Exception {
+        //given
+
+        String message = "테스트 코맨트";
+        CodeReviewCommentReqDto reqDto = CodeReviewCommentReqDto.builder()
+                .startLine(1)
+                .endLine(2)
+                .parent(1L)
+                .depth(1)
+                .contents(message)
+                .codeHistoryId(9999L)
+                .build();
+        //when
+
+        //then
+        assertThatThrownBy(()->codeReviewService.addComment(reqDto))
+                .isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("MVC_코드리뷰_댓글_추가_성공")
     public void addCommentMvc() throws Exception {
         Map<String, String> json = new HashMap<>();
         json.put("codeHistoryId", "1");
@@ -98,11 +118,11 @@ class CodeReviewServiceTest {
     }
 
     @Test
-    @DisplayName("코드리뷰_댓글_좋아요")
+    @DisplayName("코드리뷰_댓글_좋아요_성공")
     public void likeComment() throws Exception {
         //given
         final List<CodeComment> top = codeCommentRepository.findTop1By();
-        int id = top.get(0).getId();
+        Long id = top.get(0).getId();
         int like = top.get(0).getLikeCount();
         final CodeReviewCommentReqDto reqDto = new CodeReviewCommentReqDto();
         reqDto.setCodeCommentId(id);
@@ -113,7 +133,7 @@ class CodeReviewServiceTest {
         //then
         Optional<CodeComment> comment = codeCommentRepository.findById(id);
         assertThat(comment.isPresent()).isTrue();
-        assertThat(comment.get().getLikeCount()).isEqualTo(like + 1);
+        assertThat(comment.get().getLikeCount()).isEqualTo(like+1);
 
         //when
         codeReviewService.likeComment(reqDto);
@@ -122,5 +142,120 @@ class CodeReviewServiceTest {
         comment = codeCommentRepository.findById(id);
         assertThat(comment.isPresent()).isTrue();
         assertThat(comment.get().getLikeCount()).isEqualTo(like);
+    }
+
+    @Test
+    @DisplayName("코드리뷰_댓글_좋아요_실패")
+    public void likeCommentFail() throws Exception {
+        //given
+        final List<CodeComment> top = codeCommentRepository.findTop1By();
+        int like = top.get(0).getLikeCount();
+        final CodeReviewCommentReqDto reqDto = new CodeReviewCommentReqDto();
+
+
+        //when
+        final Long id = Long.MAX_VALUE;
+
+        //then
+        Assertions.assertThatThrownBy(()-> {
+            reqDto.setCodeCommentId(id);
+            codeReviewService.likeComment(reqDto);
+        }).isInstanceOf(NoSuchElementException.class);
+    }
+
+    @Test
+    @DisplayName("나의_댓글_가져오기_title")
+    public void getMyCommentsByTitle() throws Exception {
+        //given
+        String message = "test comment in Test";
+        CodeReviewCommentReqDto reqDto = CodeReviewCommentReqDto.builder()
+                .startLine(1)
+                .endLine(2)
+                .parent(1L)
+                .depth(1)
+                .contents(message)
+                .codeHistoryId(1L)
+                .build();
+
+        final Long id = codeReviewService.addComment(reqDto);
+
+        //when
+        final PageRequest pageRequest = PageRequest.of(0, 20);
+        final Page<CodeCommentResDto> myComments = codeReviewService.getMyComments("title", "title", pageRequest);
+
+        //then
+        assertThat(myComments.getContent().get(0).getTitle()).contains("title");
+    }
+
+    @Test
+    @DisplayName("나의_댓글_가져오기_실패(key 값 에러)")
+    public void getMyCommentsByTitleFail() throws Exception {
+        //given
+        String message = "test comment in Test";
+        CodeReviewCommentReqDto reqDto = CodeReviewCommentReqDto.builder()
+                .startLine(1)
+                .endLine(2)
+                .parent(1L)
+                .depth(1)
+                .contents(message)
+                .codeHistoryId(1L)
+                .build();
+
+        final Long id = codeReviewService.addComment(reqDto);
+
+        //when
+        final PageRequest pageRequest = PageRequest.of(0, 20);
+
+        //then
+        assertThatThrownBy(() -> codeReviewService.getMyComments("unknown", "title", pageRequest))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    @DisplayName("나의_댓글_가져오기_Contents")
+    public void getMyCommentsByContents() throws Exception {
+        //given
+        String message = "test comment in Test";
+        CodeReviewCommentReqDto reqDto = CodeReviewCommentReqDto.builder()
+                .startLine(1)
+                .endLine(2)
+                .parent(1L)
+                .depth(1)
+                .contents(message)
+                .codeHistoryId(1L)
+                .build();
+
+        final Long id = codeReviewService.addComment(reqDto);
+
+        //when
+        final PageRequest pageRequest = PageRequest.of(0, 20);
+        final Page<CodeCommentResDto> myComments = codeReviewService.getMyComments("contents", "test comment", pageRequest);
+
+        //then
+        assertThat(myComments.getContent().get(0).getContents()).isEqualTo(message);
+    }
+
+    @Test
+    @DisplayName("나의_댓글_가져오기_writer")
+    public void getMyCommentsByWriter() throws Exception {
+        //given
+        String message = "test comment in Test";
+        CodeReviewCommentReqDto reqDto = CodeReviewCommentReqDto.builder()
+                .startLine(1)
+                .endLine(2)
+                .parent(1L)
+                .depth(1)
+                .contents(message)
+                .codeHistoryId(1L)
+                .build();
+
+        final Long id = codeReviewService.addComment(reqDto);
+        final String writer = "ludwings";
+        //when
+        final PageRequest pageRequest = PageRequest.of(0, 20);
+        final Page<CodeCommentResDto> myComments = codeReviewService.getMyComments("writer", writer, pageRequest);
+
+        //then
+        assertThat(myComments.getContent().get(0).getWriter()).contains(writer);
     }
 }
