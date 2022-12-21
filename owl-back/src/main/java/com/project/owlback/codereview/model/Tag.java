@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 @Entity
 @Getter
 @Setter
@@ -14,6 +15,7 @@ import lombok.Setter;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@ToString(of = {"id","content","count"})
 public class Tag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

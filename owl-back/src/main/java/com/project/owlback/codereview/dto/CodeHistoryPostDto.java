@@ -25,30 +25,16 @@ import com.project.owlback.codereview.model.Tag;
 @Setter
 @ToString(of = {"id","versionNum","code","subTitle","contents","codeReview"})
 public class CodeHistoryPostDto{
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    @Column(name = "code_history_id", nullable = false)
-//    private Long id;
-
-//	@Column(name = "version_num", nullable = false)
     private Integer versionNum;
 
-//    @Lob
-//    @Column(name = "code", nullable = false)
     private String code;
 
-//    @Column(name = "sub_title", nullable = false, length = 50)
     private String subTitle;
 
-//    @Lob
-//    @Column(name = "contents", nullable = false)
     private String contents;
 
-//    @ManyToOne(optional = false)
-//    @JoinColumn(name = "code_review_id", nullable = false)
     private CodeReview codeReview;
     
-//    @Column(name = "tag",nullable = true)
     private List<Tag> tag;
 
 }

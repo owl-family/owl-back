@@ -92,35 +92,28 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 	@Transactional
 	public List<Tag> createTag(List<Tag> tag) {
 		
-//		tag.stream()
-//		.filter((x->!tagRepository.existsByContent(x.getContent())))
-//		.forEach(x->tagRepository.save(x));
-		
+		log.info("info1 log={}",tag);
 		for (int i = 0; i < tag.size(); i++) {
 			// createtag
-			tag.get(i).setCount(0);
 			if(!tagRepository.existsByContent(tag.get(i).getContent())) {
+				tag.get(i).setCount(0);
 				tagRepository.save(tag.get(i));
 			}else {
+				tagRepository.CountUp(tag.get(i).getContent());
 				tag.set(i,tagRepository.findByContent(tag.get(i).getContent()));
 			}
 		}
 		return tag;
 	}
 	
-	
+	@Transactional
 	public Long createHistory(CodeHistory codeHistory,List<Tag> tag) {
 		// TODO Auto-generated method stub
 		log.info("info log={}", codeHistory);
-//		CodeHistory codeHistory = CodeHistory.builder()
-//				.code(codeHistoryPostDto.getCode())
-//				.subTitle(codeHistoryPostDto.getSubTitle())
-//				.contents(codeHistoryPostDto.getContents())
-//				.versionNum(codeHistoryPostDto.getVersionNum())
-//				.build();
 		codeReviewHistoryRepository.save(codeHistory);
 		if(tag != null) {
 			tag = createTag(tag);
+			
 			createCodeHistoryTag(codeHistory, tag);
 		}
 		return codeHistory.getId();
