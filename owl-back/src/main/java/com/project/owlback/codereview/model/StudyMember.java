@@ -14,7 +14,7 @@ public class StudyMember {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_member_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "join_message", nullable = false, length = 100)
     private String joinMessage;

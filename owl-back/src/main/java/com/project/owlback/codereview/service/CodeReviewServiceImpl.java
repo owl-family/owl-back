@@ -73,7 +73,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
     @Override
     public CodeHistoryDetailDto codeReviewHistoryDetail(
-            int codeReviewId, int versionNum, int userId, Pageable pageable) throws Exception {
+            int codeReviewId, int versionNum, long userId, Pageable pageable) throws Exception {
         CodeHistory history = codeReviewHistoryRepository.findByCodeReviewIdAndVersionNum(codeReviewId, versionNum).orElseThrow();
         log.info("found history : {}", history);
         CodeHistoryDetailDto result = changeToCodeReviewHistoryDto(history, userId, pageable);
@@ -84,7 +84,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 
     @Override
     public Page<CodeCommentDetailDto> codeReviewCommentsDetail(
-            long historyId, int startLine, int userId, Pageable pageable) throws Exception {
+            long historyId, int startLine, long userId, Pageable pageable) throws Exception {
 
         CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
         condition.setCodeHistoryId(historyId);
@@ -100,7 +100,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     }
 
     @Override
-    public Page<CodeCommentDetailDto> codeReviewComments(long historyId, int userId, Pageable pageable) throws Exception {
+    public Page<CodeCommentDetailDto> codeReviewComments(long historyId, long userId, Pageable pageable) throws Exception {
 
         CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
         condition.setCodeHistoryId(historyId);
@@ -164,7 +164,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     }
 
     public CodeHistoryDetailDto changeToCodeReviewHistoryDto(
-            CodeHistory history, int userId, Pageable pageable) throws Exception {
+            CodeHistory history, long userId, Pageable pageable) throws Exception {
         CodeReviewSearchCondition condition = new CodeReviewSearchCondition();
         condition.setCodeHistoryId(history.getId());
 
@@ -177,7 +177,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
         return new CodeHistoryDetailDto(history, tags, comments);
     }
 
-    public Page<CodeCommentDetailDto> changeToCodeCommentDto(Page<CodeComment> comments, int userId) throws Exception {
+    public Page<CodeCommentDetailDto> changeToCodeCommentDto(Page<CodeComment> comments, long userId) throws Exception {
 
         return comments.map(c -> {
             try {

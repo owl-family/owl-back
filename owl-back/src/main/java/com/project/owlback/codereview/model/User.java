@@ -16,7 +16,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ToString.Include
     @Column(name = "email", nullable = false, length = 50)

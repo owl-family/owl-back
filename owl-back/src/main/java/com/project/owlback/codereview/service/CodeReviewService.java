@@ -12,11 +12,11 @@ public interface CodeReviewService {
 
     Page<?> codeReviewSearch(String key, String word, Pageable pageable) throws Exception;
 
-    CodeHistoryDetailDto codeReviewHistoryDetail(int codeReviewId, int versionNum, int userId, Pageable pageable) throws Exception;
+    CodeHistoryDetailDto codeReviewHistoryDetail(int codeReviewId, int versionNum, long userId, Pageable pageable) throws Exception;
 
-    Page<CodeCommentDetailDto> codeReviewCommentsDetail(long historyId, int startLine, int userId, Pageable pageable) throws Exception;
+    Page<CodeCommentDetailDto> codeReviewCommentsDetail(long historyId, int startLine, long userId, Pageable pageable) throws Exception;
 
     List<String> getRelativeTags(String word) throws Exception;
 
-    Page<CodeCommentDetailDto> codeReviewComments(long historyId, int userId, Pageable pageable) throws Exception;
+    Page<CodeCommentDetailDto> codeReviewComments(long historyId, long userId, Pageable pageable) throws Exception;
 }

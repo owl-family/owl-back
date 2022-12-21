@@ -14,7 +14,7 @@ public class CodeComment {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_comment_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Lob
     @Column(name = "contents", nullable = false)

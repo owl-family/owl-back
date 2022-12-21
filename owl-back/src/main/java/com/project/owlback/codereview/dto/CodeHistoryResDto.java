@@ -3,6 +3,7 @@ package com.project.owlback.codereview.dto;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeReview;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -11,6 +12,7 @@ import java.time.Instant;
 import java.util.List;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class CodeHistoryResDto {

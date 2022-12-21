@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.sql.SQLException;
 
 public interface CodeCommentLikeRepository extends JpaRepository<CodeCommentLike, Long> {
-    int countByUserIdAndCodeCommentId(int userId, int codeCommentId) throws SQLException;
+    int countByUserIdAndCodeCommentId(long userId, long codeCommentId) throws SQLException;
 }

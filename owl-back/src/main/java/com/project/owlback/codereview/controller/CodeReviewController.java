@@ -53,7 +53,7 @@ public class CodeReviewController {
     }
 
     @GetMapping("/{codeReviewId}/history/{versionNum}")
-    public ResponseEntity<?> codeReviewHistoryDetail(
+    public ResponseEntity<?> codeHistoryDetail(
             @PathVariable int codeReviewId, @PathVariable int versionNum, HttpServletRequest request,
             @PageableDefault(size = 10) Pageable pageable) {
         Map<String, Object> resultMap = new HashMap<>();
@@ -63,7 +63,7 @@ public class CodeReviewController {
         // access-token에서 userId 뽑기
         String token = request.getHeader("access-token");
 
-        int userId = 2;
+        long userId = 2;
         log.info("userId : {}", userId);
         try {
             CodeHistoryDetailDto codeHistory = service.codeReviewHistoryDetail(codeReviewId, versionNum, userId, pageable);
@@ -88,7 +88,7 @@ public class CodeReviewController {
     }
 
     @GetMapping("/history/{historyId}/comments")
-    public ResponseEntity<?> codeReviewComments(
+    public ResponseEntity<?> codeHistoryComments(
             @PathVariable long historyId, HttpServletRequest request,
             @PageableDefault(size = 20, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
@@ -96,7 +96,7 @@ public class CodeReviewController {
         HttpStatus status = null;
 
         request.getHeader("access-token");
-        int userId = 2;
+        long userId = 2;
         try {
             Page<CodeCommentDetailDto> list = service.codeReviewComments(historyId, userId, pageable);
             resultMap.put("message", "success");
@@ -111,7 +111,7 @@ public class CodeReviewController {
     }
 
     @GetMapping("/history/{historyId}/comments/{startLine}")
-    public ResponseEntity<?> codeReviewCommentsDetail(
+    public ResponseEntity<?> codeHistoryCommentsDetail(
             @PathVariable long historyId, @PathVariable int startLine, HttpServletRequest request,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable) {
 
@@ -123,7 +123,7 @@ public class CodeReviewController {
         // access-token에서 userId 뽑기
         String token = request.getHeader("access-token");
 
-        int userId = 2;
+        long userId = 2;
         log.info("userId : {}", userId);
         try {
             Page<CodeCommentDetailDto> comments = service.codeReviewCommentsDetail(historyId, startLine, userId, pageable);
@@ -140,7 +140,6 @@ public class CodeReviewController {
 
         return new ResponseEntity<>(resultMap, status);
     }
-
 
     @GetMapping("/tag/{word}")
     public ResponseEntity<?> codeReviewRelativeTags(@PathVariable String word) {
