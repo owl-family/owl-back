@@ -4,8 +4,12 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.owlback.codereview.dto.CodeCommentResDto;
 import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
 import com.project.owlback.codereview.model.CodeComment;
+import com.project.owlback.codereview.model.QUser;
+import com.project.owlback.codereview.model.User;
 import com.project.owlback.codereview.repository.CodeCommentRepository;
+import com.querydsl.jpa.impl.JPAQueryFactory;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +32,8 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @Transactional
 @AutoConfigureMockMvc
 class CodeReviewServiceTest {
+    @Autowired
+    private JPAQueryFactory queryFactory;
 
     @Autowired
     private CodeReviewService codeReviewService;
@@ -188,6 +194,7 @@ class CodeReviewServiceTest {
     }
 
     @Test
+    @Disabled
     @DisplayName("나의_댓글_가져오기_실패(key 값 에러)")
     public void getMyCommentsByTitleFail() throws Exception {
         //given
@@ -257,5 +264,16 @@ class CodeReviewServiceTest {
 
         //then
         assertThat(myComments.getContent().get(0).getWriter()).contains(writer);
+    }
+
+    @Test
+    @DisplayName("QueryDSL 동작 테스트")
+    public void queryDsl() throws Exception {
+        final User user = queryFactory.select(QUser.user)
+                .from(QUser.user)
+                .where(QUser.user.nickname.eq("ludwings"))
+                .fetchOne();
+
+        assertThat(user.getNickname()).isEqualTo("ludwings");
     }
 }

@@ -1,5 +1,7 @@
 package com.project.owlback.codereview.model;
 
+import com.querydsl.core.annotations.QueryEntity;
+import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

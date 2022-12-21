@@ -62,7 +62,11 @@ public class CodeReviewController {
             return new ResponseEntity<>(
                     ResponseDto.create(HttpStatus.OK, "OK", list),
                     HttpStatus.OK);
-        } catch(Exception e) {
+        }
+        catch(NoSuchElementException e) {
+            return noElement();
+        }
+        catch (Exception e) {
             return badRequest();
         }
     }
@@ -85,5 +89,11 @@ public class CodeReviewController {
         return new ResponseEntity<>(
                 ResponseDto.create(HttpStatus.BAD_REQUEST, "bad request", Collections.emptyList()),
                 HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> noElement() {
+        return new ResponseEntity<>(
+                ResponseDto.create(HttpStatus.NO_CONTENT, "no such element", Collections.emptyList()),
+                HttpStatus.NO_CONTENT);
     }
 }

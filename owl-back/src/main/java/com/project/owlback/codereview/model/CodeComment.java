@@ -1,5 +1,7 @@
 package com.project.owlback.codereview.model;
 
+import com.querydsl.core.annotations.QueryEntity;
+import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
@@ -41,6 +43,7 @@ public class CodeComment extends BaseTimeEntity{
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "code_history_id", nullable = false)
+    @QueryInit("codeReview.writer")
     private CodeHistory codeHistory;
 
     @ManyToOne(optional = false)

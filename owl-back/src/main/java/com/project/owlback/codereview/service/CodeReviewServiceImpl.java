@@ -26,6 +26,8 @@ public class CodeReviewServiceImpl implements CodeReviewService{
     private final CodeCommentRepository codeCommentRepository;
     private final CodeCommentLikeRepository codeCommentLikeRepository;
 
+    private final CodeCommentCustomRepository codeCommentCustomRepository;
+
     @Override
     @Transactional
     public Long addComment(CodeReviewCommentReqDto reqDto) {
@@ -96,22 +98,28 @@ public class CodeReviewServiceImpl implements CodeReviewService{
         Page<CodeCommentResDto> res = null;// id
         Page<CodeComment> page;
 
-        if(key.equals("title")) {
-            // find by code review title
-            page = codeCommentRepository.findByWriterAndCodeReviewTitle(user, word, pageable);
-            res = page.map(CodeCommentResDto::new);
-        } else if(key.equals("contents")) {
-            // find by code comment contents
-            page = codeCommentRepository.findByWriterAndContentsContains(user, word, pageable);
-            res = page.map(CodeCommentResDto::new);
-        } else if(key.equals("writer")) {
-            // find by code review writer
-            page = codeCommentRepository.findByWriterAndUserNickName(user, word, pageable);
-            res = page.map(CodeCommentResDto::new);
-        } else {
-            throw new IllegalArgumentException();
-        }
+
+        //query dsl 적용전
+//      if(key.equals("title")) {
+//            // find by code review title
+//            page = codeCommentRepository.findByWriterAndCodeReviewTitle(user, word, pageable);
+//            res = page.map(CodeCommentResDto::new);
+//        } else if(key.equals("contents")) {
+//            // find by code comment contents
+//            page = codeCommentRepository.findByWriterAndContentsContains(user, word, pageable);
+//            res = page.map(CodeCommentResDto::new);
+//        } else if(key.equals("writer")) {
+//            // find by code review writer
+//            page = codeCommentRepository.findByWriterAndUserNickName(user, word, pageable);
+//            res = page.map(CodeCommentResDto::new);
+//        } else {
+//            throw new IllegalArgumentException();
+//        }
+
         // queryDsl -> 동적 쿼리 작성에 필수로 사용되는 오픈소스
+        page = codeCommentCustomRepository.getMyComments(user, key, word, pageable);
+        res = page.map(CodeCommentResDto::new);
+
         return res;
     }
 }
