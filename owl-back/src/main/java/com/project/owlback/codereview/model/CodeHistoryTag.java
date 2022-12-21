@@ -1,6 +1,6 @@
 package com.project.owlback.codereview.model;
 
-import java.util.List;
+import java.util.List; 
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -17,8 +17,8 @@ import lombok.ToString;
 @ToString(of = {"id","count","tag","codeHistory"})
 @Table(name = "code_history_tag")
 public class CodeHistoryTag {
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "code_history_tag_id", nullable = false)
     private Long id;
 

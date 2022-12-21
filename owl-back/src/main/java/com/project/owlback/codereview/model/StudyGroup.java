@@ -22,7 +22,7 @@ public class StudyGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_group_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @Column(name = "name", nullable = false, length = 50)
     private String name;
@@ -50,8 +50,8 @@ public class StudyGroup {
     private User user;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "process_study_join_process_id", nullable = false)
-    private StudyJoinProcess processStudyJoinProcess;
+    @JoinColumn(name = "study_join_process_id", nullable = false)
+    private StudyJoinProcess studyJoinProcess;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "study_criteria_id", nullable = false)

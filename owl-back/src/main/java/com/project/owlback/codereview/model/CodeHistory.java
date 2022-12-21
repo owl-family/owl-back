@@ -3,12 +3,16 @@ package com.project.owlback.codereview.model;
 import jakarta.persistence.*; 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
+import com.querydsl.core.annotations.QueryInit;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Builder
 @NoArgsConstructor
@@ -50,4 +54,6 @@ public class CodeHistory extends BaseTimeEntity{
     @JoinColumn(name = "code_review_id", nullable = false)
     private CodeReview codeReview;
 
+    @OneToMany(mappedBy = "codeHistory")
+    private List<CodeComment> comments = new ArrayList<>();
 }

@@ -9,6 +9,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -22,7 +24,7 @@ public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "user_id", nullable = false)
-    private Integer id;
+    private Long id;
 
     @ToString.Include
     @Column(name = "email", nullable = false, length = 50)
@@ -55,4 +57,7 @@ public class User {
     @ToString.Include
     @Column(name = "status")
     private Integer status;
+
+    @OneToMany(mappedBy = "writer")
+    private List<CodeComment> comments = new ArrayList<>();
 }
