@@ -1,5 +1,11 @@
 package com.project.owlback.user.dto;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.project.owlback.goal.dto.Goal;
+import com.project.owlback.goal.dto.UpdateGoal;
+import com.project.owlback.user.dto.req.PutUserInfoReq;
+import com.project.owlback.util.BaseTimeEntity;
 import com.project.owlback.favorite.dto.Favorite;
 import com.project.owlback.favorite.dto.temp.CodeReview;
 import com.project.owlback.favorite.dto.temp.Url;
@@ -7,6 +13,8 @@ import com.project.owlback.goal.dto.Subject;
 import com.project.owlback.score.dto.Score;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.ColumnDefault;
+import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -18,21 +26,44 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @ToString
-public class User {
+@DynamicInsert
+@Table(name="user")
+public class User extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long userId;
+    @Column(name="user_id", nullable=false)
+    private Long userId;
 
+    @Column(name="email", nullable=false)
     private String email;
-    private String nickname;
-    private String name;
-    private String imgFile;
 
+    @Column(name="nickname", nullable=false)
+    private String nickname;
+
+    @Column(name="name", nullable=false)
+    private String name;
+
+
+    @Column(name="introduction", nullable = false)
+    @ColumnDefault("''")
     private String introduction;
+
+    @Column(name="password", nullable = false)
     private String password;
-    private Date createdDate;
-    private Date modifiedDate;
-    private int status;
+
+
+    @Column(name="status",nullable = false )
+    @ColumnDefault("2")
+    private Integer status;
+
+    @OneToOne(mappedBy ="user")
+    @JsonManagedReference // 순환참조 방지
+    private Goal goal;
+
+    @OneToOne
+    @JsonManagedReference
+    @JoinColumn(name="img_id")
+    private UserImg userImg;
 
 //    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
 //    private Stat stat;
@@ -55,5 +86,25 @@ public class User {
     public void updatePassword(String password) {
         this.password = password;
     }
+
+    public void updateInfo(PutUserInfoReq putUserInfoReq){
+        this.introduction=putUserInfoReq.getIntroduction();
+        this.nickname= putUserInfoReq.getNickname();
+    }
+
+    public void deleteUser(){
+        this.status=0;
+    }
+
+    public void updateImg(UserImg userImg){
+        UserImg u = new UserImg();
+        u.setImgId(userImg.getImgId());
+        u.setFileName(userImg.getFileName());
+        u.setFileOriginalName(userImg.getFileOriginalName());
+        u.setFileUrl(userImg.getFileUrl());
+        this.userImg=u;
+    }
+
+
 }
 
