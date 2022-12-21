@@ -1,8 +1,16 @@
 package com.project.owlback.codereview.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Entity
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+@Getter
 @Table(name = "code_comment_like")
 public class CodeCommentLike {
     @Id
@@ -17,28 +25,4 @@ public class CodeCommentLike {
     @ManyToOne(optional = false)
     @JoinColumn(name = "code_comment_id", nullable = false)
     private CodeComment codeComment;
-
-    public CodeComment getCodeComment() {
-        return codeComment;
-    }
-
-    public void setCodeComment(CodeComment codeComment) {
-        this.codeComment = codeComment;
-    }
-
-    public User getUser() {
-        return user;
-    }
-
-    public void setUser(User user) {
-        this.user = user;
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public void setId(Long id) {
-        this.id = id;
-    }
 }

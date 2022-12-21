@@ -1,10 +1,15 @@
 package com.project.owlback.codereview.model;
 
+import com.querydsl.core.annotations.QueryEntity;
+import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "code_history")
@@ -46,4 +51,6 @@ public class CodeHistory {
     @JoinColumn(name = "code_review_id", nullable = false)
     private CodeReview codeReview;
 
+    @OneToMany(mappedBy = "codeHistory")
+    private List<CodeComment> comments = new ArrayList<>();
 }

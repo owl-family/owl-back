@@ -42,8 +42,8 @@ public class StudyGroup {
     private User user;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "process_study_join_process_id", nullable = false)
-    private StudyJoinProcess processStudyJoinProcess;
+    @JoinColumn(name = "study_join_process_id", nullable = false)
+    private StudyJoinProcess studyJoinProcess;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "study_criteria_id", nullable = false)

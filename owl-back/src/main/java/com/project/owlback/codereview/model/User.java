@@ -6,6 +6,8 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.Instant;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @Setter
@@ -49,4 +51,7 @@ public class User {
     @ToString.Include
     @Column(name = "status")
     private Integer status;
+
+    @OneToMany(mappedBy = "writer")
+    private List<CodeComment> comments = new ArrayList<>();
 }
