@@ -21,7 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
-public class UserServiceImpl implements UserService{
+public class AuthServiceImpl implements AuthService {
 
     private final UserRepository userRepository;
     private final JwtTokenProvider jwtTokenProvider;

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.project.owlback.user.dto.Login;
-import com.project.owlback.user.service.UserServiceImpl;
+import com.project.owlback.user.service.AuthServiceImpl;
 
 @RequestMapping("/api/users")
 @RestController
@@ -22,7 +22,7 @@ import com.project.owlback.user.service.UserServiceImpl;
 @Slf4j
 public class UserController {
 
-    private final UserServiceImpl userService;
+    private final AuthServiceImpl userService;
     private final Response response;
 
     @PostMapping("/login")
