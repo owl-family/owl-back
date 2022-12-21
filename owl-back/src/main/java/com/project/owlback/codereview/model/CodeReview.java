@@ -1,7 +1,7 @@
 package com.project.owlback.codereview.model;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,10 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.validator.constraints.Length;
-
-import java.time.Instant;
 @Builder
 @Entity
 @Getter
@@ -20,7 +16,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Table(name="code_review")
-@ToString(of = {"id","versioinCount","title","viewCount","commentCount","writer","studyGroup"})
+@ToString(of = {"id","versionCount","title","viewCount","commentCount","writer","studyGroup"})
 public class CodeReview extends BaseTimeEntity{
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id

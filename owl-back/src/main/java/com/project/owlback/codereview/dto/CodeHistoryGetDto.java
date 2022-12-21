@@ -1,6 +1,6 @@
 package com.project.owlback.codereview.dto;
 
-import jakarta.persistence.*;
+import jakarta.persistence.*; 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -9,59 +9,58 @@ import lombok.Setter;
 import lombok.ToString;
 
 import java.time.Instant;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import java.util.List;
 
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeReview;
+import com.project.owlback.codereview.model.Tag;
 
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table(name = "code_history")
 @Getter
 @Setter
 @ToString(of = {"id","versionNum","code","subTitle","createdDate","modifiedDate","contents","like","commentCount","codeReview"})
-public class CodeHistoryDto{
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "code_history_id", nullable = false)
+public class CodeHistoryGetDto{
+//    @Id
+//    @GeneratedValue(strategy = GenerationType.IDENTITY)
+//    @Column(name = "code_history_id", nullable = false)
     private Long id;
 
-	@Column(name = "version_num", nullable = false)
+//	@Column(name = "version_num", nullable = false)
     private Integer versionNum;
 
-    @Lob
-    @Column(name = "code", nullable = false)
+//    @Lob
+//    @Column(name = "code", nullable = false)
     private String code;
 
-    @Column(name = "sub_title", nullable = false, length = 50)
+//    @Column(name = "sub_title", nullable = false, length = 50)
     private String subTitle;
 
-    @Column(name = "created_date")
+//    @Column(name = "created_date")
     private Instant createdDate;
 	
-    @Column(name = "modified_date")
+//    @Column(name = "modified_date")
     private Instant modifiedDate;
   
-    @Lob
-    @Column(name = "contents", nullable = false)
+//    @Lob
+//    @Column(name = "contents", nullable = false)
     private String contents;
 
-    @Column(name = "`like`", nullable = false)
+//    @Column(name = "`like`", nullable = false)
     private Integer like;
 
-    @Column(name = "comment_count", nullable = false)
+//    @Column(name = "comment_count", nullable = false)
     private Integer commentCount;
 
-    @ManyToOne(optional = false)
-    @JoinColumn(name = "code_review_id", nullable = false)
+//    @ManyToOne(optional = false)
+//    @JoinColumn(name = "code_review_id", nullable = false)
     private CodeReview codeReview;
     
-    public static CodeHistoryDto fromEntity(CodeHistory codeHistory) {
-    	return CodeHistoryDto.builder()
+    private List<Tag> tag;
+    
+    public static CodeHistoryGetDto fromEntity(CodeHistory codeHistory) {
+    	return CodeHistoryGetDto.builder()
     			.id(codeHistory.getId())
     			.versionNum(codeHistory.getVersionNum())
     			.code(codeHistory.getCode())

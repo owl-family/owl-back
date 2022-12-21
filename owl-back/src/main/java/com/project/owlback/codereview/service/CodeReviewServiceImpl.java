@@ -7,15 +7,16 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.project.owlback.codereview.dto.CodeHistoryDto;
-import com.project.owlback.codereview.dto.CodeReviewDto;
+import com.project.owlback.codereview.dto.CodeHistoryGetDto;
+import com.project.owlback.codereview.dto.CodeHistoryPostDto;
+import com.project.owlback.codereview.dto.CodeReviewPostDto;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeReview;
-import com.project.owlback.codereview.model.CodeReviewTag;
+import com.project.owlback.codereview.model.CodeHistoryTag;
 import com.project.owlback.codereview.model.Tag;
 import com.project.owlback.codereview.repository.CodeReviewHistoryRepository;
 import com.project.owlback.codereview.repository.CodeReviewRepository;
-import com.project.owlback.codereview.repository.CodeReviewTagRepository;
+import com.project.owlback.codereview.repository.CodeHistoryTagRepository;
 import com.project.owlback.codereview.repository.TagRepository;
 
 import lombok.RequiredArgsConstructor;
@@ -28,25 +29,25 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 	
 	final private CodeReviewHistoryRepository codeReviewHistoryRepository;
 	
-	final private CodeReviewTagRepository codeReviewTagRepository;
+	final private CodeHistoryTagRepository codeHistoryTagRepository;
 	
 	final private TagRepository tagRepository;
 	
 
 	@Transactional
-	public Long create(CodeReviewDto codeReviewDto) {
+	public Long create(CodeReviewPostDto codeReviewPostDto) {
 
-		log.info("info log={}", codeReviewDto);
+		log.info("info log={}", codeReviewPostDto);
 		
 		// user 정보
 		// codereview 정보
 		CodeReview codeReview = CodeReview.builder()
-				.versionCount(codeReviewDto.getVersionCount())
-				.title(codeReviewDto.getTitle())
-				.writer(codeReviewDto.getWriter())
-				.studyGroup(codeReviewDto.getStudyGroup())
-				.codeScope(codeReviewDto.getCodeScope())
-				.codeLanguage(codeReviewDto.getCodeLanguage())
+				.versionCount(1)
+				.title(codeReviewPostDto.getTitle())
+				.writer(codeReviewPostDto.getWriter())
+				.studyGroup(codeReviewPostDto.getStudyGroup())
+				.codeScope(codeReviewPostDto.getCodeScope())
+				.codeLanguage(codeReviewPostDto.getCodeLanguage())
 				.build();
 		log.info("info log={}", codeReview);
 		
@@ -56,36 +57,33 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 		
 		CodeHistory codeHistory = CodeHistory.builder()
 				.codeReview(codeReview)
-				.code(codeReviewDto.getCodeHistory().getCode())
-				.subTitle(codeReviewDto.getCodeHistory().getSubTitle())
-				.contents(codeReviewDto.getCodeHistory().getContents())
-				.versionNum(codeReviewDto.getCodeHistory().getVersionNum())
+				.code(codeReviewPostDto.getCodeHistoryPostDto().getCode())
+				.subTitle(codeReviewPostDto.getCodeHistoryPostDto().getSubTitle())
+				.contents(codeReviewPostDto.getCodeHistoryPostDto().getContents())
+				.versionNum(codeReviewPostDto.getCodeHistoryPostDto().getVersionNum())
 				.like(0)
 				.commentCount(0)
 				.build();
 		log.info("info log={}",codeHistory);
 		
-		createHistory(codeHistory);
+		createHistory(codeHistory,codeReviewPostDto.getCodeHistoryPostDto().getTag());
 		
 		log.info("info log={}",codeHistory);
-		if(codeReviewDto.getTag() != null) {
-			codeReviewDto.setTag(createTag(codeReviewDto.getTag()));
-			createCodeReviewTag(codeReview, codeReviewDto.getTag());
-		}
 		
-		log.info("info log={}", codeReviewDto);
+		
+		log.info("info log={}", codeReviewPostDto);
 		
 		return codeReview.getId();
 	}
 	
 	@Transactional
-	public void createCodeReviewTag(CodeReview codeReview, List<Tag> tag) {
+	public void createCodeHistoryTag(CodeHistory codeHistory, List<Tag> tag) {
 		
 		log.info("info log={}", tag);
 		tag.stream()
-		.forEach(x->codeReviewTagRepository.save(CodeReviewTag.builder()
+		.forEach(x->codeHistoryTagRepository.save(CodeHistoryTag.builder()
 				.count(0)
-				.codeReview(codeReview)
+				.codeHistory(codeHistory)
 				.tag(x)
 				.build()));
 		log.info("info log={}", tag);
@@ -109,34 +107,57 @@ public class CodeReviewServiceImpl implements CodeReviewService{
 		}
 		return tag;
 	}
-	public Long createHistory(CodeHistory codeHistory) {
+	
+	
+	public Long createHistory(CodeHistory codeHistory,List<Tag> tag) {
 		// TODO Auto-generated method stub
 		log.info("info log={}", codeHistory);
+//		CodeHistory codeHistory = CodeHistory.builder()
+//				.code(codeHistoryPostDto.getCode())
+//				.subTitle(codeHistoryPostDto.getSubTitle())
+//				.contents(codeHistoryPostDto.getContents())
+//				.versionNum(codeHistoryPostDto.getVersionNum())
+//				.build();
 		codeReviewHistoryRepository.save(codeHistory);
+		if(tag != null) {
+			tag = createTag(tag);
+			createCodeHistoryTag(codeHistory, tag);
+		}
 		return codeHistory.getId();
 	}
 	
-	public CodeHistory setCodeReviewToCodeHistory(CodeHistory codeHistory, Long id) throws Exception{
-		codeHistory = CodeHistory.builder()
+	public CodeHistory setCodeReviewToCodeHistory(CodeHistoryPostDto codeHistoryPostDto, Long id) throws Exception{
+		CodeHistory codeHistory = CodeHistory.builder()
 				.codeReview(codeReviewRepository.findById(id).orElseThrow())
-				.code(codeHistory.getCode())
-				.subTitle(codeHistory.getSubTitle())
-				.contents(codeHistory.getContents())
-				.versionNum(codeHistory.getVersionNum())
+				.code(codeHistoryPostDto.getCode())
+				.subTitle(codeHistoryPostDto.getSubTitle())
+				.contents(codeHistoryPostDto.getContents())
+				.versionNum(codeHistoryPostDto.getVersionNum())
 				.like(0)
 				.commentCount(0)
 				.build();
 		return codeHistory;
 	}
 	
-	public List<CodeHistoryDto> getCodeReviewHistory(Long id) throws Exception{
+	public List<CodeHistoryGetDto> getCodeReviewHistory(Long id) throws Exception{
 //		CodeReview optionCodeReview = codeReviewRepository.findById(id);
 //		===> []
 		
 		CodeReview optionCodeReview = codeReviewRepository.findById(id).orElseThrow();
 //		===> NoSuchElementException
 		log.info("info log={}", optionCodeReview);
-		return codeReviewHistoryRepository.findByCodeReview(optionCodeReview).stream()
-				.map(CodeHistoryDto::fromEntity).collect(Collectors.toList());
+		
+		List<CodeHistoryGetDto> codeHistoryGetDto = codeReviewHistoryRepository.findByCodeReview(optionCodeReview).stream()
+				.map(CodeHistoryGetDto::fromEntity).collect(Collectors.toList());
+		
+		for (int i = 0; i < codeHistoryGetDto.size(); i++) {
+			CodeHistoryGetDto temp = codeHistoryGetDto.get(i);
+			log.info("info log={}", temp);
+			List<CodeHistoryTag> tempTag = codeHistoryTagRepository.findByCodeHistory(CodeHistory.builder().id(temp.getId()).build());
+			log.info("info log={}", tempTag);
+			codeHistoryGetDto.get(i).setTag((List<Tag>) tempTag.stream()
+					.map(x->x.getTag()).collect(Collectors.toList()));
+		}
+		return codeHistoryGetDto;
 	}
 }

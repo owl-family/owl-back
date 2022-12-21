@@ -21,8 +21,9 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.project.owlback.codereview.dto.CodeHistoryDto;
-import com.project.owlback.codereview.dto.CodeReviewDto;
+import com.project.owlback.codereview.dto.CodeHistoryGetDto;
+import com.project.owlback.codereview.dto.CodeHistoryPostDto;
+import com.project.owlback.codereview.dto.CodeReviewPostDto;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeLanguage;
 import com.project.owlback.codereview.model.CodeReview;
@@ -64,11 +65,11 @@ public class CodeReviewServiceTest {
 				.id(1)
 				.nickname("emotion")
 				.build();
-		CodeReviewDto inputDto = CodeReviewDto.builder()
-				.versionCount(1)
+		CodeReviewPostDto inputDto = CodeReviewPostDto.builder()
+//				.versionCount(1)
 				.title("testing")
 				.writer(inputUser)
-				.commentCount(0)
+//				.commentCount(0)
 				.studyGroup(StudyGroup.builder()
 						.id(2)
 						.name("test")
@@ -88,13 +89,13 @@ public class CodeReviewServiceTest {
 						.build())
 				.codeScope(CodeScope.builder().id(1).build())
 				.codeLanguage(CodeLanguage.builder().id(1).build())
-				.codeHistory(CodeHistory.builder()
+				.codeHistoryPostDto(CodeHistoryPostDto.builder()
 						.code("hellow")
 						.subTitle("subTitle test")
 						.contents("contents test")
 						.versionNum(1)
+						.tag(List.of(Tag.builder().content("test1").build(), Tag.builder().content("test2").build()))
 						.build())
-				.tag(List.of(Tag.builder().content("test1").build(), Tag.builder().content("test2").build()))
 				.build();
 		Long x = codeReviewService.create(inputDto);
 		log.info("Test info log={}",x);
@@ -107,14 +108,15 @@ public class CodeReviewServiceTest {
 	@DisplayName("코드히스토리_추가")
 	public void addCodeHistoryTest() throws Exception{
 		Long inputId = 15L;
-		CodeHistory inputDto = CodeHistory.builder()
+		List<Tag> tag = new ArrayList<>();
+		CodeHistoryPostDto inputDto = CodeHistoryPostDto.builder()
 				.code("Testing code")
 				.subTitle("subTitle test")
 				.contents("contents test")
 				.versionNum(1)
+				.tag(tag)
 				.build();
-		
-		Long x = codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(inputDto,inputId));
+		Long x = codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(inputDto,inputId),tag);
 		log.info("Test info log={}",x);
 		log.info("Test info log={}",codeReviewHistoryRepository.findById(x));
 	}
@@ -123,7 +125,7 @@ public class CodeReviewServiceTest {
 	@DisplayName("코드히스토리_상세보기")
 	public void getCodeHistoryListTest() throws Exception{
 		Long id = 35L;
-		List<CodeHistoryDto> codeHistoryList = codeReviewService.getCodeReviewHistory(id);
+		List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(id);
 		log.info("Test info log={}", codeHistoryList);
 	}
 }

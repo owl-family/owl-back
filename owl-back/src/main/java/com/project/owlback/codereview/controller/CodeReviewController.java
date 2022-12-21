@@ -12,8 +12,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.owlback.codereview.dto.CodeHistoryDto;
-import com.project.owlback.codereview.dto.CodeReviewDto;
+import com.project.owlback.codereview.dto.CodeHistoryGetDto;
+import com.project.owlback.codereview.dto.CodeHistoryPostDto;
+import com.project.owlback.codereview.dto.CodeReviewPostDto;
 import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.CodeReview;
 import com.project.owlback.codereview.repository.CodeReviewHistoryRepository;
@@ -29,27 +30,27 @@ public class CodeReviewController {
 	private final CodeReviewServiceImpl codeReviewService;
 
 	@PostMapping("/api/codereviews")
-	public ResponseEntity create(@RequestBody CodeReviewDto codeReviewDto) {
+	public ResponseEntity create(@RequestBody CodeReviewPostDto codeReviewPostDto) {
 		// codereview 정보
-		log.info("info log={}", codeReviewDto);
-		codeReviewService.create(codeReviewDto);
+		log.info("info log={}", codeReviewPostDto);
+		codeReviewService.create(codeReviewPostDto);
 
 		return ResponseEntity.ok("success");
 	}
 	
 	@PostMapping("/api/codereviews/{id}/history")
-	public ResponseEntity createHistory(@RequestBody CodeHistory codeHistory, @PathVariable Long id) throws Exception {
-		log.info("info log={}", codeHistory);
+	public ResponseEntity createHistory(@RequestBody CodeHistoryPostDto codeHistoryPostDto, @PathVariable Long id) throws Exception {
+		log.info("info log={}", codeHistoryPostDto);
 		log.info("info log={}",id);
-		codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(codeHistory,id));
+		codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto,id),codeHistoryPostDto.getTag());
 		return ResponseEntity.ok("success");
 	}
 	
 	@GetMapping("/api/codereviews/{codeReviewId}/history")
-	public ResponseEntity<List<CodeHistoryDto>> getCodeReviewHistory(@PathVariable Long codeReviewId) throws Exception{
+	public ResponseEntity<List<CodeHistoryGetDto>> getCodeReviewHistory(@PathVariable Long codeReviewId) throws Exception{
 		log.info("info log={}", codeReviewId);
-		List<CodeHistoryDto> codeHistoryList = codeReviewService.getCodeReviewHistory(codeReviewId);
+		List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(codeReviewId);
 		log.info("info log={}", codeHistoryList);
-		return new ResponseEntity<List<CodeHistoryDto>>(codeHistoryList,HttpStatus.OK);
+		return new ResponseEntity<List<CodeHistoryGetDto>>(codeHistoryList,HttpStatus.OK);
 	}
 }
