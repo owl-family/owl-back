@@ -8,46 +8,30 @@ import com.project.owlback.user.dto.User;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
 import com.project.owlback.user.repository.UserImgRepository;
 import com.project.owlback.user.repository.UserRepository;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
 import java.util.Optional;
 
 @Service
+@RequiredArgsConstructor
 @Slf4j
 public class UserServiceImpl implements UserService {
 
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    private UserRepository userRepository;
-    private GoalRepository goalRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final UserRepository userRepository;
+    private final GoalRepository goalRepository;
 
-    private UserImgRepository userImgRepository;
-
-    @Autowired
-    public UserServiceImpl(UserRepository userRepository, GoalRepository goalRepository,UserImgRepository userImgRepository) {
-        this.userRepository = userRepository;
-        this.goalRepository = goalRepository;
-        this.userImgRepository=userImgRepository;
-    }
+    private final UserImgRepository userImgRepository;
 
     @Override
     public boolean findByEmail(String email) {
         return userRepository.findByEmail(email).isPresent();
     }
 
-    @Override
-    public boolean signupEmail(String email) {
-        return false;
-    }
-
-    @Override
-    public boolean findPassword() {
-        return false;
-    }
 
     @Override
     @Transactional

@@ -11,10 +11,6 @@ import java.util.Optional;
 public interface UserService {
     boolean findByEmail(String email);
 
-    boolean signupEmail(String email);
-
-    boolean findPassword();
-
     User updatePassword(User user, String password);
 
     Optional<User> findByEmailAndName(User user);

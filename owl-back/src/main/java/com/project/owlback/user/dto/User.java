@@ -6,12 +6,19 @@ import com.project.owlback.goal.dto.Goal;
 import com.project.owlback.goal.dto.UpdateGoal;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
 import com.project.owlback.util.BaseTimeEntity;
+import com.project.owlback.favorite.dto.Favorite;
+import com.project.owlback.favorite.dto.temp.CodeReview;
+import com.project.owlback.favorite.dto.temp.Url;
+import com.project.owlback.goal.dto.Subject;
+import com.project.owlback.score.dto.Score;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Builder
@@ -46,7 +53,7 @@ public class User extends BaseTimeEntity {
 
 
     @Column(name="status",nullable = false )
-    @ColumnDefault("2") //int형으로 선언했더니 ColumnDefault적용 안됨.. 그래서 Integer로바꿈
+    @ColumnDefault("2")
     private Integer status;
 
     @OneToOne(mappedBy ="user")
@@ -57,6 +64,24 @@ public class User extends BaseTimeEntity {
     @JsonManagedReference
     @JoinColumn(name="img_id")
     private UserImg userImg;
+
+//    @OneToOne(fetch = FetchType.LAZY, mappedBy = "user")
+//    private Stat stat;
+//
+    @OneToMany(mappedBy = "user")
+    private List<Subject> subjects;
+
+    @OneToMany(mappedBy = "user")
+    private List<Score> scores = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Favorite> favorites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<Url> urls = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user")
+    private List<CodeReview> codeReviews = new ArrayList<>();
 
     public void updatePassword(String password) {
         this.password = password;

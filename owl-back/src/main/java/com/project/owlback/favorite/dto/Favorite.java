@@ -1,5 +1,8 @@
 package com.project.owlback.favorite.dto;
 
+import com.project.owlback.favorite.dto.temp.CodeReview;
+import com.project.owlback.favorite.dto.temp.Url;
+import com.project.owlback.user.dto.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -14,12 +17,15 @@ public class Favorite {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long favoriteId;
 
-    @Column(name = "URL_ID")
-    private long urlId;
+    @OneToOne
+    @JoinColumn(name = "url_id")
+    private Url url;
 
-    @Column(name = "CODEREVIEW_ID")
-    private long codeReviewId;
+    @OneToOne
+    @JoinColumn(name = "code_review_id")
+    private CodeReview codeReview;
 
-    @Column(name = "USER_ID")
-    private long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 }
