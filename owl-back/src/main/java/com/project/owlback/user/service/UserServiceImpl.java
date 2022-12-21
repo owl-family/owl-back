@@ -4,6 +4,7 @@ import com.project.owlback.user.dto.SessionUser;
 import com.project.owlback.user.dto.Tokens;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +20,7 @@ import com.project.owlback.user.dto.TokenInfo;
 import com.project.owlback.user.repository.UserRepository;
 import org.springframework.util.ObjectUtils;
 
+import java.util.Optional;
 import java.util.concurrent.TimeUnit;
 
 @Service
@@ -31,9 +33,10 @@ public class UserServiceImpl implements UserService{
     private final AuthenticationManagerBuilder authenticationManagerBuilder;
     private final RedisTemplate<String, String> redisTemplate;
 
-    public ResponseEntity<?> login(Login login) {		// email, password 기반으로 Authentication 객체 생성
+    public Optional<TokenInfo> login(Login login) {		// email, password 기반으로 Authentication 객체 생성
         if (userRepository.findByEmail(login.getEmail()).orElse(null) == null) {
-            return response.fail("해당하는 유저가 존재하지 않습니다.", HttpStatus.BAD_REQUEST);
+            // 해당하는 유저가 존재하지 않음
+            return Optional.empty();
         }
 
         UsernamePasswordAuthenticationToken authenticationToken = login.toAuthentication();
@@ -53,14 +56,16 @@ public class UserServiceImpl implements UserService{
                         tokenInfo.getRefreshToken(),  // value
                         tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS); // expiration timeout
 
-        return response.success(tokenInfo, "로그인에 성공했습니다.", HttpStatus.OK);
+        // 로그인 성공
+        return Optional.of(tokenInfo);
     }
 
     @Override
-    public ResponseEntity<?> reissue(Tokens reissue) {
+    public Optional<TokenInfo> reissue(Tokens reissue) {
         // refresh token이 유효한지 검증
         if (!jwtTokenProvider.validateToken(reissue.getRefreshToken())) {
-            return response.fail("refresh token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+            // refresh token 정보가 유효하지 않음
+            return Optional.empty();
         }
 
         // access token에서 Authentication 객체를 가지고 옴
@@ -74,10 +79,11 @@ public class UserServiceImpl implements UserService{
         // 로그아웃되어 redis 에 refresh token 이 존재하지 않는 경우 처리
         // refresh token이 존재하는지 확인
         if(ObjectUtils.isEmpty(refreshToken)) {
-            return response.fail("잘못된 요청입니다.", HttpStatus.BAD_REQUEST);
+            return Optional.empty();
         }
         if(!refreshToken.equals(reissue.getRefreshToken())) { // 입력받은 refresh token값과 비교
-            return response.fail("Refresh Token 정보가 일치하지 않습니다.", HttpStatus.BAD_REQUEST);
+            // refresh token 정보가 일치하지 않음
+            return Optional.empty();
         }
 
         // access token이 만료됐으면
@@ -89,18 +95,19 @@ public class UserServiceImpl implements UserService{
                 .set("RT:" + authentication.getName(),
                         tokenInfo.getRefreshToken(), tokenInfo.getRefreshTokenExpirationTime(), TimeUnit.MILLISECONDS);
 
-        return response.success(tokenInfo, "Token 정보가 갱신되었습니다.", HttpStatus.OK);
+        // token 정보 갱신 완료
+        return Optional.of(tokenInfo);
     }
 
     @Override
-    public ResponseEntity<?> logout(Tokens logout) {
+    public Boolean logout(String accessToken) {
         // access token 유효성 검증
-        if (!jwtTokenProvider.validateToken(logout.getAccessToken())) {
-            return response.fail("access token 정보가 유효하지 않습니다.", HttpStatus.BAD_REQUEST);
+        if (!jwtTokenProvider.validateToken(accessToken)) {
+            return false;
         }
 
         // access token을 통해 Authentication 객체를 가져옴
-        Authentication authentication = jwtTokenProvider.getAuthentication(logout.getAccessToken());
+        Authentication authentication = jwtTokenProvider.getAuthentication(accessToken);
 
         // email(authentication.getName())을 가지고
         // redis에 저장된 refresh token을 가지고 옴(.get("RT:" + authentication.getName()))
@@ -112,25 +119,25 @@ public class UserServiceImpl implements UserService{
 
         // access token 유효시간 가지고 와서 BlackList로 저장하기
         // key: access token, value: logout
-        Long expirationTime = jwtTokenProvider.getExpirationTime(logout.getAccessToken());
+        Long expirationTime = jwtTokenProvider.getExpirationTime(accessToken);
         redisTemplate.opsForValue()
-                .set(logout.getAccessToken(), "logout", expirationTime, TimeUnit.MILLISECONDS);
+                .set(accessToken, "logout", expirationTime, TimeUnit.MILLISECONDS);
 
-        return response.success("로그아웃 되었습니다.");
+        return true;
     }
 
     private final HttpSession httpSession;
 
     @Override
-    public ResponseEntity<?> socialLogin() {
+    public Optional<TokenInfo> socialLogin() {
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         httpSession.removeAttribute("user");
 
         if(user.getNickname() == null)
-            return response.fail(user,"signUp", HttpStatus.NO_CONTENT);
+            return Optional.empty();
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(user);
-        return response.success(tokenInfo, "로그인에 성공했습니다.", HttpStatus.OK);
+        return Optional.ofNullable(tokenInfo);
     }
 
 }

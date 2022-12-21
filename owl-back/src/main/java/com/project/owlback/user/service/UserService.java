@@ -5,10 +5,12 @@ import org.springframework.http.ResponseEntity;
 
 import com.project.owlback.user.dto.Login;
 
+import java.util.Optional;
+
 public interface UserService{
 
-    public ResponseEntity<?> login(Login login);
-    ResponseEntity<?> reissue(Tokens reissue);
-    ResponseEntity<?> logout(Tokens logout);
-    ResponseEntity<?> socialLogin();
+    Optional<?> login(Login login);
+    Optional<?> reissue(Tokens reissue);
+    Boolean logout(String accessToken);
+    Optional<?> socialLogin();
 }

@@ -46,7 +46,7 @@ public class SecurityConfig{
                 .authorizeHttpRequests((requests) -> requests
                         .requestMatchers("/v3/api-docs/**", "/swagger*/**") // swagger
                         .permitAll()
-                        .requestMatchers("/api/users/login/**", "/oauth2/**", "/login/**") // login
+                        .requestMatchers("/api/users/login/**", "api/users/reissue", "/oauth2/**", "/login/**") // login
                         .permitAll()
                         .requestMatchers("/api/users/logout") // logout
                         .hasAnyRole(new String[]{"ADMIN", "USER"}) // hasAnyRole이 String 앞에 "ROLE_"을 추가해줌
