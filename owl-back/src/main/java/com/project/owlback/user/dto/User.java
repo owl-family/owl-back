@@ -1,9 +1,7 @@
 package com.project.owlback.user.dto;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.owlback.goal.dto.Goal;
-import com.project.owlback.goal.dto.UpdateGoal;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
 import com.project.owlback.util.BaseTimeEntity;
 import com.project.owlback.favorite.dto.Favorite;
@@ -11,24 +9,30 @@ import com.project.owlback.favorite.dto.temp.CodeReview;
 import com.project.owlback.favorite.dto.temp.Url;
 import com.project.owlback.goal.dto.Subject;
 import com.project.owlback.score.dto.Score;
-import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
 import org.hibernate.annotations.DynamicInsert;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.Collection;
+import java.util.stream.Collectors;
 
-@Entity
-@Builder
-@NoArgsConstructor
-@AllArgsConstructor
+import jakarta.persistence.*;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+
 @Getter
-@ToString
+@Entity
 @DynamicInsert
+@Builder
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @Table(name="user")
-public class User extends BaseTimeEntity {
+public class User extends BaseTimeEntity  implements UserDetails {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="user_id", nullable=false)
@@ -105,6 +109,40 @@ public class User extends BaseTimeEntity {
         this.userImg=u;
     }
 
+    @Column
+    @ElementCollection(fetch = FetchType.EAGER)
+    @Builder.Default
+    private List<String> roles = new ArrayList<>();
 
+    @Override
+    public Collection<? extends GrantedAuthority> getAuthorities() {
+        return this.roles.stream()
+                .map(SimpleGrantedAuthority::new)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public String getUsername() {
+        return Long.toString(userId);
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+        return true;
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+        return true;
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return true;
+    }
 }
-
