@@ -2,11 +2,8 @@ package com.project.owlback.codereview.model;
 
 import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.ColumnDefault;
-import org.hibernate.validator.constraints.Length;
 
 import java.time.Instant;
 
@@ -53,4 +50,5 @@ public class CodeReview {
     @ManyToOne(optional = false)
     @JoinColumn(name = "code_language_id", nullable = false)
     private CodeLanguage codeLanguage;
+
 }

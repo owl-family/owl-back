@@ -7,11 +7,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "code_review_tag")
-public class CodeReviewTag {
+@Table(name = "code_history_tag")
+public class CodeHistoryTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "code_review_tag_id", nullable = false)
+    @Column(name = "code_history_tag_id", nullable = false)
     private Long id;
 
     @Column(name = "count", nullable = false)
@@ -22,6 +22,6 @@ public class CodeReviewTag {
     private Tag tag;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "code_review_id", nullable = false)
-    private CodeReview codeReview;
+    @JoinColumn(name = "code_history_id", nullable = false)
+    private CodeHistory codeHistory;
 }
