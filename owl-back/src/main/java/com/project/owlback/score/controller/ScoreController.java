@@ -17,7 +17,7 @@ import java.util.List;
 public class ScoreController {
 
     private final ScoreService scoreService;
-    private final Response response;
+    Response response;
 
     @GetMapping("{user_id}")
     public ResponseEntity<?> getHistory(@PathVariable("user_id") long userId, @RequestParam String service) {

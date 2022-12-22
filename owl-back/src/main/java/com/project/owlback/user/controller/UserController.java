@@ -33,7 +33,7 @@ public class UserController {
 
     private final UserImgService userImgService;
 
-    private final Response response;
+    Response response;
 
     /**
      * 회원가입 API

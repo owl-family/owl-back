@@ -17,7 +17,7 @@ public class GoalController {
     private final GoalService goalService;
     private static final int ZERO = 0;
 
-    private final Response response;
+    Response response;
 
     /**
      * 회원 목표 수정 API

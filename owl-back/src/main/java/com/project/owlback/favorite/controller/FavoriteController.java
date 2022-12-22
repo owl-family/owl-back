@@ -18,7 +18,7 @@ import java.util.List;
 public class FavoriteController {
 
     private final FavoriteService favoriteService;
-    private final Response response;
+    Response response;
 
     @GetMapping("{user_id}")
     public ResponseEntity<?> getFavorites(@PathVariable("user_id") long userId, @RequestParam String service, @RequestParam(required = false) String search, @RequestParam(required = false) String query) {

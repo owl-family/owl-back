@@ -16,7 +16,7 @@ import java.util.List;
 public class StatController {
 
     private final StatService statService;
-    private final Response response;
+    Response response;
 
     @GetMapping("{user_id}")
     public ResponseEntity<?> getStat(@PathVariable("user_id") long userId, @RequestParam String term) {
