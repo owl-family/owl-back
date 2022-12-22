@@ -27,7 +27,7 @@ public class CodeComment {
     private Integer endLine;
 
     @Column(name = "parent", nullable = false)
-    private Integer parent;
+    private Long parent;
 
     @Column(name = "depth", nullable = false)
     private Integer depth;

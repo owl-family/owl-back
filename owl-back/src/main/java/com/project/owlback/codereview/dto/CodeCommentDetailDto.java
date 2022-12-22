@@ -19,7 +19,7 @@ public class CodeCommentDetailDto {
     String contents;
     int startLine;
     int endLine;
-    int parent;
+    Long parent;
     int depth;
     int likeCount;
     Instant createdDate;
