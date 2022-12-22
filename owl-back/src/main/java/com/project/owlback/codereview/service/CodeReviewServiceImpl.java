@@ -25,24 +25,15 @@ import com.project.owlback.codereview.dto.CodeCommentResDto;
 import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
 import com.project.owlback.codereview.model.CodeComment;
 import com.project.owlback.codereview.model.CodeCommentLike;
-import com.project.owlback.codereview.model.CodeHistory;
 import com.project.owlback.codereview.model.User;
 import com.project.owlback.codereview.condition.CodeReviewSearchCondition;
 import com.project.owlback.codereview.dto.CodeCommentDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryResDto;
 import com.project.owlback.codereview.dto.CodeReviewResDto;
-import com.project.owlback.codereview.model.CodeComment;
-import com.project.owlback.codereview.model.CodeHistory;
-import com.project.owlback.codereview.model.CodeHistoryTag;
-import com.project.owlback.codereview.model.CodeReview;
 import com.project.owlback.codereview.repository.*;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -53,13 +44,10 @@ import java.util.List;
 @Slf4j
 @RequiredArgsConstructor
 public class CodeReviewServiceImpl implements CodeReviewService {
-	
-	
-	
+
 	final private CodeHistoryTagRepository codeHistoryTagRepository;
 	
 	final private TagRepository tagRepository;
-//	final private CodeReviewHistoryRepository codeReviewHistoryRepository;
 	
     private final CodeReviewRepositoryCustom codeReviewRepositoryCustom;
 

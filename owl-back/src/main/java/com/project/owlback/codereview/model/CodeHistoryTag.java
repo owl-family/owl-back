@@ -14,7 +14,6 @@ import lombok.ToString;
 @Getter
 @Setter
 @Builder
-@ToString(of = {"id","count","tag","codeHistory"})
 @Table(name = "code_history_tag")
 public class CodeHistoryTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)

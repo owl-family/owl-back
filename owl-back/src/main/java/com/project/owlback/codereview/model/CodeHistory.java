@@ -21,7 +21,6 @@ import java.util.List;
 @Table(name = "code_history")
 @Getter
 @Setter
-@ToString(of = {"id","versionNum","code","subTitle","contents","like","commentCount","codeReview"})
 
 public class CodeHistory extends BaseTimeEntity{
     @Id
