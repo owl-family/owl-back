@@ -1,6 +1,6 @@
 package com.project.owlback.codereview.repository;
 
-import com.project.owlback.codereview.condition.CodeReviewSearchCondition;
+import com.project.owlback.codereview.condition.CodeReviewSearchCondition; 
 import com.project.owlback.codereview.model.CodeHistoryTag;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;

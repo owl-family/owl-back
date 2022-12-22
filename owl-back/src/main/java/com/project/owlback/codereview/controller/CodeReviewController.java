@@ -1,8 +1,11 @@
 package com.project.owlback.codereview.controller;
 
+
 import com.project.owlback.codereview.dto.CodeCommentDetailDto;
 import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
 import com.project.owlback.codereview.service.CodeReviewService;
+import com.project.owlback.codereview.service.CodeReviewServiceImpl;
+
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -18,13 +21,128 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
+import com.project.owlback.codereview.dto.CodeCommentResDto;
+import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
+import com.project.owlback.codereview.dto.ResponseDto;
+import com.project.owlback.codereview.service.CodeReviewService;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.project.owlback.codereview.dto.CodeHistoryGetDto;
+import com.project.owlback.codereview.dto.CodeHistoryPostDto;
+import com.project.owlback.codereview.dto.CodeReviewPostDto;
+import java.util.*;
 @RestController
 @Slf4j
 @RequiredArgsConstructor
-@RequestMapping("/api/codereviews")
 public class CodeReviewController {
+    private final CodeReviewService codeReviewService;
+//    private final CodeReviewServiceImpl codeReviewService;
     final private CodeReviewService service;
+    
+    @PostMapping("/api/codereviews")
+	public ResponseEntity create(@RequestBody CodeReviewPostDto codeReviewPostDto) {
+		// codereview 정보
+		log.info("info log={}", codeReviewPostDto);
+		codeReviewService.create(codeReviewPostDto);
+
+		return ResponseEntity.ok("success");
+	}
+	
+	@PostMapping("/api/codereviews/{id}/history")
+	public ResponseEntity createHistory(@RequestBody CodeHistoryPostDto codeHistoryPostDto, @PathVariable Long id) throws Exception {
+		log.info("info log={}", codeHistoryPostDto);
+		log.info("info log={}",id);
+		log.info("info log={}",codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto,id));
+		codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto,id),codeHistoryPostDto.getTag());
+		return ResponseEntity.ok("success");
+	}
+	
+	@GetMapping("/api/codereviews/{codeReviewId}/history")
+	public ResponseEntity<List<CodeHistoryGetDto>> getCodeReviewHistory(@PathVariable Long codeReviewId) throws Exception{
+		log.info("info log={}", codeReviewId);
+		List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(codeReviewId);
+		log.info("info log={}", codeHistoryList);
+		return new ResponseEntity<List<CodeHistoryGetDto>>(codeHistoryList,HttpStatus.OK);
+	}
+    
+    @PostMapping("/{codeReviewId}/comments")
+    public ResponseEntity<?> addComment(@PathVariable Long codeReviewId,
+                                        @RequestBody CodeReviewCommentReqDto reqDto) {
+        log.info("codeReviewId : {}", codeReviewId);
+        reqDto.setCodeReviewId(codeReviewId);
+        log.info("{}", reqDto);
+
+        try {
+            final Long id = codeReviewService.addComment(reqDto);
+            log.info("comment saved successfully id : {}", id);
+
+            return new ResponseEntity<>(
+                    ResponseDto.create(HttpStatus.OK, "comment saved successfully", Collections.emptyList()),
+                    HttpStatus.OK);
+        } catch(Exception e) {
+            return badRequest();
+        }
+    }
+
+    @PutMapping("/comments/{codeCommentId}")
+    public ResponseEntity<?> likeComment(@PathVariable Long codeCommentId) {
+        log.info("codeCommentId : {}", codeCommentId);
+
+        CodeReviewCommentReqDto reqDto = new CodeReviewCommentReqDto();
+        reqDto.setCodeCommentId(codeCommentId);
+        log.info("request Dto : {}", reqDto);
+
+        try {
+            final int likeCount = codeReviewService.likeComment(reqDto);
+
+            Map<String, Integer> result = new HashMap<>();
+            result.put("likeCount", likeCount);
+
+            List<Map<?, ?>> list = new ArrayList<>();
+            list.add(result);
+
+            return new ResponseEntity<>(
+                    ResponseDto.create(HttpStatus.OK, "OK", list),
+                    HttpStatus.OK);
+        }
+        catch(NoSuchElementException e) {
+            return noElement();
+        }
+        catch (Exception e) {
+            return badRequest();
+        }
+    }
+
+    @GetMapping("/comments")
+    // key : title, contents, writer (포스트 작성자 nickname)
+    public ResponseEntity<?> getMyComments(@RequestParam String key, @RequestParam String word,
+                                           @PageableDefault(size=20, sort="createdDate",
+                                                   direction= Sort.Direction.DESC) Pageable pageable) {
+
+        final Page<CodeCommentResDto> response = codeReviewService.getMyComments(key, word, pageable);
+        List<Page<?>> list = new ArrayList<>();
+        list.add(response);
+        return new ResponseEntity<>(
+                ResponseDto.create(HttpStatus.OK, "OK", list),
+                HttpStatus.OK);
+    }
+
+    public ResponseEntity<?> badRequest() {
+        return new ResponseEntity<>(
+                ResponseDto.create(HttpStatus.BAD_REQUEST, "bad request", Collections.emptyList()),
+                HttpStatus.BAD_REQUEST);
+    }
+
+    public ResponseEntity<?> noElement() {
+        return new ResponseEntity<>(
+                ResponseDto.create(HttpStatus.NO_CONTENT, "no such element", Collections.emptyList()),
+                HttpStatus.NO_CONTENT);
+    }
 
     @GetMapping("")
     public ResponseEntity<?> codeReviewList(
@@ -161,5 +279,4 @@ public class CodeReviewController {
         }
         return new ResponseEntity<>(resultMap, status);
     }
-
 }
