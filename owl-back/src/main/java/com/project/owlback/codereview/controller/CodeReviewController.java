@@ -1,11 +1,9 @@
 package com.project.owlback.codereview.controller;
 
 
-import com.project.owlback.codereview.dto.CodeCommentDetailDto;
-import com.project.owlback.codereview.dto.CodeHistoryDetailDto;
+import com.project.owlback.codereview.dto.*;
 import com.project.owlback.codereview.service.CodeReviewService;
-import com.project.owlback.codereview.service.CodeReviewServiceImpl;
-
+import com.project.owlback.util.Response;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,59 +15,41 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.NoSuchElementException;
-import com.project.owlback.codereview.dto.CodeCommentResDto;
-import com.project.owlback.codereview.dto.CodeReviewCommentReqDto;
-import com.project.owlback.codereview.dto.ResponseDto;
-import com.project.owlback.codereview.service.CodeReviewService;
-import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
-
-import com.project.owlback.codereview.dto.CodeHistoryGetDto;
-import com.project.owlback.codereview.dto.CodeHistoryPostDto;
-import com.project.owlback.codereview.dto.CodeReviewPostDto;
 import java.util.*;
-@RestController
+
+@RestController()
 @Slf4j
 @RequiredArgsConstructor
+@RequestMapping("/api/codereviews")
 public class CodeReviewController {
     private final CodeReviewService codeReviewService;
-//    private final CodeReviewServiceImpl codeReviewService;
-    final private CodeReviewService service;
-    
-    @PostMapping("/api/codereviews")
-	public ResponseEntity create(@RequestBody CodeReviewPostDto codeReviewPostDto) {
-		// codereview 정보
-		log.info("info log={}", codeReviewPostDto);
-		codeReviewService.create(codeReviewPostDto);
 
-		return ResponseEntity.ok("success");
-	}
-	
-	@PostMapping("/api/codereviews/{id}/history")
-	public ResponseEntity createHistory(@RequestBody CodeHistoryPostDto codeHistoryPostDto, @PathVariable Long id) throws Exception {
-		log.info("info log={}", codeHistoryPostDto);
-		log.info("info log={}",id);
-		log.info("info log={}",codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto,id));
-		codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto,id),codeHistoryPostDto.getTag());
-		return ResponseEntity.ok("success");
-	}
-	
-	@GetMapping("/api/codereviews/{codeReviewId}/history")
-	public ResponseEntity<List<CodeHistoryGetDto>> getCodeReviewHistory(@PathVariable Long codeReviewId) throws Exception{
-		log.info("info log={}", codeReviewId);
-		List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(codeReviewId);
-		log.info("info log={}", codeHistoryList);
-		return new ResponseEntity<List<CodeHistoryGetDto>>(codeHistoryList,HttpStatus.OK);
-	}
-    
+    @PostMapping("")
+    public ResponseEntity create(@RequestBody CodeReviewPostDto codeReviewPostDto) {
+        // codereview 정보
+        log.info("info log={}", codeReviewPostDto);
+        codeReviewService.create(codeReviewPostDto);
+
+        return ResponseEntity.ok("success");
+    }
+
+    @PostMapping("/{id}/history")
+    public ResponseEntity createHistory(@RequestBody CodeHistoryPostDto codeHistoryPostDto, @PathVariable Long id) throws Exception {
+        log.info("info log={}", codeHistoryPostDto);
+        log.info("info log={}", id);
+        log.info("info log={}", codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto, id));
+        codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto, id), codeHistoryPostDto.getTag());
+        return ResponseEntity.ok("success");
+    }
+
+    @GetMapping("/{codeReviewId}/history")
+    public ResponseEntity<List<CodeHistoryGetDto>> getCodeReviewHistory(@PathVariable Long codeReviewId) throws Exception {
+        log.info("info log={}", codeReviewId);
+        List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(codeReviewId);
+        log.info("info log={}", codeHistoryList);
+        return new ResponseEntity<List<CodeHistoryGetDto>>(codeHistoryList, HttpStatus.OK);
+    }
+
     @PostMapping("/{codeReviewId}/comments")
     public ResponseEntity<?> addComment(@PathVariable Long codeReviewId,
                                         @RequestBody CodeReviewCommentReqDto reqDto) {
@@ -84,7 +64,7 @@ public class CodeReviewController {
             return new ResponseEntity<>(
                     ResponseDto.create(HttpStatus.OK, "comment saved successfully", Collections.emptyList()),
                     HttpStatus.OK);
-        } catch(Exception e) {
+        } catch (Exception e) {
             return badRequest();
         }
     }
@@ -109,11 +89,9 @@ public class CodeReviewController {
             return new ResponseEntity<>(
                     ResponseDto.create(HttpStatus.OK, "OK", list),
                     HttpStatus.OK);
-        }
-        catch(NoSuchElementException e) {
+        } catch (NoSuchElementException e) {
             return noElement();
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             return badRequest();
         }
     }
@@ -121,8 +99,8 @@ public class CodeReviewController {
     @GetMapping("/comments")
     // key : title, contents, writer (포스트 작성자 nickname)
     public ResponseEntity<?> getMyComments(@RequestParam String key, @RequestParam String word,
-                                           @PageableDefault(size=20, sort="createdDate",
-                                                   direction= Sort.Direction.DESC) Pageable pageable) {
+                                           @PageableDefault(size = 20, sort = "createdDate",
+                                                   direction = Sort.Direction.DESC) Pageable pageable) {
 
         final Page<CodeCommentResDto> response = codeReviewService.getMyComments(key, word, pageable);
         List<Page<?>> list = new ArrayList<>();
@@ -149,33 +127,27 @@ public class CodeReviewController {
             @RequestParam String key, @RequestParam(defaultValue = "0") String word,
             @PageableDefault(size = 20) Pageable pageable)
             throws Exception {
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
+
+        HttpStatus status = HttpStatus.OK;
 
         log.info("key : {}, word : {}, pageable : {}", key, word, pageable);
 
         try {
-            Page<?> list = service.codeReviewSearch(key, word, pageable);
+            Page<?> list = codeReviewService.codeReviewSearch(key, word, pageable);
             log.info("list : {}", list);
 
-            resultMap.put("message", "success");
-            resultMap.put("list", list);
-
-            status = HttpStatus.OK;
+            return Response.makeResponse(status, "success to get CodeReviewList", list.getSize(), list);
         } catch (Exception e) {
-            resultMap.put("message", "fail");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return Response.badRequest("fail to get CodeReviewList");
         }
-
-        return new ResponseEntity<>(resultMap, status);
     }
 
     @GetMapping("/{codeReviewId}/history/{versionNum}")
     public ResponseEntity<?> codeHistoryDetail(
             @PathVariable int codeReviewId, @PathVariable int versionNum, HttpServletRequest request,
             @PageableDefault(size = 10) Pageable pageable) {
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
+
+        HttpStatus status = HttpStatus.OK;
 
         log.info("codeReviewId : {}, versionNum : {}", codeReviewId, versionNum);
         // access-token에서 userId 뽑기
@@ -184,25 +156,16 @@ public class CodeReviewController {
         long userId = 2;
         log.info("userId : {}", userId);
         try {
-            CodeHistoryDetailDto codeHistory = service.codeReviewHistoryDetail(codeReviewId, versionNum, userId, pageable);
+            CodeHistoryDetailDto codeHistory = codeReviewService.codeReviewHistoryDetail(codeReviewId, versionNum, userId, pageable);
             log.info("codeHistory : {}", codeHistory);
 
-            if (codeHistory != null) {
-                resultMap.put("message", "success");
-                resultMap.put("codeHistory", codeHistory);
-                status = HttpStatus.OK;
-            }
+            return Response.makeResponse(status, "success to get CodeHistoryDetail", 1, codeHistory);
         } catch (NoSuchElementException s) {
-            resultMap.put("message", "no data");
-            status = HttpStatus.NO_CONTENT;
-
+            return Response.noContent("no content History");
         } catch (Exception e) {
-            resultMap.put("message", "fail");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-
+            return Response.badRequest("fail to get CodeHistoryDetail");
         }
 
-        return new ResponseEntity<>(resultMap, status);
     }
 
     @GetMapping("/history/{historyId}/comments")
@@ -210,22 +173,17 @@ public class CodeReviewController {
             @PathVariable long historyId, HttpServletRequest request,
             @PageableDefault(size = 20, sort = "modifiedDate", direction = Sort.Direction.DESC) Pageable pageable) {
 
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
+        HttpStatus status = HttpStatus.OK;
 
         request.getHeader("access-token");
         long userId = 2;
         try {
-            Page<CodeCommentDetailDto> list = service.codeReviewComments(historyId, userId, pageable);
-            resultMap.put("message", "success");
-            resultMap.put("list", list);
-            status = HttpStatus.OK;
-        } catch (Exception e) {
-            resultMap.put("message", "fail");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
-        }
+            Page<CodeCommentDetailDto> list = codeReviewService.codeReviewComments(historyId, userId, pageable);
 
-        return new ResponseEntity<>(resultMap, status);
+            return Response.makeResponse(status, "success to get comments", list.getSize(), list);
+        } catch (Exception e) {
+            return Response.badRequest("fail to get comments");
+        }
     }
 
     @GetMapping("/history/{historyId}/comments/{startLine}")
@@ -233,8 +191,8 @@ public class CodeReviewController {
             @PathVariable long historyId, @PathVariable int startLine, HttpServletRequest request,
             @PageableDefault(size = 10, direction = Sort.Direction.ASC) Pageable pageable) {
 
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
+        HttpStatus status = HttpStatus.OK;
+
         log.info("historyId : {}, startLine : {}", historyId, startLine);
 
 
@@ -244,39 +202,29 @@ public class CodeReviewController {
         long userId = 2;
         log.info("userId : {}", userId);
         try {
-            Page<CodeCommentDetailDto> comments = service.codeReviewCommentsDetail(historyId, startLine, userId, pageable);
+            Page<CodeCommentDetailDto> comments = codeReviewService.codeReviewCommentsDetail(historyId, startLine, userId, pageable);
             log.info("comments : {}", comments);
 
-            resultMap.put("message", "success");
-            resultMap.put("comments", comments);
-            status = HttpStatus.OK;
-
+            return Response.makeResponse(status, "success to get comments detail", comments.getSize(), comments);
         } catch (Exception e) {
-            resultMap.put("message", "fail");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return Response.badRequest("fail to get comments detail");
         }
 
-        return new ResponseEntity<>(resultMap, status);
     }
 
     @GetMapping("/tag/{word}")
     public ResponseEntity<?> codeReviewRelativeTags(@PathVariable String word) {
-        Map<String, Object> resultMap = new HashMap<>();
-        HttpStatus status = null;
+
+        HttpStatus status = HttpStatus.OK;
         log.info("word : {}", word);
 
         try {
-            List<String> tags = service.getRelativeTags(word);
+            List<String> tags = codeReviewService.getRelativeTags(word);
             log.info("tags : {}", tags);
 
-            resultMap.put("message", "success");
-            resultMap.put("tags", tags);
-            status = HttpStatus.OK;
-
+            return Response.makeResponse(status, "success to get relative tags", tags.size(), tags);
         } catch (Exception e) {
-            resultMap.put("message", "fail");
-            status = HttpStatus.INTERNAL_SERVER_ERROR;
+            return Response.badRequest("fail to get relative tags");
         }
-        return new ResponseEntity<>(resultMap, status);
     }
 }
