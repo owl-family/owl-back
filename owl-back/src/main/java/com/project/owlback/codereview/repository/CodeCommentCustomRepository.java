@@ -1,6 +1,6 @@
 package com.project.owlback.codereview.repository;
 
-import com.project.owlback.codereview.model.CodeComment;
+import com.project.owlback.codereview.model.CodeComment;   
 import com.project.owlback.codereview.model.QCodeComment;
 import com.project.owlback.codereview.model.QCodeReview;
 import com.project.owlback.codereview.model.User;
@@ -18,9 +18,8 @@ import static com.project.owlback.codereview.model.QCodeComment.codeComment;
 
 @Repository
 @RequiredArgsConstructor
-public class CodeCommentCustomRepository {
+public class CodeCommentCustomRepository{
     private final JPAQueryFactory queryFactory;
-
     public Page<CodeComment> getMyComments(User user, String key, String word, Pageable pageable) {
 
         final List<CodeComment> list = queryFactory.selectFrom(codeComment)

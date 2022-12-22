@@ -1,16 +1,24 @@
 package com.project.owlback.codereview.model;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import java.util.List; 
 
-@Entity
+import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
+@NoArgsConstructor
+@AllArgsConstructor@Entity
 @Getter
 @Setter
+@Builder
+@ToString(of = {"id","count","tag","codeHistory"})
 @Table(name = "code_history_tag")
 public class CodeHistoryTag {
-    @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "code_history_tag_id", nullable = false)
     private Long id;
 

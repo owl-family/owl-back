@@ -1,20 +1,28 @@
 package com.project.owlback.codereview.model;
 
-import com.querydsl.core.annotations.QueryInit;
+import com.querydsl.core.annotations.QueryInit; 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
+import lombok.ToString;
 
 import java.time.Instant;
 
+@Builder
 @Entity
 @Getter
 @Setter
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name="code_review")
-public class CodeReview {
-
+@ToString(of = {"id","versionCount","title","viewCount","commentCount","writer","studyGroup"})
+public class CodeReview extends BaseTimeEntity{
     @Id
     @Column(name = "code_review_id", nullable = false)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
     @Column(name = "version_count", nullable = false)
@@ -23,11 +31,6 @@ public class CodeReview {
     @Column(name = "title", nullable = false, length = 50)
     private String title;
 
-    @Column(name = "created_date")
-    private Instant createdDate;
-
-    @Column(name = "modified_date")
-    private Instant modifiedDate;
 
     @Column(name = "view_count")
     private Integer viewCount;
@@ -39,7 +42,8 @@ public class CodeReview {
     @JoinColumn(name = "writer", nullable = false)
     private User writer;
 
-    @ManyToOne(optional = false)
+
+	@ManyToOne(optional = false)
     @JoinColumn(name = "study_group_id", nullable = false)
     private StudyGroup studyGroup;
 

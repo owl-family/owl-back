@@ -1,9 +1,12 @@
 package com.project.owlback.codereview.model;
 
-import com.querydsl.core.annotations.QueryEntity;
+import jakarta.persistence.*; 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.*;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
@@ -11,17 +14,22 @@ import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "code_history")
 @Getter
 @Setter
-public class CodeHistory {
+@ToString(of = {"id","versionNum","code","subTitle","contents","like","commentCount","codeReview"})
+
+public class CodeHistory extends BaseTimeEntity{
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "code_history_id", nullable = false)
     private Long id;
 
-    @Column(name = "version_num", nullable = false)
+	@Column(name = "version_num", nullable = false)
     private Integer versionNum;
 
     @Lob
@@ -31,11 +39,6 @@ public class CodeHistory {
     @Column(name = "sub_title", nullable = false, length = 50)
     private String subTitle;
 
-    @Column(name = "created_date", nullable = false)
-    private Instant createdDate;
-
-    @Column(name = "modified_date", nullable = false)
-    private Instant modifiedDate;
 
     @Lob
     @Column(name = "contents", nullable = false)

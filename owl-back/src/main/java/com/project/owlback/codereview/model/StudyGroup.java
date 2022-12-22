@@ -1,15 +1,23 @@
 package com.project.owlback.codereview.model;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
 
+import org.springframework.data.annotation.CreatedDate;
+
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "study_group")
 @Getter
 @Setter
+@Builder
 public class StudyGroup {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -24,7 +32,7 @@ public class StudyGroup {
 
     @Column(name = "study_information", nullable = false, length = 200)
     private String studyInformation;
-
+    @CreatedDate
     @Column(name = "created_date", nullable = false)
     private Instant createdDate;
 
