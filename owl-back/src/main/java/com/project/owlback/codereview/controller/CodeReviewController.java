@@ -25,29 +25,42 @@ public class CodeReviewController {
     private final CodeReviewService codeReviewService;
 
     @PostMapping("")
-    public ResponseEntity create(@RequestBody CodeReviewPostDto codeReviewPostDto) {
+    public ResponseEntity<?> create(@RequestBody CodeReviewPostDto codeReviewPostDto) {
         // codereview 정보
         log.info("info log={}", codeReviewPostDto);
-        codeReviewService.create(codeReviewPostDto);
-
-        return ResponseEntity.ok("success");
+        try {
+        	final Long x = codeReviewService.create(codeReviewPostDto);
+        	return Response.makeResponse(HttpStatus.OK, "sucess post codereview",1,x);
+        } catch (Exception e) {
+			return Response.badRequest("fail");
+		}
     }
 
     @PostMapping("/{id}/history")
-    public ResponseEntity createHistory(@RequestBody CodeHistoryPostDto codeHistoryPostDto, @PathVariable Long id) throws Exception {
+    public ResponseEntity<?> createHistory(@RequestBody CodeHistoryPostDto codeHistoryPostDto, @PathVariable Long id) {
         log.info("info log={}", codeHistoryPostDto);
         log.info("info log={}", id);
-        log.info("info log={}", codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto, id));
-        codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto, id), codeHistoryPostDto.getTag());
-        return ResponseEntity.ok("success");
+        try {
+        	final Long x = codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(codeHistoryPostDto, id), codeHistoryPostDto.getTag());
+        	log.info("info log={}", x);
+        	return Response.makeResponse(HttpStatus.OK, "sucess post history",1,x);
+        }catch(Exception e) {
+        	return Response.badRequest("fail");
+        }
     }
 
     @GetMapping("/{codeReviewId}/history")
-    public ResponseEntity<List<CodeHistoryGetDto>> getCodeReviewHistory(@PathVariable Long codeReviewId) throws Exception {
-        log.info("info log={}", codeReviewId);
-        List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(codeReviewId);
-        log.info("info log={}", codeHistoryList);
-        return new ResponseEntity<List<CodeHistoryGetDto>>(codeHistoryList, HttpStatus.OK);
+    public ResponseEntity<?> getCodeReviewHistory(@PathVariable Long codeReviewId) {
+        log.info("codeReview id={}", codeReviewId);
+        try {
+        	final List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(codeReviewId);
+        	log.info("codeHistoryList={}", codeHistoryList);
+        	return Response.makeResponse(HttpStatus.OK,"sucess get CodeHistoryAll",codeHistoryList.size(),codeHistoryList);
+        }catch(NoSuchElementException ne) {
+        	return Response.noContent("no history");
+        }catch(Exception e) {
+        	return Response.badGateway("fail");
+        }
     }
 
     @PostMapping("/{codeReviewId}/comments")

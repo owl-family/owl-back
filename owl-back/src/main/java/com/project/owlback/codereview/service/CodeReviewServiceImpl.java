@@ -72,7 +72,6 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     @Override
     @Transactional
 	public Long create(CodeReviewPostDto codeReviewPostDto) {
-    	System.out.println("!!!!!!!");
     	
 		log.info("info log={}", codeReviewPostDto);
 		
@@ -80,6 +79,8 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 		// codereview 정보
 		CodeReview codeReview = CodeReview.builder()
 				.versionCount(1)
+				.viewCount(0)
+				.commentCount(0)
 				.title(codeReviewPostDto.getTitle())
 				.writer(codeReviewPostDto.getWriter())
 				.studyGroup(codeReviewPostDto.getStudyGroup())
@@ -181,6 +182,7 @@ public class CodeReviewServiceImpl implements CodeReviewService {
 //		===> []
 		
 		CodeReview optionCodeReview = codeReviewRepository.findById(id).orElseThrow();
+		codeReviewRepository.CountUp(id);
 //		===> NoSuchElementException
 		log.info("info log={}", optionCodeReview);
 		
