@@ -5,6 +5,7 @@ import com.project.owlback.user.dto.UserImg;
 import com.project.owlback.user.dto.req.PostUserReq;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
+import com.project.owlback.user.dto.req.UserFindPasswordDto;
 
 import java.util.Optional;
 
@@ -13,7 +14,7 @@ public interface UserService {
 
     User updatePassword(User user, String password);
 
-    Optional<User> findByEmailAndName(User user);
+    Optional<User> findByEmailAndName(UserFindPasswordDto userFindPasswordDto);
 
     User findByUserId(Long userId);
 

@@ -7,6 +7,7 @@ import com.project.owlback.user.dto.UserImg;
 import com.project.owlback.user.dto.req.PostUserReq;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
+import com.project.owlback.user.dto.req.UserFindPasswordDto;
 import com.project.owlback.user.repository.UserImgRepository;
 import com.project.owlback.user.repository.UserRepository;
 import com.project.owlback.user.repository.UserRoleRepository;
@@ -45,8 +46,8 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public Optional<User> findByEmailAndName(User user) {
-        return userRepository.findByEmailAndName(user.getEmail(), user.getName());
+    public Optional<User> findByEmailAndName(UserFindPasswordDto userFindPasswordDto) {
+        return userRepository.findByEmailAndName(userFindPasswordDto.getEmail(), userFindPasswordDto.getName());
     }
 
     @Override

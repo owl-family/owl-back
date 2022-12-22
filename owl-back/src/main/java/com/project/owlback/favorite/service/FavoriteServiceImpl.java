@@ -26,11 +26,11 @@ public class FavoriteServiceImpl implements FavoriteService {
     public List<CodeReviewDto> getFavoritesByCodeReview(long userId, String search, String query) {
         List<CodeReviewDto> codeReviewDtos;
 
-        if (search == null) {
-            codeReviewDtos = favoriteRepository.findFavoriesByCodeReview(userId);
+        // 추후 search 조건에 따라 추가 필요
+        if (search.equals("title")) {
+            codeReviewDtos = favoriteRepository.findFavoritesByCodeReviewAndTitle(userId, query);
         } else {
-            // 이거 search와 query에 따라 바꿔야 함
-            codeReviewDtos = favoriteRepository.findFavoriesByCodeReview(userId);
+            codeReviewDtos = favoriteRepository.findFavoritesByCodeReview(userId);
         }
 
         return codeReviewDtos;
@@ -40,11 +40,11 @@ public class FavoriteServiceImpl implements FavoriteService {
     public List<UrlDto> getFavoritesByUrl(long userId, String search, String query) {
         List<UrlDto> urlDtos;
 
-        if (search == null) {
-            urlDtos = favoriteRepository.findFavoriesByUrl(userId);
+        // 추후 search 조건에 따라 추가 필요
+        if (search.equals("title")) {
+            urlDtos = favoriteRepository.findFavoritesByUrlAndTitle(userId, query);
         } else {
-            // 이거 search와 query에 따라 바꿔야 함
-            urlDtos = favoriteRepository.findFavoriesByUrl(userId);
+            urlDtos = favoriteRepository.findFavoritesByUrl(userId);
         }
 
         return urlDtos;
