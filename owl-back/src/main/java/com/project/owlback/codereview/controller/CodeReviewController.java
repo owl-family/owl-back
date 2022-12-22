@@ -59,7 +59,7 @@ public class CodeReviewController {
         }catch(NoSuchElementException ne) {
         	return Response.noContent("no history");
         }catch(Exception e) {
-        	return Response.badGateway("fail");
+        	return Response.badRequest("fail");
         }
     }
 
@@ -73,12 +73,9 @@ public class CodeReviewController {
         try {
             final Long id = codeReviewService.addComment(reqDto);
             log.info("comment saved successfully id : {}", id);
-
-            return new ResponseEntity<>(
-                    ResponseDto.create(HttpStatus.OK, "comment saved successfully", Collections.emptyList()),
-                    HttpStatus.OK);
+            return Response.makeResponse(HttpStatus.OK, "comment saved successfully",1,id);
         } catch (Exception e) {
-            return badRequest();
+            return Response.badRequest("fail");
         }
     }
 
@@ -96,16 +93,15 @@ public class CodeReviewController {
             Map<String, Integer> result = new HashMap<>();
             result.put("likeCount", likeCount);
 
-            List<Map<?, ?>> list = new ArrayList<>();
-            list.add(result);
-
-            return new ResponseEntity<>(
-                    ResponseDto.create(HttpStatus.OK, "OK", list),
-                    HttpStatus.OK);
+//            List<Map<?, ?>> list = new ArrayList<>();
+//            list.add(result);
+            return Response.makeResponse(
+            		HttpStatus.OK, "OK",
+            		result.size(),result);
         } catch (NoSuchElementException e) {
-            return noElement();
+            return Response.noContent("no content");
         } catch (Exception e) {
-            return badRequest();
+            return Response.badRequest("fail");
         }
     }
 
@@ -118,23 +114,18 @@ public class CodeReviewController {
         final Page<CodeCommentResDto> response = codeReviewService.getMyComments(key, word, pageable);
         List<Page<?>> list = new ArrayList<>();
         list.add(response);
-        return new ResponseEntity<>(
-                ResponseDto.create(HttpStatus.OK, "OK", list),
-                HttpStatus.OK);
+        return Response.makeResponse(HttpStatus.OK, "OK",list.size(),list);
     }
 
-    public ResponseEntity<?> badRequest() {
-        return new ResponseEntity<>(
-                ResponseDto.create(HttpStatus.BAD_REQUEST, "bad request", Collections.emptyList()),
-                HttpStatus.BAD_REQUEST);
-    }
-
-    public ResponseEntity<?> noElement() {
-        return new ResponseEntity<>(
-                ResponseDto.create(HttpStatus.NO_CONTENT, "no such element", Collections.emptyList()),
-                HttpStatus.NO_CONTENT);
-    }
-
+	/*
+	 * public ResponseEntity<?> badRequest() { return new ResponseEntity<>(
+	 * ResponseDto.create(HttpStatus.BAD_REQUEST, "bad request",
+	 * Collections.emptyList()), HttpStatus.BAD_REQUEST); }
+	 * 
+	 * public ResponseEntity<?> noElement() { return new ResponseEntity<>(
+	 * ResponseDto.create(HttpStatus.NO_CONTENT, "no such element",
+	 * Collections.emptyList()), HttpStatus.NO_CONTENT); }
+	 */
     @GetMapping("")
     public ResponseEntity<?> codeReviewList(
             @RequestParam String key, @RequestParam(defaultValue = "0") String word,
