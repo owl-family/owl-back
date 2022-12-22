@@ -1,8 +1,6 @@
 package com.project.owlback;
 
-import static org.assertj.core.api.Assertions.assertThat; 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
+import static org.assertj.core.api.Assertions.assertThat;  
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import java.util.ArrayList;
@@ -38,11 +36,10 @@ import com.project.owlback.codereview.repository.CodeReviewHistoryRepository;
 import com.project.owlback.codereview.repository.CodeReviewRepository;
 import com.project.owlback.codereview.service.CodeReviewServiceImpl;
 
-import lombok.extern.slf4j.Slf4j;
+
 @Transactional
 @AutoConfigureMockMvc
 @SpringBootTest
-@Slf4j
 public class CodeReviewServiceTest {
 	
 	@Autowired
@@ -62,7 +59,7 @@ public class CodeReviewServiceTest {
 	public void addCodeReviewTest() throws Exception{
 		// input
 		User inputUser = User.builder()
-				.id(1)
+				.id(1L)
 				.nickname("emotion")
 				.build();
 		CodeReviewPostDto inputDto = CodeReviewPostDto.builder()
@@ -71,24 +68,24 @@ public class CodeReviewServiceTest {
 				.writer(inputUser)
 //				.commentCount(0)
 				.studyGroup(StudyGroup.builder()
-						.id(2)
+						.id(2L)
 						.name("test")
 						.goal("goaltest")
 						.studyInformation("infomationTest")
 						.maxMember(10)
 						.curMember(3)
-						.processStudyJoinProcess(StudyJoinProcess.builder()
-								.id(1)
+						.studyJoinProcess(StudyJoinProcess.builder()
+								.id(1L)
 								.build())
 						.studyCriteria(StudyCriteria.builder()
-								.id(1)
+								.id(1L)
 								.build())
 						.studyStatus(StudyStatus.builder()
-								.id(1)
+								.id(1L)
 								.build())
 						.build())
-				.codeScope(CodeScope.builder().id(1).build())
-				.codeLanguage(CodeLanguage.builder().id(1).build())
+				.codeScope(CodeScope.builder().id(1L).build())
+				.codeLanguage(CodeLanguage.builder().id(1L).build())
 				.codeHistoryPostDto(CodeHistoryPostDto.builder()
 						.code("hellow")
 						.subTitle("subTitle test")
@@ -98,9 +95,7 @@ public class CodeReviewServiceTest {
 						.build())
 				.build();
 		Long x = codeReviewService.create(inputDto);
-		log.info("Test info log={}",x);
 		final Optional<CodeReview> codeReview = codeReviewRepository.findById(x);
-		log.info("Test info log={}",codeReview);
 		assertThat(codeReview.get());
 	}
 	
@@ -117,8 +112,7 @@ public class CodeReviewServiceTest {
 				.tag(tag)
 				.build();
 		Long x = codeReviewService.createHistory(codeReviewService.setCodeReviewToCodeHistory(inputDto,inputId),tag);
-		log.info("Test info log={}",x);
-		log.info("Test info log={}",codeReviewHistoryRepository.findById(x));
+		assertThat(x);
 	}
 	
 	@Test
@@ -126,6 +120,6 @@ public class CodeReviewServiceTest {
 	public void getCodeHistoryListTest() throws Exception{
 		Long id = 35L;
 		List<CodeHistoryGetDto> codeHistoryList = codeReviewService.getCodeReviewHistory(id);
-		log.info("Test info log={}", codeHistoryList);
+		assertThat(codeHistoryList);
 	}
 }
