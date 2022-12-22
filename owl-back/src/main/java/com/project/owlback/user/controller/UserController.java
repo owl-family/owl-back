@@ -211,16 +211,9 @@ public class UserController {
         boolean isExist = userService.findByEmail(email);
 
         if (isExist) {
-            return Response.makeResponse(HttpStatus.OK, "존재하는 이메일");
-//            ResponseDto = ResponseDto.builder()
-//                    .code(HttpStatus.OK.value())
-//                    .httpStatus(HttpStatus.OK)
-//                    .message("존재하는 이메일")
-//                    .result(Collections.emptyList())
-//                    .count(ZERO)
-//                    .build();
+            return Response.ok("존재하는 이메일");
         }
-        return Response.makeResponse(HttpStatus.NOT_FOUND, "존재하지 않는 이메일");
+        return Response.notFound("존재하지 않는 이메일");
     }
 
     @GetMapping("signup/{email}")
@@ -244,8 +237,7 @@ public class UserController {
 
         String newPW = emailService.sendPasswordEmail(reqUser.getEmail());
         userService.updatePassword(result.get(), newPW);
-        return Response.makeResponse(HttpStatus.CREATED, "임시 비밀번호 이메일 발송 완료");
-
+        return Response.created("임시 비밀번호 이메일 발송 완료");
     }
 
     @PutMapping("change-password/{user_id}")
@@ -253,7 +245,7 @@ public class UserController {
         User user = userService.findByUserId(userId);
         userService.updatePassword(user, reqUser.getPassword());
 
-        return Response.makeResponse(HttpStatus.CREATED, "비밀번호 변경 완료");
+        return Response.created("비밀번호 변경 완료");
 
     }
 

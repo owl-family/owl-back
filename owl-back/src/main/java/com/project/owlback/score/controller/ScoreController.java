@@ -18,7 +18,6 @@ public class ScoreController {
 
     private final ScoreService scoreService;
 
-
     @GetMapping("{user_id}")
     public ResponseEntity<?> getHistory(@PathVariable("user_id") long userId, @RequestParam String service) {
         List<ScoreDto> scoreDtos = scoreService.getHistory(userId, service);
