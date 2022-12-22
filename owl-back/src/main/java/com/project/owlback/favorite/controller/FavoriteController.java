@@ -20,6 +20,7 @@ public class FavoriteController {
     private final FavoriteService favoriteService;
 
 
+
     @GetMapping("{user_id}")
     public ResponseEntity<?> getFavorites(@PathVariable("user_id") long userId, @RequestParam String service, @RequestParam(required = false) String search, @RequestParam(required = false) String query) {
         // search랑 query가 뭐임? 예시
