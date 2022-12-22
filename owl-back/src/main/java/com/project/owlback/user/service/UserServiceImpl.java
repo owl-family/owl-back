@@ -2,12 +2,14 @@ package com.project.owlback.user.service;
 
 import com.project.owlback.goal.dto.Goal;
 import com.project.owlback.goal.repository.GoalRepository;
+import com.project.owlback.user.dto.Role;
 import com.project.owlback.user.dto.UserImg;
 import com.project.owlback.user.dto.req.PostUserReq;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
 import com.project.owlback.user.repository.UserImgRepository;
 import com.project.owlback.user.repository.UserRepository;
+import com.project.owlback.user.repository.UserRoleRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +28,8 @@ public class UserServiceImpl implements UserService {
     private final GoalRepository goalRepository;
 
     private final UserImgRepository userImgRepository;
+
+    private final UserRoleRepository userRoleRepository;
 
     @Override
     public boolean findByEmail(String email) {
@@ -70,8 +74,15 @@ public class UserServiceImpl implements UserService {
                 .user(user)
                 .build();
 
+        // 회원가입시, 유저에게 ROLE_USER 권한 부여
+        Role role = Role.builder()
+                .role("ROLE_USER")
+                .userId(userId)
+                .build();
+
         log.info("goal : {}", goal);
         goalRepository.save(goal);
+        userRoleRepository.save(role);
 
     }
 

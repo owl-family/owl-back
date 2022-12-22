@@ -17,17 +17,17 @@ import java.util.List;
 public class ScoreController {
 
     private final ScoreService scoreService;
-    private final Response response;
+
 
     @GetMapping("{user_id}")
     public ResponseEntity<?> getHistory(@PathVariable("user_id") long userId, @RequestParam String service) {
         List<ScoreDto> scoreDtos = scoreService.getHistory(userId, service);
-        return response.makeResponse(HttpStatus.OK, "유저의 " + service + " 점수", scoreDtos.size(), scoreDtos);
+        return Response.makeResponse(HttpStatus.OK, "유저의 " + service + " 점수", scoreDtos.size(), scoreDtos);
     }
 
     @GetMapping("ranking/{user_id}")
     public ResponseEntity<?> getRanking(@PathVariable("user_id") long userId) {
         RankingDto rankingDto = scoreService.getRanking(userId);
-        return response.makeResponse(HttpStatus.OK, "유저 랭킹", 1, rankingDto);
+        return Response.makeResponse(HttpStatus.OK, "유저 랭킹", 1, rankingDto);
     }
 }

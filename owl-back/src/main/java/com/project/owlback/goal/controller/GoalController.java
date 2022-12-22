@@ -17,7 +17,7 @@ public class GoalController {
     private final GoalService goalService;
     private static final int ZERO = 0;
 
-    private final Response response;
+
 
     /**
      * 회원 목표 수정 API
@@ -28,7 +28,7 @@ public class GoalController {
 
         goalService.updateGoal(userId, updateGoal);
 
-        return response.makeResponse(HttpStatus.OK,"회원 목표 수정 완료");
+        return Response.makeResponse(HttpStatus.OK,"회원 목표 수정 완료");
     }
 
     /**
@@ -44,7 +44,7 @@ public class GoalController {
         Object result = new UpdateGoal(goal.getSubjectId(),goal.getStudyContent(), goal.getWeeklyCommitment(),
                 goal.getDailyGoalTime(),goal.getWeeklyGoalTime());
 
-        return response.makeResponse(HttpStatus.OK, "회원 목표 조회 완료", 1,result);
+        return Response.makeResponse(HttpStatus.OK, "회원 목표 조회 완료", 1,result);
 
 
     }

@@ -55,7 +55,7 @@ public class OAuthAttributes {
         return User.builder()
                 .name(name)
                 .email(email)
-                .roles(Arrays.asList("ROLE_USER"))
+//                .roles(Arrays.asList(new Role("ROLE_USER")))
                 .build();
     }
 }

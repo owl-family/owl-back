@@ -16,11 +16,11 @@ import java.util.List;
 public class StatController {
 
     private final StatService statService;
-    private final Response response;
+
 
     @GetMapping("{user_id}")
     public ResponseEntity<?> getStat(@PathVariable("user_id") long userId, @RequestParam String term) {
         List<StatDto> statDtos = statService.getStat(userId, term);
-        return response.makeResponse(HttpStatus.OK, "유저의 " + term + " 통계", statDtos.size(), statDtos);
+        return Response.makeResponse(HttpStatus.OK, "유저의 " + term + " 통계", statDtos.size(), statDtos);
     }
 }
