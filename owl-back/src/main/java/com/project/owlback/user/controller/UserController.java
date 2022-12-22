@@ -228,7 +228,7 @@ public class UserController {
         Optional<User> result = userService.findByEmailAndName(userFindPasswordDto);
 
         // 이메일 또는 이름이 존재하지 않을 경우,
-        if (!result.isPresent()) {
+        if (result.isEmpty()) {
             return Response.makeResponse(HttpStatus.NOT_FOUND, "존재하지 않는 이메일 또는 이름");
         }
 
