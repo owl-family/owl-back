@@ -1,8 +1,7 @@
 package com.project.owlback.user.controller;
 
 import com.project.owlback.user.dto.*;
-import com.project.owlback.user.dto.req.PostUserReq;
-import com.project.owlback.user.dto.req.PutUserInfoReq;
+import com.project.owlback.user.dto.req.*;
 import com.project.owlback.user.dto.res.GetUserInfoRes;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.service.EmailService;
@@ -23,7 +22,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.*;
 import com.project.owlback.user.dto.res.TokenInfo;
-import com.project.owlback.user.dto.req.Tokens;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,7 +29,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.project.owlback.user.dto.req.Login;
 import com.project.owlback.user.service.AuthServiceImpl;
 
 @RequestMapping("/api/users")
@@ -227,26 +224,25 @@ public class UserController {
     }
 
     @PutMapping("find-password")
-    public ResponseEntity<?> findPassword(@RequestBody User reqUser) throws Exception {
-        Optional<User> result = userService.findByEmailAndName(reqUser);
+    public ResponseEntity<?> findPassword(@RequestBody UserFindPasswordDto userFindPasswordDto) throws Exception {
+        Optional<User> result = userService.findByEmailAndName(userFindPasswordDto);
 
         // 이메일 또는 이름이 존재하지 않을 경우,
         if (!result.isPresent()) {
             return Response.makeResponse(HttpStatus.NOT_FOUND, "존재하지 않는 이메일 또는 이름");
         }
 
-        String newPW = emailService.sendPasswordEmail(reqUser.getEmail());
+        String newPW = emailService.sendPasswordEmail(userFindPasswordDto.getEmail());
         userService.updatePassword(result.get(), newPW);
         return Response.created("임시 비밀번호 이메일 발송 완료");
     }
 
     @PutMapping("change-password/{user_id}")
-    public ResponseEntity<?> changePassword(@PathVariable("user_id") long userId, @RequestBody User reqUser) {
+    public ResponseEntity<?> changePassword(@PathVariable("user_id") long userId, @RequestBody PasswordDto passwordDto) {
         User user = userService.findByUserId(userId);
-        userService.updatePassword(user, reqUser.getPassword());
+        userService.updatePassword(user, passwordDto.getPassword());
 
         return Response.created("비밀번호 변경 완료");
-
     }
 
     /**
