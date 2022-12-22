@@ -87,6 +87,10 @@ public class User extends BaseTimeEntity  implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<CodeReview> codeReviews = new ArrayList<>();
 
+    @OneToMany
+    @JoinColumn(name = "user_id") //@JoinColumn을 통해 TEAM_ID를 연관관계의 주인으로 설정
+    private List<Role> roles = new ArrayList<>();
+
     public void updatePassword(String password) {
         this.password = password;
     }
@@ -109,16 +113,14 @@ public class User extends BaseTimeEntity  implements UserDetails {
         this.userImg=u;
     }
 
-    @Column
-    @ElementCollection(fetch = FetchType.EAGER)
-    @Builder.Default
-    private List<String> roles = new ArrayList<>();
+
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return this.roles.stream()
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+//        return this.roles.stream()
+//                .map(SimpleGrantedAuthority::new)
+//                .collect(Collectors.toList());
+        return null;
     }
 
     @Override

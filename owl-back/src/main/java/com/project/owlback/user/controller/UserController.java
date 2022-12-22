@@ -43,7 +43,6 @@ public class UserController {
     private final UserService userService;
     private final EmailService emailService;
     private final UserImgService userImgService;
-    private final Response response;
     private final AuthServiceImpl authService;
 
     @PostMapping("/login")
@@ -56,8 +55,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
-        else return response.makeResponse(HttpStatus.FORBIDDEN, "로그인이 실패했습니다.");
+        if(tokenInfo != null) return Response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
+        else return Response.makeResponse(HttpStatus.FORBIDDEN, "로그인이 실패했습니다.");
     }
 
     // access token 재발급; front에서 access token 만료여부를 확인해서 reissue를 요청함
@@ -71,8 +70,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return response.makeResponse(HttpStatus.OK, "재발급 완료", 1, tokenInfo);
-        else return response.makeResponse(HttpStatus.FORBIDDEN, "재발급 실패");
+        if(tokenInfo != null) return Response.makeResponse(HttpStatus.OK, "재발급 완료", 1, tokenInfo);
+        else return Response.makeResponse(HttpStatus.FORBIDDEN, "재발급 실패");
     }
 
     @PostMapping("/logout")
@@ -84,8 +83,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(isLogout) return response.makeResponse(HttpStatus.OK, "로그아웃되었습니다.");
-        else return response.makeResponse(HttpStatus.FORBIDDEN, "로그아웃이 실패했습니다.");
+        if(isLogout) return Response.makeResponse(HttpStatus.OK, "로그아웃되었습니다.");
+        else return Response.makeResponse(HttpStatus.FORBIDDEN, "로그아웃이 실패했습니다.");
     }
 
     // session에 저장된 정보를 가지고 토큰을 만들어서 보내줌
@@ -99,8 +98,8 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
-        else return response.makeResponse(HttpStatus.FORBIDDEN, "signUp");
+        if(tokenInfo != null) return Response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
+        else return Response.makeResponse(HttpStatus.FORBIDDEN, "signUp");
     }
 
     /**
@@ -111,9 +110,9 @@ public class UserController {
     public ResponseEntity<?> createUser(@RequestBody @Valid PostUserReq postUserReq) {
         userService.createUser(postUserReq);
         if (!postUserReq.getPassword().equals(postUserReq.getPasswordCheck()))
-            return response.makeResponse(HttpStatus.NOT_FOUND,"비밀번호가 비밀번호 확인 값과 다름");
+            return Response.makeResponse(HttpStatus.NOT_FOUND,"비밀번호가 비밀번호 확인 값과 다름");
         else
-            return response.makeResponse(HttpStatus.OK,"회원가입 완료");
+            return Response.makeResponse(HttpStatus.OK,"회원가입 완료");
     }
 
     /**
@@ -125,9 +124,9 @@ public class UserController {
         boolean isExist = userService.findByNickname(nickname);
 
         if (!isExist)
-            return response.makeResponse(HttpStatus.NOT_FOUND,"닉네임 중복 확인 완료");
+            return Response.makeResponse(HttpStatus.NOT_FOUND,"닉네임 중복 확인 완료");
         else
-            return response.makeResponse(HttpStatus.OK,"이미 존재하는 닉네하는 닉네임");
+            return Response.makeResponse(HttpStatus.OK,"이미 존재하는 닉네하는 닉네임");
     }
 
 
@@ -140,7 +139,7 @@ public class UserController {
     public ResponseEntity<?> UpdateInfo(@PathVariable("user_id") Long userId, @RequestBody PutUserInfoReq putUserInfoReq) {
         userService.updateInfo(userId,putUserInfoReq);
 
-        return response.makeResponse(HttpStatus.CREATED, "회원 정보 수정 완료");
+        return Response.makeResponse(HttpStatus.CREATED, "회원 정보 수정 완료");
     }
 
 
@@ -153,7 +152,7 @@ public class UserController {
 
         User user = userService.findByUserId(userId);
         Object getUserInfo = new GetUserInfoRes(user.getNickname(), user.getIntroduction(),user.getUserImg());
-        return response.makeResponse(HttpStatus.OK, "회원 정보 조회 완료",1, getUserInfo);
+        return Response.makeResponse(HttpStatus.OK, "회원 정보 조회 완료",1, getUserInfo);
     }
 
     /**
@@ -164,7 +163,7 @@ public class UserController {
     public ResponseEntity<?> deleteUser(@PathVariable("user_id") Long userId) {
         userService.deleteUser(userId);
 
-        return response.makeResponse(HttpStatus.CREATED, "회원 탈퇴 완료");
+        return Response.makeResponse(HttpStatus.CREATED, "회원 탈퇴 완료");
     }
 
 
@@ -212,8 +211,8 @@ public class UserController {
         boolean isExist = userService.findByEmail(email);
 
         if (isExist) {
-            return response.makeResponse(HttpStatus.OK, "존재하는 이메일");
-//            responseDto = ResponseDto.builder()
+            return Response.makeResponse(HttpStatus.OK, "존재하는 이메일");
+//            ResponseDto = ResponseDto.builder()
 //                    .code(HttpStatus.OK.value())
 //                    .httpStatus(HttpStatus.OK)
 //                    .message("존재하는 이메일")
@@ -221,7 +220,7 @@ public class UserController {
 //                    .count(ZERO)
 //                    .build();
         }
-        return response.makeResponse(HttpStatus.NOT_FOUND, "존재하지 않는 이메일");
+        return Response.makeResponse(HttpStatus.NOT_FOUND, "존재하지 않는 이메일");
     }
 
     @GetMapping("signup/{email}")
@@ -231,7 +230,7 @@ public class UserController {
         HashMap<String, String> map = new HashMap<>();
         map.put("code", code);
 
-        return response.makeResponse(HttpStatus.OK, "인증 코드 발송 완료", map.size(), map);
+        return Response.makeResponse(HttpStatus.OK, "인증 코드 발송 완료", map.size(), map);
     }
 
     @PutMapping("find-password")
@@ -240,12 +239,12 @@ public class UserController {
 
         // 이메일 또는 이름이 존재하지 않을 경우,
         if (!result.isPresent()) {
-            return response.makeResponse(HttpStatus.NOT_FOUND, "존재하지 않는 이메일 또는 이름");
+            return Response.makeResponse(HttpStatus.NOT_FOUND, "존재하지 않는 이메일 또는 이름");
         }
 
         String newPW = emailService.sendPasswordEmail(reqUser.getEmail());
         userService.updatePassword(result.get(), newPW);
-        return response.makeResponse(HttpStatus.CREATED, "임시 비밀번호 이메일 발송 완료");
+        return Response.makeResponse(HttpStatus.CREATED, "임시 비밀번호 이메일 발송 완료");
 
     }
 
@@ -254,7 +253,7 @@ public class UserController {
         User user = userService.findByUserId(userId);
         userService.updatePassword(user, reqUser.getPassword());
 
-        return response.makeResponse(HttpStatus.CREATED, "비밀번호 변경 완료");
+        return Response.makeResponse(HttpStatus.CREATED, "비밀번호 변경 완료");
 
     }
 
@@ -299,7 +298,7 @@ public class UserController {
         userImg.setFileUrl(fileUrl);
         userImgService.save(userId,userImg);
 
-        return response.makeResponse(HttpStatus.CREATED,"회원 프로필 사진 변경 완료");
+        return Response.makeResponse(HttpStatus.CREATED,"회원 프로필 사진 변경 완료");
     }
 
 }
