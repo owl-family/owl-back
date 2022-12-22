@@ -21,7 +21,6 @@ public class FavoriteController {
 
     @GetMapping("{user_id}")
     public ResponseEntity<?> getFavorites(@PathVariable("user_id") long userId, @RequestParam String service, @RequestParam(required = false) String search, @RequestParam(required = false) String query) {
-        // search랑 query가 뭐임? 예시
         if (service.equals("code_review")) {
             List<CodeReviewDto> codeReviewDtos = favoriteService.getFavoritesByCodeReview(userId, search, query);
             return Response.makeResponse(HttpStatus.OK, "유저의 " + service + " 즐겨찾기", codeReviewDtos.size(), codeReviewDtos);
