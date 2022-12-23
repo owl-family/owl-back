@@ -4,6 +4,7 @@ import lombok.Builder;
 import lombok.Getter;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import static java.util.Arrays.asList;
@@ -55,7 +56,7 @@ public class OAuthAttributes {
         return User.builder()
                 .name(name)
                 .email(email)
-//                .roles(Arrays.asList(new Role("ROLE_USER")))
+                .roles(List.of(new Role("ROLE_USER")))
                 .build();
     }
 }

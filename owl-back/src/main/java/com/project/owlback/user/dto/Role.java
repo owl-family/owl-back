@@ -25,4 +25,8 @@ public class Role {
     @Column(name = "role")
     private String role;
 
+    public Role(String roleUser) {
+        this.userId = 0L;
+        this.role = roleUser;
+    }
 }

@@ -9,6 +9,7 @@ import com.project.owlback.user.service.EmailService;
 import com.project.owlback.user.service.UserImgService;
 import com.project.owlback.user.service.UserService;
 import com.project.owlback.util.Response;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.io.FilenameUtils;
@@ -55,7 +56,7 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return Response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
+        if(tokenInfo != null) return Response.makeResponse(HttpStatus.CREATED, "로그인이 성공했습니다.", 1, tokenInfo);
         else return Response.makeResponse(HttpStatus.FORBIDDEN, "로그인이 실패했습니다.");
     }
 
@@ -70,7 +71,7 @@ public class UserController {
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return Response.makeResponse(HttpStatus.OK, "재발급 완료", 1, tokenInfo);
+        if(tokenInfo != null) return Response.makeResponse(HttpStatus.CREATED, "재발급 완료", 1, tokenInfo);
         else return Response.makeResponse(HttpStatus.FORBIDDEN, "재발급 실패");
     }
 
@@ -89,17 +90,15 @@ public class UserController {
 
     // session에 저장된 정보를 가지고 토큰을 만들어서 보내줌
     @GetMapping("/login/social")
-    public ResponseEntity<?> socialLogin(){
-        TokenInfo tokenInfo = null;
+    public ResponseEntity<?> socialLogin(HttpServletResponse response) throws IOException {
         // 로그인하면 access token과 refresh token을 모두 발급
         try {
-            tokenInfo = authService.socialLogin().orElse(null);
+            return authService.socialLogin();
         } catch(Exception e){
             log.info(e.getMessage());
         }
 
-        if(tokenInfo != null) return Response.makeResponse(HttpStatus.OK, "로그인이 성공했습니다.", 1, tokenInfo);
-        else return Response.makeResponse(HttpStatus.FORBIDDEN, "signUp");
+        return Response.notFound("로그인이 실패했습니다.");
     }
 
     /**

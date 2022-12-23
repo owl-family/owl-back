@@ -2,9 +2,12 @@ package com.project.owlback.user.service;
 
 import com.project.owlback.user.dto.SessionUser;
 import com.project.owlback.user.dto.req.Tokens;
+import com.project.owlback.util.Response;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.RedisTemplate;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.core.Authentication;
@@ -124,15 +127,15 @@ public class AuthServiceImpl implements AuthService {
     private final HttpSession httpSession;
 
     @Override
-    public Optional<TokenInfo> socialLogin() {
+    public ResponseEntity<?> socialLogin() {
         SessionUser user = (SessionUser) httpSession.getAttribute("user");
         httpSession.removeAttribute("user");
 
         if(user.getNickname() == null)
-            return Optional.empty();
+            return Response.makeResponse(HttpStatus.CREATED, "sinUp", 1, user);
 
         TokenInfo tokenInfo = jwtTokenProvider.generateToken(user);
-        return Optional.ofNullable(tokenInfo);
+        return Response.makeResponse(HttpStatus.CREATED, "로그인이 성공했습니다.", 1, tokenInfo);
     }
 
 }
