@@ -61,4 +61,7 @@ public class StudyGroup {
     @JoinColumn(name = "study_status_id", nullable = false)
     private StudyStatus studyStatus;
 
+    @Column(name = "join_code", nullable = false)
+    private String joinCode;
+
 }

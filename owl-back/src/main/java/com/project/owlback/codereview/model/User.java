@@ -17,8 +17,8 @@ import java.util.List;
 @Getter
 @Setter
 @Entity
-@Table(name = "user")
 @Builder
+@Table(name = "user")
 public class User {
     @ToString.Include
     @Id

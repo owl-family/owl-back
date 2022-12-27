@@ -1,4 +1,4 @@
-package com.project.owlback.codereview.config;
+package com.project.owlback.config;
 
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.EntityManager;
