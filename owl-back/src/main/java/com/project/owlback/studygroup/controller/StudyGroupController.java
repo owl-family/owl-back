@@ -89,6 +89,8 @@ public class StudyGroupController {
             emailService.sendInviteEmail(emails, studyGroup);
 
             return Response.makeResponse(HttpStatus.CREATED, "study invite request success");
+        } catch (NoSuchElementException s) {
+            return Response.noContent("존재하지 않는 유저입니다.");
         } catch (Exception e) {
             return Response.badRequest("스터디 가입 초대 실패");
         }
@@ -103,14 +105,13 @@ public class StudyGroupController {
         try {
             long id = studyGroupService.inviteAccept(studyId, userId, joinCode);
             log.info("update member state id : {}", id);
-            if (id == 0) {
+            if (id == 0L) {
                 log.info("joinCode is not equal");
                 return Response.noContent("초대코드가 올바르지 않습니다.");
             }
             return Response.makeResponse(HttpStatus.OK, "스터디 가입 초대 승인 성공");
         } catch (NoSuchElementException s) {
             log.info("not invite user");
-
             return Response.noContent("초대한 유저가 아닙니다.");
         } catch (Exception e) {
             return Response.badRequest("스터디 가입 초대 승인 실패");

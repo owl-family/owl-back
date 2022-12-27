@@ -95,7 +95,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
             member.setStudyGroup(studyGroup);
             member.setStudyMemberStatus(status);
 
-            final User user = userRepository.findByEmail(email);
+            final User user = userRepository.findByEmail(email).orElseThrow();
             log.info("found user : {}", user);
             // 이미 초대한 유저인지 확인
             condition.setStudyId(studyId);
@@ -139,13 +139,14 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         Optional<StudyGroup> studyGroup = studyGroupRepository.findByIdAndJoinCode(studyId, joinCode);
         if (studyGroup.isEmpty()) {
             log.info("found studyGroup : {}", studyGroup);
-            return 0;
+            return 0L;
         }
         // 초대코드가 올바르면,
         // 멤버 정보 변경
         StudyMemberStatus status = studyMemberStatusRepository.findByDescription("가입완료");
         member.setStudyMemberStatus(status);
-        log.info("member : [memberId : {}, nickname : {}, memberStatus : {}]", member.getId(), member.getStudyGroup().getName(), member.getStudyMemberStatus().getDescription());
+        log.info("member : [memberId : {}, userId : {}, studyName : {}, memberStatus : {}]",
+                member.getId(), member.getUser().getId(), member.getStudyGroup().getName(), member.getStudyMemberStatus().getDescription());
 
         return studyMemberRepository.save(member).getId();
     }

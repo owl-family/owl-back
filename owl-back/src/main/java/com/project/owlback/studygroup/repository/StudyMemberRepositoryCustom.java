@@ -7,6 +7,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
+import java.util.Objects;
 import java.util.Optional;
 
 import static com.project.owlback.codereview.model.QStudyMember.studyMember;
@@ -19,15 +20,23 @@ public class StudyMemberRepositoryCustom {
 
     public Optional<StudyMember> getStudyMember(StudyGroupCondition condition) {
         Optional<StudyMember> member = Optional.ofNullable(queryFactory.selectFrom(studyMember)
-                .where(studyIdAnduserIdEq(condition.getStudyId(), condition.getUserId()),
+                .where(studyIdAndUserIdEq(condition.getStudyId(), condition.getUserId()),
                         descriptionEq(condition.getDescription()))
                 .fetchOne());
         return member;
     }
 
-    private BooleanExpression studyIdAnduserIdEq(long studyId, long userId) {
-        return (studyId != 0 && userId != 0) ?
-                studyMember.studyGroup.id.eq(studyId).and(studyMember.user.id.eq(userId)) : null;
+    private BooleanExpression studyIdAndUserIdEq(long studyId, long userId) {
+        return studyMember.studyGroup.id.eq(studyId)
+                .and(studyMember.user.id.eq(userId));
+    }
+
+    private BooleanExpression studyIdEq(long studyId) {
+        return studyId != 0 ? studyMember.studyGroup.id.eq(studyId) : null;
+    }
+
+    private BooleanExpression userIdEq(long userId) {
+        return userId != 0 ? studyMember.studyGroup.id.eq(userId) : null;
     }
 
     private BooleanExpression descriptionEq(String description) {
