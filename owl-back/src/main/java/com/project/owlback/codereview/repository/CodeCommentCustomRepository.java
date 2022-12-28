@@ -1,9 +1,7 @@
 package com.project.owlback.codereview.repository;
 
-import com.project.owlback.codereview.model.CodeComment;   
-import com.project.owlback.codereview.model.QCodeComment;
-import com.project.owlback.codereview.model.QCodeReview;
-import com.project.owlback.codereview.model.User;
+import com.project.owlback.codereview.model.CodeComment;
+import com.project.owlback.user.model.User;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;

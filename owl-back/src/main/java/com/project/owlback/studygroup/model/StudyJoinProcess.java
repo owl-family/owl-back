@@ -17,7 +17,7 @@ public class StudyJoinProcess {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_join_process_id", nullable = false)
-    private Long id;
+    private Long joinProcessId;
 
     @Column(name = "description", nullable = false, length = 20)
     private String description;

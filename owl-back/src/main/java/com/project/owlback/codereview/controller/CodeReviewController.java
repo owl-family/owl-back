@@ -138,6 +138,7 @@ public class CodeReviewController {
 
             return Response.makeResponse(status, "success to get CodeReviewList", list.getSize(), list);
         } catch (Exception e) {
+            log.info(e.getMessage());
             return Response.badRequest("fail to get CodeReviewList");
         }
     }

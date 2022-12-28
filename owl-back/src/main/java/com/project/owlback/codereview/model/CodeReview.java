@@ -1,6 +1,7 @@
 package com.project.owlback.codereview.model;
 
 import com.project.owlback.studygroup.model.StudyGroup;
+import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;

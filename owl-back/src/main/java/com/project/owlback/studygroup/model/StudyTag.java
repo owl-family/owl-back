@@ -2,18 +2,19 @@ package com.project.owlback.studygroup.model;
 
 import com.project.owlback.codereview.model.Tag;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 @Entity
 @Getter
-@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Table(name = "study_tag")
 public class StudyTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_tag_id", nullable = false)
-    private Long id;
+    private Long studyTagId;
 
     @Column(name = "count", nullable = false)
     private Integer count;

@@ -50,7 +50,7 @@ public class CodeReviewRepositoryCustom {
     }
 
     private BooleanExpression studyGroupIdEq(long id) {
-        return id != 0 ? codeReview.studyGroup.id.eq(id) : null;
+        return id != 0 ? codeReview.studyGroup.studyGroupId.eq(id) : null;
 
     }
 

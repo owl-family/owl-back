@@ -1,7 +1,7 @@
 package com.project.owlback.studygroup.model;
 
 import com.project.owlback.codereview.model.BaseTimeEntity;
-import com.project.owlback.codereview.model.User;
+import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -17,7 +17,7 @@ public class StudyMember extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_member_id", nullable = false)
-    private Long id;
+    private Long memberId;
 
     @Column(name = "join_message", nullable = false, length = 100)
     private String joinMessage;
@@ -28,7 +28,7 @@ public class StudyMember extends BaseTimeEntity {
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "study_member_status_id", nullable = false)
-    private StudyMemberStatus studyMemberStatus;
+    private MemberStatus memberStatus;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "user_id", nullable = false)

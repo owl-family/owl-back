@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+import com.project.owlback.user.model.User;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +26,6 @@ import com.project.owlback.studygroup.model.StudyGroup;
 import com.project.owlback.studygroup.model.StudyJoinProcess;
 import com.project.owlback.studygroup.model.StudyStatus;
 import com.project.owlback.codereview.model.Tag;
-import com.project.owlback.codereview.model.User;
 import com.project.owlback.codereview.repository.CodeReviewHistoryRepository;
 import com.project.owlback.codereview.repository.CodeReviewRepository;
 import com.project.owlback.codereview.service.CodeReviewServiceImpl;
@@ -53,7 +53,7 @@ public class CodeReviewServiceTest {
 	public void addCodeReviewTest() throws Exception{
 		// input
 		User inputUser = User.builder()
-				.id(1L)
+				.userId(1L)
 				.nickname("emotion")
 				.build();
 		CodeReviewPostDto inputDto = CodeReviewPostDto.builder()
@@ -62,20 +62,20 @@ public class CodeReviewServiceTest {
 				.writer(inputUser)
 //				.commentCount(0)
 				.studyGroup(StudyGroup.builder()
-						.id(2L)
+						.studyGroupId(2L)
 						.name("test")
 						.goal("goaltest")
-						.studyInformation("infomationTest")
+						.information("infomationTest")
 						.maxMember(10)
 						.curMember(3)
-						.studyJoinProcess(StudyJoinProcess.builder()
-								.id(1L)
+						.joinProcess(StudyJoinProcess.builder()
+								.joinProcessId(1L)
 								.build())
-						.studyCriteria(StudyCriteria.builder()
-								.id(1L)
+						.criteria(StudyCriteria.builder()
+								.criteriaId(1L)
 								.build())
-						.studyStatus(StudyStatus.builder()
-								.id(1L)
+						.status(StudyStatus.builder()
+								.statusId(1L)
 								.build())
 						.build())
 				.codeScope(CodeScope.builder().id(1L).build())

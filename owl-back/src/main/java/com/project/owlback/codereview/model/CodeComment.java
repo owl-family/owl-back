@@ -1,12 +1,10 @@
 package com.project.owlback.codereview.model;
 
-import com.querydsl.core.annotations.QueryEntity; 
+import com.project.owlback.user.model.User;
 import com.querydsl.core.annotations.QueryInit;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.ColumnDefault;
-
-import java.time.Instant;
 
 @Entity
 @Getter

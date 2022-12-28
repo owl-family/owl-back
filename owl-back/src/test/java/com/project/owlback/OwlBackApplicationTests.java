@@ -8,7 +8,6 @@ class OwlBackApplicationTests {
 
     @Test
     void contextLoads() {
-
     }
 
 }

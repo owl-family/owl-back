@@ -7,6 +7,7 @@ import com.project.owlback.studygroup.model.StudyMember;
 import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
 import com.project.owlback.studygroup.dto.req.StudyJoinReqDto;
 import com.project.owlback.studygroup.repository.StudyGroupRepository;
+import com.project.owlback.studygroup.repository.StudyMemberRepository;
 import com.project.owlback.studygroup.repository.StudyMemberStatusRepository;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,7 +36,7 @@ class StudyGroupServiceTest {
     private StudyGroupService studyGroupService;
 
     @Autowired
-    private EmailService emailService;
+    private StudyEmailService emailService;
 
     @Autowired
     private StudyMemberRepository studyMemberRepository;
@@ -115,7 +116,7 @@ class StudyGroupServiceTest {
         //then
         final Optional<StudyMember> member = studyMemberRepository.findById(id);
         assertThat(member.isPresent()).isTrue();
-        assertThat(member.get().getStudyMemberStatus().getDescription()).isEqualTo("가입완료");
+        assertThat(member.get().getMemberStatus().getDescription()).isEqualTo("가입완료");
 
     }
 
@@ -174,7 +175,7 @@ class StudyGroupServiceTest {
             final Optional<StudyMember> member = studyMemberRepository.findByUserEmail(email);
 
             assertThat(member.isPresent()).isTrue();
-            assertThat(member.get().getStudyMemberStatus().getDescription()).isEqualTo("초대중");
+            assertThat(member.get().getMemberStatus().getDescription()).isEqualTo("초대중");
         }
 
     }
@@ -235,7 +236,7 @@ class StudyGroupServiceTest {
         //then
         final Optional<StudyMember> member = studyMemberRepository.findById(id);
         assertThat(member.isPresent()).isTrue();
-        assertThat(member.get().getStudyMemberStatus().getDescription()).isEqualTo("가입완료");
+        assertThat(member.get().getMemberStatus().getDescription()).isEqualTo("가입완료");
 
     }
 

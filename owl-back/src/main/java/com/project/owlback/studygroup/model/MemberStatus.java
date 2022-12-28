@@ -1,20 +1,21 @@
 package com.project.owlback.studygroup.model;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import lombok.Getter;
-import lombok.Setter;
+import jakarta.persistence.*;
+import lombok.*;
 
 @Entity
 @Getter
 @Setter
+@AllArgsConstructor
+@NoArgsConstructor
+@ToString
 @Table(name = "study_member_status")
-public class StudyMemberStatus {
+// 가입완료/승인대기/초대중
+public class MemberStatus {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "study_member_status_id", nullable = false)
-    private Long id;
+    private Long memberStatusId;
 
     @Column(name = "description", nullable = false, length = 45)
     private String description;

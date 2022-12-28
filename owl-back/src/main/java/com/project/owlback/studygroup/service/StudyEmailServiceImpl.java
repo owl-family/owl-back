@@ -14,7 +14,7 @@ import java.util.List;
 @Service
 @Slf4j
 @RequiredArgsConstructor
-public class EmailServiceImpl implements EmailService {
+public class StudyEmailServiceImpl implements StudyEmailService {
 
     private final JavaMailSender emailSender;
 

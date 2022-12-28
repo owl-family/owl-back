@@ -9,7 +9,7 @@ import org.springframework.stereotype.Repository;
 
 import java.util.Optional;
 
-import static com.project.owlback.codereview.model.QStudyMember.studyMember;
+import static com.project.owlback.studygroup.model.QStudyMember.studyMember;
 import static org.springframework.util.StringUtils.hasText;
 
 @Repository
@@ -26,19 +26,19 @@ public class StudyMemberRepositoryCustom {
     }
 
     private BooleanExpression studyIdAndUserIdEq(long studyId, long userId) {
-        return studyMember.studyGroup.id.eq(studyId)
-                .and(studyMember.user.id.eq(userId));
+        return studyMember.studyGroup.studyGroupId.eq(studyId)
+                .and(studyMember.user.userId.eq(userId));
     }
 
     private BooleanExpression studyIdEq(long studyId) {
-        return studyId != 0 ? studyMember.studyGroup.id.eq(studyId) : null;
+        return studyId != 0 ? studyMember.studyGroup.studyGroupId.eq(studyId) : null;
     }
 
     private BooleanExpression userIdEq(long userId) {
-        return userId != 0 ? studyMember.studyGroup.id.eq(userId) : null;
+        return userId != 0 ? studyMember.studyGroup.studyGroupId.eq(userId) : null;
     }
 
     private BooleanExpression descriptionEq(String description) {
-        return hasText(description) ? studyMember.studyMemberStatus.description.eq(description) : null;
+        return hasText(description) ? studyMember.memberStatus.description.eq(description) : null;
     }
 }
