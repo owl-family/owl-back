@@ -1,14 +1,8 @@
 package com.project.owlback.studygroup.service;
 
-import com.project.owlback.studygroup.dto.StudyCriteria;
-import com.project.owlback.studygroup.dto.StudyGroup;
-import com.project.owlback.studygroup.dto.StudyMember;
-import com.project.owlback.studygroup.dto.StudyStatus;
+import com.project.owlback.studygroup.dto.*;
 import com.project.owlback.studygroup.dto.res.StudyMemberRes;
-import com.project.owlback.studygroup.repository.StudyCriteriaRepository;
-import com.project.owlback.studygroup.repository.StudyGroupRepository;
-import com.project.owlback.studygroup.repository.StudyMemberRepository;
-import com.project.owlback.studygroup.repository.StudyStatusRepository;
+import com.project.owlback.studygroup.repository.*;
 import com.project.owlback.user.dto.User;
 import com.project.owlback.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -28,6 +22,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final StudyMemberRepository studyMemberRepository;
     private final StudyStatusRepository studyStatusRepository;
     private final StudyCriteriaRepository studyCriteriaRepository;
+    private final StudyJoinProcessRepository studyJoinProcessRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -76,5 +71,15 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         if(criteria.size() == 0) return Optional.empty();
 
         return Optional.of(criteria);
+    }
+
+    @Override
+    public Optional<List<StudyJoinProcess>> joinProcesses() {
+        List<StudyJoinProcess> joinProcesses = studyJoinProcessRepository.findAll();
+
+        // 가입 방식 목록이 존재하지 않으면 null 리턴
+        if(joinProcesses.size() == 0) return Optional.empty();
+
+        return Optional.of(joinProcesses);
     }
 }

@@ -1,6 +1,7 @@
 package com.project.owlback.studygroup.controller;
 
 import com.project.owlback.studygroup.dto.StudyCriteria;
+import com.project.owlback.studygroup.dto.StudyJoinProcess;
 import com.project.owlback.studygroup.dto.res.StudyMemberRes;
 import com.project.owlback.studygroup.service.StudyGroupService;
 import com.project.owlback.util.Response;
@@ -57,6 +58,19 @@ public class StudyGroupController {
 
         if(criteria == null) return Response.notFound("가입 기준 목록을 가져오는 것에 실패했습니다.");
         return Response.makeResponse(HttpStatus.CREATED, "가입 기준 목록을 성공적으로 가져왔습니다.", criteria.size(), criteria);
+    }
+
+    @GetMapping("/join-process")
+    public ResponseEntity<?> joinProcesses(){
+        List<StudyJoinProcess> joinProcesses = null;
+        try {
+            joinProcesses = studyGroupService.joinProcesses().orElse(null);
+        } catch(Exception e){
+            log.info(e.getMessage());
+        }
+
+        if(joinProcesses == null) return Response.notFound("가입 방식 목록을 가져오는 것에 실패했습니다.");
+        return Response.makeResponse(HttpStatus.CREATED, "가입 방식 목록을 성공적으로 가져왔습니다.", joinProcesses.size(), joinProcesses);
     }
 
 }
