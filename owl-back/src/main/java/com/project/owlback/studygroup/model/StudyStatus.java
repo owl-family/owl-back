@@ -1,4 +1,4 @@
-package com.project.owlback.codereview.model;
+package com.project.owlback.studygroup.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -12,11 +12,11 @@ import lombok.Setter;
 @Entity
 @Getter
 @Setter
-@Table(name = "study_join_process")
-public class StudyJoinProcess {
+@Table(name = "study_status")
+public class StudyStatus {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "study_join_process_id", nullable = false)
+    @Column(name = "study_status_id", nullable = false)
     private Long id;
 
     @Column(name = "description", nullable = false, length = 20)

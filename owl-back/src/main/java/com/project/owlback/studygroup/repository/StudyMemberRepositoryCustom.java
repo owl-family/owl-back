@@ -1,13 +1,12 @@
 package com.project.owlback.studygroup.repository;
 
-import com.project.owlback.codereview.model.StudyMember;
+import com.project.owlback.studygroup.model.StudyMember;
 import com.project.owlback.studygroup.dto.StudyGroupCondition;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Repository;
 
-import java.util.Objects;
 import java.util.Optional;
 
 import static com.project.owlback.codereview.model.QStudyMember.studyMember;

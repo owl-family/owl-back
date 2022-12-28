@@ -1,5 +1,6 @@
-package com.project.owlback.codereview.model;
+package com.project.owlback.studygroup.model;
 
+import com.project.owlback.codereview.model.Tag;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;

@@ -1,8 +1,8 @@
 package com.project.owlback.studygroup.controller;
 
-import com.project.owlback.codereview.model.StudyGroup;
-import com.project.owlback.studygroup.dto.StudyInviteReqDto;
-import com.project.owlback.studygroup.dto.StudyJoinReqDto;
+import com.project.owlback.studygroup.model.StudyGroup;
+import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
+import com.project.owlback.studygroup.dto.req.StudyJoinReqDto;
 import com.project.owlback.studygroup.service.EmailService;
 import com.project.owlback.studygroup.service.StudyGroupService;
 import com.project.owlback.util.Response;
@@ -13,9 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
 import java.util.NoSuchElementException;
-import java.util.concurrent.locks.ReentrantLock;
 
 
 @RestController

@@ -1,4 +1,4 @@
-package com.project.owlback.codereview.model;
+package com.project.owlback.studygroup.model;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

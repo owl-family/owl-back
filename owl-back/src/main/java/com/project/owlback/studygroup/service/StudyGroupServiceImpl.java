@@ -1,12 +1,12 @@
 package com.project.owlback.studygroup.service;
 
-import com.project.owlback.codereview.model.StudyGroup;
-import com.project.owlback.codereview.model.StudyMember;
-import com.project.owlback.codereview.model.StudyMemberStatus;
+import com.project.owlback.studygroup.model.StudyGroup;
+import com.project.owlback.studygroup.model.StudyMember;
+import com.project.owlback.studygroup.model.StudyMemberStatus;
 import com.project.owlback.codereview.model.User;
 import com.project.owlback.codereview.repository.UserRepository;
 import com.project.owlback.studygroup.dto.StudyGroupCondition;
-import com.project.owlback.studygroup.dto.StudyInviteReqDto;
+import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
 import com.project.owlback.studygroup.repository.StudyGroupRepository;
 import com.project.owlback.studygroup.repository.StudyMemberRepositoryCustom;
 import com.project.owlback.studygroup.repository.StudyMemberStatusRepository;

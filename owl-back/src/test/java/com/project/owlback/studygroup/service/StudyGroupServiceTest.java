@@ -2,10 +2,10 @@ package com.project.owlback.studygroup.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.project.owlback.EnableMockMvc;
-import com.project.owlback.codereview.model.StudyGroup;
-import com.project.owlback.codereview.model.StudyMember;
-import com.project.owlback.studygroup.dto.StudyInviteReqDto;
-import com.project.owlback.studygroup.dto.StudyJoinReqDto;
+import com.project.owlback.studygroup.model.StudyGroup;
+import com.project.owlback.studygroup.model.StudyMember;
+import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
+import com.project.owlback.studygroup.dto.req.StudyJoinReqDto;
 import com.project.owlback.studygroup.repository.StudyGroupRepository;
 import com.project.owlback.studygroup.repository.StudyMemberStatusRepository;
 import org.junit.jupiter.api.DisplayName;

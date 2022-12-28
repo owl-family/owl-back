@@ -1,6 +1,6 @@
 package com.project.owlback.studygroup.service;
 
-import com.project.owlback.codereview.model.StudyGroup;
+import com.project.owlback.studygroup.model.StudyGroup;
 
 import java.util.List;
 

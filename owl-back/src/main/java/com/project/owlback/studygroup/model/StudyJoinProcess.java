@@ -1,4 +1,4 @@
-package com.project.owlback.codereview.model;
+package com.project.owlback.studygroup.model;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
@@ -6,18 +6,17 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Getter
 @Setter
-@Table(name = "study_criteria")
-public class StudyCriteria {
+@Table(name = "study_join_process")
+public class StudyJoinProcess {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "study_criteria_id", nullable = false)
+    @Column(name = "study_join_process_id", nullable = false)
     private Long id;
 
     @Column(name = "description", nullable = false, length = 20)

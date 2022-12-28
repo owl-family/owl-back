@@ -1,6 +1,6 @@
 package com.project.owlback.codereview.model;
 
-import com.querydsl.core.annotations.QueryInit; 
+import com.project.owlback.studygroup.model.StudyGroup;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
-
-import java.time.Instant;
 
 @Builder
 @Entity

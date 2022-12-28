@@ -2,7 +2,7 @@ package com.project.owlback.codereview.dto;
 
 import com.project.owlback.codereview.model.CodeLanguage;
 import com.project.owlback.codereview.model.CodeScope;
-import com.project.owlback.codereview.model.StudyGroup;
+import com.project.owlback.studygroup.model.StudyGroup;
 import com.project.owlback.codereview.model.User;
 
 import lombok.AllArgsConstructor;

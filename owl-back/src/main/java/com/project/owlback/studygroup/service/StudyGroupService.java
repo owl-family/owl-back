@@ -1,10 +1,9 @@
 package com.project.owlback.studygroup.service;
 
-import com.project.owlback.codereview.model.StudyGroup;
-import com.project.owlback.studygroup.dto.StudyInviteReqDto;
+import com.project.owlback.studygroup.model.StudyGroup;
+import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
 
 import java.util.List;
-import java.util.Map;
 
 public interface StudyGroupService {
     long joinRequest(long studyId, long userId, String message);

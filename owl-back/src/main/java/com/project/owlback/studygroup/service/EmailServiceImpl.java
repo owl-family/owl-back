@@ -1,9 +1,8 @@
 package com.project.owlback.studygroup.service;
 
-import com.project.owlback.codereview.model.StudyGroup;
+import com.project.owlback.studygroup.model.StudyGroup;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Autowired;
 import jakarta.mail.Message;
 import jakarta.mail.internet.InternetAddress;
 import jakarta.mail.internet.MimeMessage;

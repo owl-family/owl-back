@@ -1,6 +1,6 @@
 package com.project.owlback.studygroup.service;
 
-import com.project.owlback.codereview.model.StudyMember;
+import com.project.owlback.studygroup.model.StudyMember;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;
