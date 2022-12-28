@@ -2,6 +2,7 @@ package com.project.owlback.studygroup.controller;
 
 import com.project.owlback.studygroup.dto.StudyCriteria;
 import com.project.owlback.studygroup.dto.StudyJoinProcess;
+import com.project.owlback.studygroup.dto.res.AppliedMemberRes;
 import com.project.owlback.studygroup.dto.res.StudyMemberRes;
 import com.project.owlback.studygroup.service.StudyGroupService;
 import com.project.owlback.util.Response;
@@ -71,6 +72,19 @@ public class StudyGroupController {
 
         if(joinProcesses == null) return Response.notFound("가입 방식 목록을 가져오는 것에 실패했습니다.");
         return Response.makeResponse(HttpStatus.CREATED, "가입 방식 목록을 성공적으로 가져왔습니다.", joinProcesses.size(), joinProcesses);
+    }
+
+    @GetMapping("/{studyGroupId}/join/{userId}")
+    public ResponseEntity<?> applied(@PathVariable Long studyGroupId, @PathVariable Long userId){
+        ArrayList<AppliedMemberRes> appliedMembers = null;
+        try {
+            appliedMembers = studyGroupService.applied(studyGroupId).orElse(null);
+        } catch(Exception e){
+            log.info(e.getMessage());
+        }
+
+        if(appliedMembers == null) return Response.notFound("존재하지 않는 스터디 입니다.");
+        return Response.makeResponse(HttpStatus.CREATED, "가입 신청한 스터디원 검색이 완료되었습니다.", appliedMembers.size(), appliedMembers);
     }
 
 }

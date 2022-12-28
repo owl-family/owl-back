@@ -1,6 +1,7 @@
 package com.project.owlback.studygroup.service;
 
 import com.project.owlback.studygroup.dto.*;
+import com.project.owlback.studygroup.dto.res.AppliedMemberRes;
 import com.project.owlback.studygroup.dto.res.StudyMemberRes;
 import com.project.owlback.studygroup.repository.*;
 import com.project.owlback.user.dto.User;
@@ -23,6 +24,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
     private final StudyStatusRepository studyStatusRepository;
     private final StudyCriteriaRepository studyCriteriaRepository;
     private final StudyJoinProcessRepository studyJoinProcessRepository;
+    private final StudyMemberStatusRepository studyMemberStatusRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -81,5 +83,35 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         if(joinProcesses.size() == 0) return Optional.empty();
 
         return Optional.of(joinProcesses);
+    }
+
+    @Override
+    public Optional<ArrayList<AppliedMemberRes>> applied(Long studyGroupId) {
+        StudyGroup group = studyGroupRepository.findById(studyGroupId).orElse(null);
+        // 해당 그룹이 존재하지 않는 그룹이면 null 리턴
+        if(group == null) return Optional.empty();
+
+        // 해당 그룹이 존재하면, study_member table에서 주어진 스터디에 해당하는 승인 대기중인 멤버 찾기
+        StudyMemberStatus appliedStatus = studyMemberStatusRepository.findById(2L).get();
+        List<StudyMember> members = studyMemberRepository.findByStudyGroupAndMemberStatus(group, appliedStatus);
+
+        ArrayList<AppliedMemberRes> list = new ArrayList<>();
+        for(StudyMember member : members){
+            User user = userRepository.findById(member.getUserId()).get();
+            String nickname = user.getNickname();
+            String imgFile = "no image";
+            if(user.getUserImg() != null)
+                imgFile = user.getUserImg().getFileUrl();
+            AppliedMemberRes mem = AppliedMemberRes.builder()
+                    .userId(user.getUserId())
+                    .nickname(nickname)
+                    .imgFile(imgFile)
+                    .joinMessage(member.getJoinMessage())
+                    .build();
+
+            list.add(mem);
+        }
+
+        return Optional.of(list);
     }
 }
