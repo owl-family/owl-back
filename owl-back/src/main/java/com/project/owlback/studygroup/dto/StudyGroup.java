@@ -66,8 +66,8 @@ public class StudyGroup extends BaseTimeEntity {
     @Column(name = "max_member")
     private int maxMember;
 
-    @Column(name = "min_member")
-    private int minMember;
+    @Column(name = "cur_member")
+    private int curMember;
 
     @OneToOne
     @JsonManagedReference
