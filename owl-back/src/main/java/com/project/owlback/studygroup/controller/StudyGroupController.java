@@ -32,4 +32,16 @@ public class StudyGroupController {
         return Response.makeResponse(HttpStatus.CREATED, "스터디원 검색이 완료되었습니다.", list.size(), list);
     }
 
+    @PutMapping("/{studyGroupId}/expiration")
+    public ResponseEntity<?> expire(@PathVariable Long studyGroupId) {
+        try {
+            studyGroupService.expire(studyGroupId);
+        } catch(Exception e){
+            log.info(e.getMessage());
+            return Response.notFound("스터디 종료에 실패했습니다.");
+        }
+
+        return Response.ok("스터디를 성공적으로 종료했습니다.");
+    }
+
 }

@@ -80,4 +80,8 @@ public class StudyGroup extends BaseTimeEntity {
     @OneToMany
     @JoinColumn(name = "study_group_id")
     private List<StudyTag> tags = new ArrayList<>();
+
+    public void expire(StudyStatus status) {
+        this.status = status;
+    }
 }

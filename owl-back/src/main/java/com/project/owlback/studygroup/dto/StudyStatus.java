@@ -5,6 +5,7 @@ import lombok.*;
 import org.hibernate.annotations.DynamicInsert;
 
 @Getter
+@Setter
 @Entity
 @DynamicInsert
 @Builder
@@ -21,4 +22,5 @@ public class StudyStatus {
 
     @Column(name = "description")
     private String description;
+
 }

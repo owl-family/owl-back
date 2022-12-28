@@ -2,17 +2,17 @@ package com.project.owlback.studygroup.service;
 
 import com.project.owlback.studygroup.dto.StudyGroup;
 import com.project.owlback.studygroup.dto.StudyMember;
+import com.project.owlback.studygroup.dto.StudyStatus;
 import com.project.owlback.studygroup.dto.res.StudyMemberRes;
 import com.project.owlback.studygroup.repository.StudyGroupRepository;
 import com.project.owlback.studygroup.repository.StudyMemberRepository;
+import com.project.owlback.studygroup.repository.StudyStatusRepository;
 import com.project.owlback.user.dto.User;
-import com.project.owlback.user.repository.UserImgRepository;
 import com.project.owlback.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -24,6 +24,7 @@ public class StudyGroupServiceImpl implements StudyGroupService {
 
     private final StudyGroupRepository studyGroupRepository;
     private final StudyMemberRepository studyMemberRepository;
+    private final StudyStatusRepository studyStatusRepository;
     private final UserRepository userRepository;
 
     @Override
@@ -52,5 +53,15 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         }
 
         return Optional.of(list);
+    }
+
+    @Override
+    public void expire(Long studyGroupId) {
+        StudyGroup group = studyGroupRepository.findById(studyGroupId).orElseThrow();
+
+        StudyStatus expireStatus = studyStatusRepository.findById(2L).get();
+
+        group.expire(expireStatus);
+        studyGroupRepository.save(group);
     }
 }
