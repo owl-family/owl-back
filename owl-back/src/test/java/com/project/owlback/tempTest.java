@@ -1,6 +1,6 @@
 //package com.project.owlback;
 //
-//import com.project.owlback.user.dto.User;
+//import com.project.owlback.user.model.User;
 //import com.project.owlback.user.repository.UserRepository;
 //import org.junit.jupiter.api.Test;
 //import org.springframework.beans.factory.annotation.Autowired;

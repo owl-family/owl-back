@@ -1,6 +1,6 @@
 package com.project.owlback.user.repository;
 
-import com.project.owlback.user.dto.UserImg;
+import com.project.owlback.user.model.UserImg;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

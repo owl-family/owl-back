@@ -1,7 +1,7 @@
 package com.project.owlback.goal.dto;
 
 import com.project.owlback.stat.dto.StatSubject;
-import com.project.owlback.user.dto.User;
+import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 

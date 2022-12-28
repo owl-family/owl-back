@@ -1,7 +1,7 @@
 package com.project.owlback.favorite.dto.temp;
 
 import com.project.owlback.favorite.dto.Favorite;
-import com.project.owlback.user.dto.User;
+import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 

@@ -1,5 +1,5 @@
 package com.project.owlback.user.service;
-import com.project.owlback.user.dto.UserImg;
+import com.project.owlback.user.model.UserImg;
 
 public interface UserImgService {
 

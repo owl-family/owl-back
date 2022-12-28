@@ -1,7 +1,7 @@
 package com.project.owlback.user.dto.res;
 
 
-import com.project.owlback.user.dto.UserImg;
+import com.project.owlback.user.model.UserImg;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 

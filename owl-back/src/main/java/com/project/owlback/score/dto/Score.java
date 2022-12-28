@@ -1,6 +1,6 @@
 package com.project.owlback.score.dto;
 
-import com.project.owlback.user.dto.User;
+import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 

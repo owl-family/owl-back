@@ -1,9 +1,9 @@
 package com.project.owlback.user.service;
 
 
-import com.project.owlback.user.dto.UserImg;
+import com.project.owlback.user.model.UserImg;
 import com.project.owlback.user.dto.req.PostUserReq;
-import com.project.owlback.user.dto.User;
+import com.project.owlback.user.model.User;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
 import com.project.owlback.user.dto.req.UserFindPasswordDto;
 

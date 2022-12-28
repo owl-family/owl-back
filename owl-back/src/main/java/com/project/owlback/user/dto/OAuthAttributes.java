@@ -1,13 +1,12 @@
 package com.project.owlback.user.dto;
 
+import com.project.owlback.user.model.Role;
+import com.project.owlback.user.model.User;
 import lombok.Builder;
 import lombok.Getter;
 
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
-
-import static java.util.Arrays.asList;
 
 @Getter
 public class OAuthAttributes {

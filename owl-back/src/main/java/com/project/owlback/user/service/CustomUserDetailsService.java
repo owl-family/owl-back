@@ -1,7 +1,6 @@
 package com.project.owlback.user.service;
 
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -25,7 +24,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     // 해당 User 데이터가 존재하면 userDetails 객체로 만들어서 리턴
-    private UserDetails createUserDetails(com.project.owlback.user.dto.User user) {
+    private UserDetails createUserDetails(com.project.owlback.user.model.User user) {
         return new User(Long.toString(user.getUserId()), user.getPassword(), user.getAuthorities());
     }
 

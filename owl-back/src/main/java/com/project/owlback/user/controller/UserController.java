@@ -1,9 +1,9 @@
 package com.project.owlback.user.controller;
 
-import com.project.owlback.user.dto.*;
 import com.project.owlback.user.dto.req.*;
 import com.project.owlback.user.dto.res.GetUserInfoRes;
-import com.project.owlback.user.dto.User;
+import com.project.owlback.user.model.User;
+import com.project.owlback.user.model.UserImg;
 import com.project.owlback.user.service.EmailService;
 import com.project.owlback.user.service.UserImgService;
 import com.project.owlback.user.service.UserService;

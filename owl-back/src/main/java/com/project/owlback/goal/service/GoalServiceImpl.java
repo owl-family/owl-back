@@ -3,7 +3,7 @@ package com.project.owlback.goal.service;
 import com.project.owlback.goal.dto.Goal;
 import com.project.owlback.goal.dto.UpdateGoal;
 import com.project.owlback.goal.repository.GoalRepository;
-import com.project.owlback.user.dto.User;
+import com.project.owlback.user.model.User;
 import com.project.owlback.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

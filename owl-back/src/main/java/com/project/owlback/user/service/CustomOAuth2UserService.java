@@ -1,7 +1,7 @@
 package com.project.owlback.user.service;
 
 import com.project.owlback.user.dto.OAuthAttributes;
-import com.project.owlback.user.dto.User;
+import com.project.owlback.user.model.User;
 import com.project.owlback.user.dto.SessionUser;
 import com.project.owlback.user.repository.UserRepository;
 import jakarta.servlet.http.HttpSession;

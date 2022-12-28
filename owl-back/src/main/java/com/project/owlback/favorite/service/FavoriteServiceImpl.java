@@ -1,8 +1,8 @@
 package com.project.owlback.favorite.service;
 
+import com.project.owlback.codereview.repository.CodeReviewRepository;
 import com.project.owlback.favorite.dto.Favorite;
 import com.project.owlback.favorite.dto.FavoriteDto;
-import com.project.owlback.favorite.dto.temp.CodeReviewRepository;
 import com.project.owlback.favorite.dto.temp.CodeReviewDto;
 import com.project.owlback.favorite.dto.temp.UrlDto;
 import com.project.owlback.favorite.dto.temp.UrlRepository;

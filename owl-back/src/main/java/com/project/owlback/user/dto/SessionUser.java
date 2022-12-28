@@ -1,5 +1,6 @@
 package com.project.owlback.user.dto;
 
+import com.project.owlback.user.model.User;
 import lombok.Getter;
 import lombok.ToString;
 

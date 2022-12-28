@@ -52,7 +52,7 @@ public class JwtTokenProvider {
         String username = userDetails.getUsername(); // 저장된 user Id 가져오기
 
         // userId로 User 정보들 가져오기
-        com.project.owlback.user.dto.User user = userRepository.findByUserId(username).get();
+        com.project.owlback.user.model.User user = userRepository.findByUserId(username).get();
 
         // 권한 가져오기
         String authorities = authentication.getAuthorities().stream()
@@ -77,7 +77,7 @@ public class JwtTokenProvider {
                 .build();
     }
 
-    private String createAccessToken(String authorities, com.project.owlback.user.dto.User user, Date accessTokenExpiresIn) {
+    private String createAccessToken(String authorities, com.project.owlback.user.model.User user, Date accessTokenExpiresIn) {
         return Jwts.builder()
                 .setSubject(Long.toString(user.getUserId())) // 아이디
                 .claim("nickName", user.getNickname())
@@ -156,7 +156,7 @@ public class JwtTokenProvider {
         long now = (new Date()).getTime();
 
         // userId로 User 정보들 가져오기
-        com.project.owlback.user.dto.User user = userRepository.findByEmail(sessionUser.getEmail()).get();
+        com.project.owlback.user.model.User user = userRepository.findByEmail(sessionUser.getEmail()).get();
 
         // 권한 가져오기
         String authorities = user.getAuthorities().stream()
