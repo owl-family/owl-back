@@ -39,11 +39,14 @@ public class UrlServiceImpl implements UrlService {
     public void createUrl(UrlPostDto urlPostDto) {
 
         // 로그인한 user정보
+        User user = userRepository.findById(urlPostDto.getUserId()).orElseThrow();
+
         Url url = Url.builder()
                 .content(urlPostDto.getContent())
                 .title(urlPostDto.getTitle())
                 .link(urlPostDto.getLink())
                 .view(0)
+                .user(user)
                 .build();
 
         urlRepository.save(url);
