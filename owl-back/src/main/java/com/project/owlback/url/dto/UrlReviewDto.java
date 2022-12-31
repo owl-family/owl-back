@@ -1,10 +1,7 @@
 package com.project.owlback.url.dto;
 
 
-import com.project.owlback.codereview.model.Tag;
 import lombok.*;
-
-import java.util.List;
 
 @Builder
 @Data
@@ -12,12 +9,9 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Setter
-public class UrlPostDto {
+public class UrlReviewDto {
     private Long userId;
-    private String title;
+    private Long startScore;
     private String content;
-    private String link;
-    private List<Tag> tag;
-
 
 }

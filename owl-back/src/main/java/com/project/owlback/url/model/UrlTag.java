@@ -21,7 +21,7 @@ public class UrlTag {
 
    @ManyToOne(optional = false)
    @JoinColumn(name="url_id", nullable = false)
-    private Long urlId;
+    private Url url;
 
     @ManyToOne(optional = false)
     @JoinColumn(name="tag_id", nullable = false)

@@ -5,18 +5,22 @@ import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@ToString
+@ToString(of={"urlId", "title", "content","link", "view", "user", "favorite", "reviews" })
 public class Url extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "url_id", nullable = false)
     private long urlId;
 
-    @Column(name = "TITLE")
+    @Column(name = "title")
     private String title;
 
     @Column(name = "CONTENT")
@@ -34,4 +38,8 @@ public class Url extends BaseTimeEntity {
 
     @OneToOne(mappedBy = "url")
     private Favorite favorite;
+
+    @OneToMany(mappedBy = "url")
+    @Builder.Default
+    private List<UrlReview> reviews = new ArrayList<>();
 }
