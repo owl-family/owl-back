@@ -1,6 +1,7 @@
 package com.project.owlback.url.service;
 
 import com.project.owlback.codereview.model.Tag;
+import com.project.owlback.url.dto.UrlGetDto;
 import com.project.owlback.url.dto.UrlPostDto;
 import com.project.owlback.url.dto.UrlReviewDto;
 import com.project.owlback.url.model.Url;
@@ -17,4 +18,6 @@ public interface UrlService {
 
 
     void toggleUrlReviewLike(Long urlReviewId);
+
+    List<UrlGetDto> getUrl(String condition,Long id);
 }

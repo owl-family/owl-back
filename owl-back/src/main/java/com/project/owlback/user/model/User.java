@@ -1,5 +1,6 @@
 package com.project.owlback.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.owlback.codereview.model.CodeComment;
 import com.project.owlback.codereview.model.CodeReview;
@@ -84,6 +85,7 @@ public class User extends BaseTimeEntity  implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Favorite> favorites = new ArrayList<>();
 
+    @JsonIgnore
     @OneToMany(mappedBy = "user")
     private List<Url> urls = new ArrayList<>();
 

@@ -2,6 +2,7 @@ package com.project.owlback.url.service;
 
 import com.project.owlback.codereview.model.Tag;
 import com.project.owlback.codereview.repository.TagRepository;
+import com.project.owlback.url.dto.UrlGetDto;
 import com.project.owlback.url.dto.UrlPostDto;
 import com.project.owlback.url.dto.UrlReviewDto;
 import com.project.owlback.url.model.Url;
@@ -16,10 +17,16 @@ import com.project.owlback.user.model.User;
 import com.project.owlback.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.ObjectUtils;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -133,6 +140,26 @@ public class UrlServiceImpl implements UrlService {
 
         }
 
+    }
+
+    @Override
+    @Transactional
+    public List<UrlGetDto> getUrl(String condition, Long id) {
+        log.info("condition = {}",condition);
+        List<Url> urlList = null;
+//        urlList = urlRepository.findAll(Sort.by(Sort.Direction.DESC,"created_date"));
+        log.info("urlList = {}",urlList);
+        Optional<Url> test = urlRepository.findById(id);
+        log.info("test ={}",test);
+        switch (condition){
+            case "realtime" -> urlList = urlRepository.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
+            case "daily" -> urlList = urlRepository.findByAllTime("DAY");
+            case "weekly" -> urlList = urlRepository.findByAllTime("WEEK");
+            case "monthly" -> urlList = urlRepository.findByAllTime("MONTH");
+        }
+        List<UrlGetDto> urlGetDtoList = urlList.stream()
+                .map(UrlGetDto::fromEntity).collect(Collectors.toList());
+        return urlGetDtoList;
     }
 
 

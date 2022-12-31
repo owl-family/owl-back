@@ -13,12 +13,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@ToString(of={"urlId", "title", "content","link", "view", "user", "favorite", "reviews" })
+@ToString(of={"urlId", "title", "content","link", "view" })
 public class Url extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "url_id", nullable = false)
-    private long urlId;
+    private Long urlId;
 
     @Column(name = "title")
     private String title;
