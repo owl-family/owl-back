@@ -65,8 +65,7 @@ public class UrlController {
     */
     @GetMapping("{condition}")
     public ResponseEntity<?> getUrl(@PathVariable String condition){
-        Long a = 1l;
-        List<UrlGetDto> uriList = urlService.getUrl(condition,a);
+        List<UrlGetDto> uriList = urlService.getUrl(condition);
         log.info("urlList ={}",uriList);
         return new ResponseEntity<List<UrlGetDto>>(uriList,HttpStatus.OK);
     }
