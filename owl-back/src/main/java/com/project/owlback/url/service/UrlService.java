@@ -20,7 +20,7 @@ public interface UrlService {
 
     void toggleUrlReviewLike(Long urlReviewId);
 
-    List<UrlGetDto> getUrl(String condition,Long id);
+    List<UrlGetDto> getUrl(String condition);
 
     List<UrlReviewGetDto> getUrlReview(Long urlId);
 

@@ -142,11 +142,9 @@ public class UrlServiceImpl implements UrlService {
 
     @Override
     @Transactional
-    public List<UrlGetDto> getUrl(String condition, Long id) {
+    public List<UrlGetDto> getUrl(String condition) {
         log.info("condition = {}",condition);
         List<Url> urlList = null;
-        Optional<Url> test = urlRepository.findById(id);
-        log.info("test ={}",test);
         switch (condition){
             case "realtime" -> urlList = urlRepository.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
             case "daily" -> urlList = urlRepository.findByAllTime(1);
