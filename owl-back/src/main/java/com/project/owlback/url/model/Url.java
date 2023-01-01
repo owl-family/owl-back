@@ -1,5 +1,6 @@
 package com.project.owlback.url.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.owlback.favorite.dto.Favorite;
 import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
@@ -13,12 +14,12 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
-@ToString(of={"urlId", "title", "content","link", "view", "user", "favorite", "reviews" })
+@ToString(of={"urlId", "title", "content","link", "view" })
 public class Url extends BaseTimeEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "url_id", nullable = false)
-    private long urlId;
+    private Long urlId;
 
     @Column(name = "title")
     private String title;
@@ -41,5 +42,6 @@ public class Url extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "url")
     @Builder.Default
+    @JsonIgnore
     private List<UrlReview> reviews = new ArrayList<>();
 }

@@ -11,6 +11,7 @@ import lombok.*;
 @Getter
 @Setter
 @Builder
+@ToString(of = {"urlTagId","url"})
 @Table(name = "url_tag")
 public class UrlTag {
 
