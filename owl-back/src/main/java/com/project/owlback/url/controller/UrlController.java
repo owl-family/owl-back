@@ -3,6 +3,7 @@ package com.project.owlback.url.controller;
 import com.project.owlback.url.dto.UrlGetDto;
 import com.project.owlback.url.dto.UrlPostDto;
 import com.project.owlback.url.dto.UrlReviewDto;
+import com.project.owlback.url.dto.UrlReviewGetDto;
 import com.project.owlback.url.model.Url;
 import com.project.owlback.url.service.UrlService;
 import com.project.owlback.user.model.User;
@@ -58,6 +59,10 @@ public class UrlController {
 
     }
 
+    /*
+    실시간 -> 최근 게시물 순
+    daily,weekly,month -> 지금부터 1,7,30일 전 최신순
+    */
     @GetMapping("{condition}")
     public ResponseEntity<?> getUrl(@PathVariable String condition){
         Long a = 1l;
@@ -66,4 +71,19 @@ public class UrlController {
         return new ResponseEntity<List<UrlGetDto>>(uriList,HttpStatus.OK);
     }
 
+    @GetMapping("{urlId}/reviews")
+    public  ResponseEntity<?> getUrlReview(@PathVariable("urlId") Long urlId){
+        log.info("uriId = {}",urlId);
+        List<UrlReviewGetDto> urlReviewList = urlService.getUrlReview(urlId);
+        log.info("result = {}",urlReviewList);
+        return new ResponseEntity<List<UrlReviewGetDto>>(urlReviewList,HttpStatus.OK);
+    }
+
+    @GetMapping("search/{word}")
+    public ResponseEntity<?> searchUrl(@PathVariable("word") String word){
+        log.info("word : {}",word);
+        List<UrlGetDto> urlList = urlService.searchUrl(word);
+
+        return new ResponseEntity<List<UrlGetDto>>(urlList,HttpStatus.OK);
+    }
 }

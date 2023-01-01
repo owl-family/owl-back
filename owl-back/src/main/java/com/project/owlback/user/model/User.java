@@ -85,8 +85,8 @@ public class User extends BaseTimeEntity  implements UserDetails {
     @OneToMany(mappedBy = "user")
     private List<Favorite> favorites = new ArrayList<>();
 
-    @JsonIgnore
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Url> urls = new ArrayList<>();
 
     @OneToMany(mappedBy = "writer")

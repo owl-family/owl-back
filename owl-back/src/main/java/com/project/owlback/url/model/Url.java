@@ -1,5 +1,6 @@
 package com.project.owlback.url.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.project.owlback.favorite.dto.Favorite;
 import com.project.owlback.user.model.User;
 import jakarta.persistence.*;
@@ -41,5 +42,6 @@ public class Url extends BaseTimeEntity {
 
     @OneToMany(mappedBy = "url")
     @Builder.Default
+    @JsonIgnore
     private List<UrlReview> reviews = new ArrayList<>();
 }

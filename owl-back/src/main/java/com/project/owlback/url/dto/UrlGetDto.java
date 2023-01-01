@@ -1,8 +1,10 @@
 package com.project.owlback.url.dto;
 
+import com.project.owlback.codereview.model.Tag;
 import com.project.owlback.favorite.dto.Favorite;
 import com.project.owlback.url.model.Url;
 import com.project.owlback.url.model.UrlReview;
+import com.project.owlback.url.model.UrlTag;
 import com.project.owlback.user.model.User;
 import lombok.*;
 
@@ -33,6 +35,7 @@ public class UrlGetDto {
 
     private Instant modifiedDate;
 
+    private List<Tag> tag;
     public static UrlGetDto fromEntity(Url url) {
         return UrlGetDto.builder()
                 .urlId(url.getUrlId())

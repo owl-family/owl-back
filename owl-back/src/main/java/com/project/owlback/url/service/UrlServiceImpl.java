@@ -5,6 +5,7 @@ import com.project.owlback.codereview.repository.TagRepository;
 import com.project.owlback.url.dto.UrlGetDto;
 import com.project.owlback.url.dto.UrlPostDto;
 import com.project.owlback.url.dto.UrlReviewDto;
+import com.project.owlback.url.dto.UrlReviewGetDto;
 import com.project.owlback.url.model.Url;
 import com.project.owlback.url.model.UrlLike;
 import com.project.owlback.url.model.UrlReview;
@@ -22,10 +23,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -147,20 +145,71 @@ public class UrlServiceImpl implements UrlService {
     public List<UrlGetDto> getUrl(String condition, Long id) {
         log.info("condition = {}",condition);
         List<Url> urlList = null;
-//        urlList = urlRepository.findAll(Sort.by(Sort.Direction.DESC,"created_date"));
-        log.info("urlList = {}",urlList);
         Optional<Url> test = urlRepository.findById(id);
         log.info("test ={}",test);
         switch (condition){
             case "realtime" -> urlList = urlRepository.findAll(Sort.by(Sort.Direction.DESC,"createdDate"));
-            case "daily" -> urlList = urlRepository.findByAllTime("DAY");
-            case "weekly" -> urlList = urlRepository.findByAllTime("WEEK");
-            case "monthly" -> urlList = urlRepository.findByAllTime("MONTH");
+            case "daily" -> urlList = urlRepository.findByAllTime(1);
+            case "weekly" -> urlList = urlRepository.findByAllTime(7);
+            case "monthly" -> urlList = urlRepository.findByAllTime(30);
         }
+        log.info("urlList = {}",urlList);
         List<UrlGetDto> urlGetDtoList = urlList.stream()
                 .map(UrlGetDto::fromEntity).collect(Collectors.toList());
+        addTag(urlGetDtoList);
         return urlGetDtoList;
     }
 
+    @Override
+    @Transactional
+    public List<UrlReviewGetDto> getUrlReview(Long urlId) {
+        log.info("urlid = {}",urlId);
+        Url url = urlRepository.findById(urlId).orElseThrow();
+        log.info("url ={}",url);
+        List<UrlReview> urlReviewList = urlReviewRepository.findByUrlId(url.getUrlId()).orElseThrow();
+        log.info("UrlReview = {}",urlReviewList);
+        List<UrlReviewGetDto> urlReviewGetDtoList = urlReviewList.stream()
+                .map(UrlReviewGetDto::fromEntity).collect(Collectors.toList());
+        log.info("UrlReviewGetDto ={}",urlReviewGetDtoList);
+        return urlReviewGetDtoList;
+    }
+
+    @Override
+    @Transactional
+    public List<UrlGetDto> searchUrl(String word) {
+        HashSet<Url> url = new HashSet<>();
+
+        List<Url> searchByUrlTitle = urlRepository.findByTitleContaining(word);
+        log.info("searchByUrlTitle = {}",searchByUrlTitle);
+        url.addAll(searchByUrlTitle);
+
+        // tag 검색
+        Tag tag = tagRepository.findByContent(word);
+        log.info("tag ={}",tag);
+        List<UrlTag> searchedTag = urlTagRepository.findByTagId(tag.getId());
+        log.info("searchedTag = {}",searchedTag);
+        List<Url> x = searchedTag.stream().map(UrlTag::getUrl).collect(Collectors.toList());
+        url.addAll(x);
+        log.info("searched = {}",url);
+        List<UrlGetDto> result = url.stream().map(UrlGetDto::fromEntity).collect(Collectors.toList());
+
+        addTag(result);
+        result.sort(new Comparator<UrlGetDto>() {
+            @Override
+            public int compare(UrlGetDto o1, UrlGetDto o2) {
+                return o2.getCreatedDate().compareTo(o1.getCreatedDate());
+            }
+        });
+        log.info("result ={}",result);
+        return result;
+    }
+    public List<UrlGetDto> addTag(List<UrlGetDto> urlGetDto){
+        for (int i = 0; i < urlGetDto.size(); i++) {
+            UrlGetDto temp = urlGetDto.get(i);
+            List<UrlTag> tagList = urlTagRepository.findByUrl(Url.builder().urlId(temp.getUrlId()).build());
+            urlGetDto.get(i).setTag(tagList.stream().map(a->a.getTag()).collect(Collectors.toList()));
+        }
+        return urlGetDto;
+    }
 
 }
