@@ -1,15 +1,16 @@
 package com.project.owlback.user.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.project.owlback.codereview.model.CodeComment;
 import com.project.owlback.codereview.model.CodeReview;
 import com.project.owlback.goal.dto.Goal;
 import com.project.owlback.studygroup.model.StudyGroup;
 import com.project.owlback.studygroup.model.StudyMember;
+import com.project.owlback.url.model.Url;
 import com.project.owlback.user.dto.req.PutUserInfoReq;
 import com.project.owlback.util.BaseTimeEntity;
 import com.project.owlback.favorite.dto.Favorite;
-import com.project.owlback.favorite.dto.temp.Url;
 import com.project.owlback.goal.dto.Subject;
 import com.project.owlback.score.dto.Score;
 import lombok.*;
@@ -85,6 +86,7 @@ public class User extends BaseTimeEntity  implements UserDetails {
     private List<Favorite> favorites = new ArrayList<>();
 
     @OneToMany(mappedBy = "user")
+    @JsonIgnore
     private List<Url> urls = new ArrayList<>();
 
     @OneToMany(mappedBy = "writer")

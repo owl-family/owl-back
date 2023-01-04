@@ -2,6 +2,7 @@ package com.project.owlback.user.model;
 
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.ToString;
 
@@ -9,6 +10,7 @@ import lombok.ToString;
 @Entity
 @ToString
 @NoArgsConstructor
+@Getter
 @Table(name="user_img")
 public class UserImg {
 

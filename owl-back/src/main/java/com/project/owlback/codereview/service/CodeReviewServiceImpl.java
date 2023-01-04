@@ -70,7 +70,6 @@ public class CodeReviewServiceImpl implements CodeReviewService {
     @Override
     @Transactional
     public Long create(CodeReviewPostDto codeReviewPostDto) {
-        System.out.println("!!!!!!!");
 
         log.info("info log={}", codeReviewPostDto);
 
