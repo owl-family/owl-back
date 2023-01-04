@@ -1,11 +1,15 @@
 package com.project.owlback.studygroup.service;
 
+import com.project.owlback.studygroup.dto.req.StudyMakeDto;
+import com.project.owlback.studygroup.dto.res.StudyDetailInfo;
+import com.project.owlback.studygroup.dto.res.StudyInfo;
 import com.project.owlback.studygroup.model.*;
 import com.project.owlback.studygroup.dto.StudyGroupCondition;
 import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
 import com.project.owlback.studygroup.repository.*;
 import com.project.owlback.user.model.User;
 import com.project.owlback.user.repository.UserRepository;
+import com.project.owlback.user.service.EmailServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -243,5 +247,74 @@ public class StudyGroupServiceImpl implements StudyGroupService {
         }
 
         return Optional.of(list);
+    }
+
+    //
+    @Override
+    public boolean makeStudy(StudyMakeDto studyMakeDto) {
+        String joinCode = "";
+
+        while (true) {
+            joinCode = EmailServiceImpl.createKey(10);
+            if (studyGroupRepository.findByJoinCode(joinCode).isEmpty()) {
+                break;
+            }
+        }
+
+        User user = userRepository.findById(studyMakeDto.getUser_id()).orElseThrow();
+        StudyCriteria studyCriteria = studyCriteriaRepository.findById(studyMakeDto.getStudy_criteria_id()).orElseThrow();
+        StudyJoinProcess studyJoinProcess = studyJoinProcessRepository.findById(studyMakeDto.getJoin_process_id()).orElseThrow();
+        StudyStatus studyStatus = studyStatusRepository.findById(1L).orElseThrow();
+
+        StudyGroup studyGroup = StudyGroup.builder()
+                .name(studyMakeDto.getName())
+                .goal(studyMakeDto.getGoal())
+                .information(studyMakeDto.getStudy_information())
+                .criteriaDetail(studyMakeDto.getCriteria_detail())
+                .maxMember(studyMakeDto.getMax_member())
+                .joinCode(joinCode)
+                .user(user)
+                .criteria(studyCriteria)
+                .joinProcess(studyJoinProcess)
+                .status(studyStatus)
+                .build();
+
+        StudyGroup savedStudyGroup = studyGroupRepository.save(studyGroup);
+        return (savedStudyGroup == studyGroup) ? true : false;
+    }
+
+    @Override
+    public void changeStudy(long studyId, StudyMakeDto studyMakeDto) {
+        StudyGroup studyGroup = studyGroupRepository.findById(studyId).orElseThrow();
+
+        StudyCriteria studyCriteria = studyCriteriaRepository.findById(studyMakeDto.getStudy_criteria_id()).orElseThrow();
+        StudyJoinProcess studyJoinProcess = studyJoinProcessRepository.findById(studyMakeDto.getJoin_process_id()).orElseThrow();
+
+        studyGroup.changeName(studyMakeDto.getName());
+        studyGroup.changeGoal(studyMakeDto.getGoal());
+        studyGroup.changeStudyInformation(studyMakeDto.getStudy_information());
+        studyGroup.changeJoinProcess(studyJoinProcess);
+        studyGroup.changeStudyCriteria(studyCriteria);
+        studyGroup.changeMaxMember(studyMakeDto.getMax_member());
+
+        studyGroupRepository.save(studyGroup);
+    }
+
+    @Override
+    public List<StudyInfo> getStudies(long userId, String search, String query) {
+        if (userId != 0) {
+            return studyGroupRepository.findByUserUserId(userId);
+        } else if (search.equals("name")) {
+            return studyGroupRepository.findByNameContainingAndStudyStatusStudyStatusIdNot(query, 2);
+        } else if (search.equals("leader")) {
+            return studyGroupRepository.findByUserNameContainingAndStudyStatusStudyStatusIdNot(query, 2);
+        } else {
+            return studyGroupRepository.findByUserUserId(userId);
+        }
+    }
+
+    @Override
+    public StudyDetailInfo getStudyDetailInfo(long studyId) {
+        return studyGroupRepository.findByStudyGroupId(studyId).get();
     }
 }
