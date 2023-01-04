@@ -71,4 +71,27 @@ public class StudyGroup extends BaseTimeEntity {
         this.status = status;
     }
 
+    public void changeName(String name) {
+        this.name = name;
+    }
+
+    public void changeGoal(String goal) {
+        this.goal = goal;
+    }
+
+    public void changeStudyInformation(String studyInformation) {
+        this.information = studyInformation;
+    }
+
+    public void changeJoinProcess(StudyJoinProcess studyJoinProcess) {
+        this.joinProcess = studyJoinProcess;
+    }
+
+    public void changeStudyCriteria(StudyCriteria studyCriteria) {
+        this.criteria = studyCriteria;
+    }
+
+    public void changeMaxMember(int maxMember) {
+        this.maxMember = maxMember;
+    }
 }

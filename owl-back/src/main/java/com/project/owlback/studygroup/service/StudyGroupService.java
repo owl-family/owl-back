@@ -1,5 +1,8 @@
 package com.project.owlback.studygroup.service;
 
+import com.project.owlback.studygroup.dto.req.StudyMakeDto;
+import com.project.owlback.studygroup.dto.res.StudyDetailInfo;
+import com.project.owlback.studygroup.dto.res.StudyInfo;
 import com.project.owlback.studygroup.model.StudyCriteria;
 import com.project.owlback.studygroup.model.StudyGroup;
 import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
@@ -34,4 +37,13 @@ public interface StudyGroupService {
     Optional<List<StudyJoinProcess>> joinProcesses();
 
     Optional<ArrayList<AppliedMemberRes>> applied(Long studyGroupId);
+
+    //
+    boolean makeStudy(StudyMakeDto studyMakeDto);
+
+    void changeStudy(long studyId, StudyMakeDto studyMakeDto);
+
+    List<StudyInfo> getStudies(long userId, String search, String query);
+
+    StudyDetailInfo getStudyDetailInfo(long studyId);
 }

@@ -1,15 +1,25 @@
 package com.project.owlback.studygroup.controller;
 
+import com.project.owlback.studygroup.dto.req.StudyMakeDto;
 import com.project.owlback.studygroup.dto.res.AppliedMemberRes;
+import com.project.owlback.studygroup.dto.res.StudyDetailInfo;
+import com.project.owlback.studygroup.dto.res.StudyInfo;
 import com.project.owlback.studygroup.dto.res.StudyMemberRes;
 import com.project.owlback.studygroup.model.StudyCriteria;
 import com.project.owlback.studygroup.model.StudyGroup;
 import com.project.owlback.studygroup.dto.req.StudyInviteReqDto;
 import com.project.owlback.studygroup.dto.req.StudyJoinReqDto;
 import com.project.owlback.studygroup.model.StudyJoinProcess;
+import com.project.owlback.studygroup.model.StudyStatus;
+import com.project.owlback.studygroup.repository.StudyCriteriaRepository;
+import com.project.owlback.studygroup.repository.StudyJoinProcessRepository;
+import com.project.owlback.studygroup.repository.StudyStatusRepository;
 import com.project.owlback.studygroup.service.StudyEmailService;
 
 import com.project.owlback.studygroup.service.StudyGroupService;
+import com.project.owlback.user.model.User;
+import com.project.owlback.user.repository.UserRepository;
+import com.project.owlback.user.service.EmailServiceImpl;
 import com.project.owlback.util.Response;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -31,6 +41,11 @@ public class StudyGroupController {
     private final StudyGroupService studyGroupService;
 
     private final StudyEmailService emailService;
+
+    private final UserRepository userRepository;
+    private final StudyCriteriaRepository studyCriteriaRepository;
+    private final StudyJoinProcessRepository studyJoinProcessRepository;
+    private final StudyStatusRepository studyStatusRepository;
 
     // 스터디 가입 요청 API
     @PostMapping("/{studyId}/join/{userId}")
@@ -187,6 +202,37 @@ public class StudyGroupController {
 
         if(appliedMembers == null) return Response.notFound("존재하지 않는 스터디 입니다.");
         return Response.makeResponse(HttpStatus.CREATED, "가입 신청한 스터디원 검색이 완료되었습니다.", appliedMembers.size(), appliedMembers);
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    @PostMapping
+    public ResponseEntity<?> makeStudy(@RequestBody StudyMakeDto studyMakeDto) {
+        boolean isCreated = studyGroupService.makeStudy(studyMakeDto);
+
+        if (isCreated) {
+            return  Response.created("스터디 생성 완료");
+        }
+        return Response.badRequest("스터디 생성 실패");
+    }
+
+    @PutMapping("{studyId}/setting")
+    public ResponseEntity<?> changeStudySetting(@PathVariable long studyId, @RequestBody StudyMakeDto studyMakeDto) {
+        studyGroupService.changeStudy(studyId, studyMakeDto);
+        return Response.created("스터디 정보 변경 완료");
+    }
+
+    @GetMapping
+    public ResponseEntity<?> getStudies(@RequestParam(required = false) long userId, @RequestParam(required = false) String search, @RequestParam(required = false) String query) {
+        // 스터디 맴버 테이블에 추가
+        List<StudyInfo> studyInfoTests = studyGroupService.getStudies(userId, search, query);
+        return Response.makeResponse(HttpStatus.OK, "스터디 목록 조회 완료", studyInfoTests.size(), studyInfoTests);
+    }
+
+    @GetMapping("{studyId}")
+    public ResponseEntity<?> getStudyDetail(@PathVariable long studyId) {
+        StudyDetailInfo studyDetailInfo = studyGroupService.getStudyDetailInfo(studyId);
+        return Response.makeResponse(HttpStatus.OK, "스터디 정보 조회 완료");
+//        return Response.makeResponse(HttpStatus.OK, "스터디 정보 조회 완료", 1, studyDetailInfo);
     }
 
 }
